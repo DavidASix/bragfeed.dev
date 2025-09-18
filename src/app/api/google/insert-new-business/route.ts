@@ -46,6 +46,7 @@ export const POST: RequestHandler<NextRouteContext> = withAuth(
       const [business] = await db
         .insert(businesses)
         .values({
+          id: crypto.randomUUID(),
           place_id,
           name: name || null,
           address: formatted_address || null,

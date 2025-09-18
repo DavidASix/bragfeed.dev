@@ -8,13 +8,18 @@ interface SerialColumn extends ColumnBaseConfig<"number", "PgSerial"> {
   columnType: "PgSerial";
 }
 
+interface UuidColumn extends ColumnBaseConfig<"string", "PgUUID"> {
+  dataType: "string";
+  columnType: "PgUUID";
+}
+
 interface TextColumn extends ColumnBaseConfig<"string", "PgText"> {
   dataType: "string";
   columnType: "PgText";
 }
 
 export type OwnedTable = PgTable & {
-  id: PgColumn<SerialColumn>;
+  id: PgColumn<SerialColumn | UuidColumn>;
   user_id: PgColumn<TextColumn>;
 };
 
@@ -23,13 +28,13 @@ export type OwnedTable = PgTable & {
  * CRUD operation to ensure that the user has the necessary permissions to modify or access the item.
  *
  * @param userId - The ID of the user to check ownership for, which is a TEXT UUID
- * @param itemId - The ID of the item to check ownership for, which is a serial number
+ * @param itemId - The ID of the item to check ownership for, which is a serial number or UUID
  * @param table  - The PG Table to check ownership against
  * @returns - Boolean indicating whether the user owns the item
  */
 export async function userHasOwnership(
   userId: string,
-  itemId: number,
+  itemId: number | string,
   table: OwnedTable,
 ): Promise<boolean> {
   try {

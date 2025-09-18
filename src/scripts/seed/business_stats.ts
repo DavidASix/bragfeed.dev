@@ -1,6 +1,6 @@
 import { db } from "@/schema/db";
 import { business_stats } from "@/schema/schema";
- 
+
 import { businessId } from "./businesses";
 
 export async function up() {

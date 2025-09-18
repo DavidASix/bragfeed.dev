@@ -9,7 +9,7 @@ const schema = {
     formatted_address: z.string().optional(),
   }),
   response: z.object({
-    business_id: z.number(),
+    business_id: z.string().uuid(),
     reviews: z
       .object({
         author_name: z.string().nullable(),

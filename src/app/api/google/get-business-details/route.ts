@@ -12,14 +12,7 @@ import schema from "./schema";
 export const POST: RequestHandler<NextRouteContext> = withAuth(
   withBody(schema, async (_, context) => {
     const { user_id, body } = context;
-    const businessId = parseInt(body.businessId);
-
-    if (isNaN(businessId)) {
-      return NextResponse.json(
-        { error: "Invalid business ID" },
-        { status: 400 },
-      );
-    }
+    const businessId = body.businessId;
 
     // Get business details with stats
     const businessData = await db
