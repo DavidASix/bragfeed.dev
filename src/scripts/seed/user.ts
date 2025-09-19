@@ -11,6 +11,7 @@ export async function up() {
     emailVerified: new Date("2025-07-27T08:14:09.624Z"),
     image: null,
     stripe_customer_id: "cus_1234567890example",
+    has_active_subscription: true,
   });
 
   console.log("User seeded successfully");
