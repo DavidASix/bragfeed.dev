@@ -10,6 +10,7 @@ import {
   real,
   pgEnum,
   jsonb,
+  uuid,
 } from "drizzle-orm/pg-core";
 import { z } from "zod";
 import type { AdapterAccountType } from "next-auth/adapters";
@@ -112,7 +113,7 @@ export const authenticators = pgTable(
  */
 
 export const businesses = pgTable("businesses", {
-  id: serial("id").primaryKey(),
+  id: uuid("id").primaryKey(),
   user_id: text("user_id")
     .references(() => users.id, { onDelete: "cascade" })
     .notNull(),
@@ -123,7 +124,7 @@ export const businesses = pgTable("businesses", {
 
 export const reviews = pgTable("reviews", {
   id: serial("id").primaryKey(),
-  business_id: integer("business_id")
+  business_id: uuid("business_id")
     .references(() => businesses.id, { onDelete: "cascade" })
     .notNull(),
   lookup_id: text("lookup_id"), // ID on the review platform
@@ -138,7 +139,7 @@ export const reviews = pgTable("reviews", {
 
 export const business_stats = pgTable("business_stats", {
   id: serial("id").primaryKey(),
-  business_id: integer("business_id")
+  business_id: uuid("business_id")
     .references(() => businesses.id, { onDelete: "cascade" })
     .notNull(),
   review_count: integer("review_count"),
@@ -156,7 +157,7 @@ export const dbEvents = pgEnum("event_types", [
 export type DBEvent = (typeof dbEvents.enumValues)[number];
 
 export const eventMetadataSchema = z.object({
-  business_id: z.number().optional(),
+  business_id: z.string().uuid().optional(),
 });
 
 export type EventMetadata = z.infer<typeof eventMetadataSchema>;
