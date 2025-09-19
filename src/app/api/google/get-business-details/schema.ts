@@ -23,7 +23,7 @@ const schema = {
       .nullable(),
     reviews: z.array(
       z.object({
-        id: z.number(),
+        id: z.string().uuid(),
         author_name: z.string().nullable(),
         author_image: z.string().nullable(),
         datetime: z.string().nullable(),
