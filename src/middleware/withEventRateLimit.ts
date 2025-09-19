@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { RequestHandler } from "./types";
 import { db } from "@/schema/db";
 import { rate_limit_events } from "@/schema/schema";
-import { and, eq, gte } from "drizzle-orm";
+import { and, eq, gte, count } from "drizzle-orm";
 
 export interface RateLimitConfig {
   eventType: string;
@@ -48,26 +48,26 @@ export function withEventRateLimit<T extends object & { user_id: string }>(
 
     try {
       // Count existing events in the time window
-      const existingEvents = await db
-        .select()
+      const eventCount = await db
+        .select({ value: count() })
         .from(rate_limit_events)
         .where(
           and(
             eq(rate_limit_events.user_id, user_id),
             eq(rate_limit_events.event_type, eventType),
-            gte(rate_limit_events.timestamp, windowStart)
-          )
+            gte(rate_limit_events.timestamp, windowStart),
+          ),
         );
 
       // Check if rate limit is exceeded
-      if (existingEvents.length >= maxRequests) {
+      if (eventCount[0].value >= maxRequests) {
         return NextResponse.json(
           {
             error: "Rate limit exceeded",
             message: `Too many ${eventType} requests. Limit: ${maxRequests} per ${Math.round(windowMs / 1000)} seconds`,
             retryAfter: Math.round(windowMs / 1000), // seconds
           },
-          { status: 429 }
+          { status: 429 },
         );
       }
 

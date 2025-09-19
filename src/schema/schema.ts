@@ -217,5 +217,7 @@ export const rate_limit_events = pgTable("rate_limit_events", {
     .references(() => users.id, { onDelete: "cascade" })
     .notNull(),
   event_type: text("event_type").notNull(),
-  timestamp: timestamp("timestamp", { withTimezone: true }).defaultNow().notNull(),
+  timestamp: timestamp("timestamp", { withTimezone: true })
+    .defaultNow()
+    .notNull(),
 });
