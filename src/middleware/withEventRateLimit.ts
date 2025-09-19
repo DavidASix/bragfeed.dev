@@ -1,3 +1,26 @@
+/**
+ * RATE LIMITING MIDDLEWARE - CURRENT LIMITATIONS
+ *
+ * This implementation provides basic rate limiting protection but has a known race condition
+ * that may allow the rate limit to be exceeded by a small margin under concurrent load.
+ *
+ * RACE CONDITION DETAILS:
+ * When multiple requests arrive simultaneously for the same user+eventType combination,
+ * they can all pass the count check before any of them insert their event record.
+ * This creates a window of vulnerability (~2-10ms) where N concurrent requests could
+ * all be allowed through, potentially exceeding the rate limit by N-1 requests.
+ *
+ * CURRENT DECISION:
+ * This level of protection is deemed sufficient for the current use case, as the
+ * rate limiting is primarily intended to prevent sustained abuse rather than
+ * achieving perfect precision to the single request level.
+ *
+ * FUTURE IMPROVEMENTS:
+ * For more precise rate limiting that eliminates this race condition, consider:
+ * Database transactions with advisory locks
+ *
+ */
+
 import { NextResponse } from "next/server";
 import { RequestHandler } from "./types";
 import { db } from "@/schema/db";
