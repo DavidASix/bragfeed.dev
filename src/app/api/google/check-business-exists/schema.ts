@@ -7,7 +7,7 @@ const schema = {
     place_id: z.string(),
   }),
   response: z.object({
-    business_id: z.number().nullable(),
+    business_id: z.string().uuid().nullable(),
   }),
 } satisfies APISchema;
 
