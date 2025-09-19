@@ -207,3 +207,15 @@ export const subscription_payments = pgTable("subscription_payments", {
   }).notNull(),
   created_at: timestamp("created_at", { withTimezone: true }).notNull(),
 });
+
+/**
+ * RATE LIMITING
+ */
+export const rate_limit_events = pgTable("rate_limit_events", {
+  id: serial("id").primaryKey(),
+  user_id: text("user_id")
+    .references(() => users.id, { onDelete: "cascade" })
+    .notNull(),
+  event_type: text("event_type").notNull(),
+  timestamp: timestamp("timestamp", { withTimezone: true }).defaultNow(),
+});
