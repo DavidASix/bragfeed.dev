@@ -4,12 +4,12 @@ import type { APISchema } from "@/schema/types";
 const schema = {
   url: "/api/google/get-business-details",
   request: z.object({
-    businessId: z.string(),
+    businessId: z.string().uuid(),
   }),
   response: z.object({
     business: z
       .object({
-        id: z.number(),
+        id: z.string().uuid(),
         name: z.string().nullable(),
         place_id: z.string().nullable(),
         address: z.string().nullable(),
@@ -23,7 +23,7 @@ const schema = {
       .nullable(),
     reviews: z.array(
       z.object({
-        id: z.number(),
+        id: z.string().uuid(),
         author_name: z.string().nullable(),
         author_image: z.string().nullable(),
         datetime: z.string().nullable(),

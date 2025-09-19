@@ -7,7 +7,7 @@ const schema = {
   response: z.object({
     businesses: z.array(
       z.object({
-        id: z.number(),
+        id: z.string().uuid(),
         name: z.string().nullable(),
         place_id: z.string().nullable(),
         address: z.string().nullable(),

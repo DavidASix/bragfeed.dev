@@ -4,10 +4,10 @@ import { reviews, business_stats } from "@/schema/schema";
 
 /**
  * Fetch the latest business stats for a given business ID
- * @param { business_id: number } - The database ID of the business to fetch stats for
+ * @param { business_id: string } - The database UUID of the business to fetch stats for
  * @returns { review_count: number, review_score: number } - The latest stats for the given business
  */
-export async function selectBusinessStats(business_id: number): Promise<{
+export async function selectBusinessStats(business_id: string): Promise<{
   review_count: number | null;
   review_score: number | null;
 }> {
@@ -27,10 +27,10 @@ export async function selectBusinessStats(business_id: number): Promise<{
 
 /**
  * Fetch the reviews for a given business
- * @param { business_id: number } - The database ID of the business to fetch reviews for
+ * @param { business_id: string } - The database UUID of the business to fetch reviews for
  * @returns { reviews: Review[] } - The reviews for the given business
  */
-export async function selectBusinessReviews(business_id: number): Promise<
+export async function selectBusinessReviews(business_id: string): Promise<
   {
     author_name: string | null;
     author_image: string | null;

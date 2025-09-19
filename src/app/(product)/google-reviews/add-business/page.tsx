@@ -57,7 +57,7 @@ export default function AddBusinessPage() {
     null,
   );
   const [currentStep, setCurrentStep] = useState(1);
-  const [businessId, setBusinessId] = useState<number | null>(null);
+  const [businessId, setBusinessId] = useState<string | null>(null);
 
   const apiKeyQuery = useQuery({
     queryKey: ["apiKey"],

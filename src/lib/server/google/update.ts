@@ -6,11 +6,11 @@ import GoogleReviews from "@/google-reviews";
 /**
  * Add the current business stats to the database for the given business ID, then return the inserted stats.
  *
- * @param { business_id } - The database business ID to update.
- * @returns { business_id: number, review_count: number, review_score: number } - The inserted stats.
+ * @param { business_id } - The database business UUID to update.
+ * @returns { business_id: string, review_count: number, review_score: number } - The inserted stats.
  */
-export async function updateBusinessStats(business_id: number): Promise<{
-  business_id: number;
+export async function updateBusinessStats(business_id: string): Promise<{
+  business_id: string;
   review_count: number | null;
   review_score: number | null;
 }> {
@@ -51,10 +51,10 @@ export async function updateBusinessStats(business_id: number): Promise<{
  * Fetch the latest reviews for a business from Google and insert them into the database.
  * This function will only insert new reviews that do not already exist in the database.
  *
- * @param { business_id } - The database business ID to update.
+ * @param { business_id } - The database business UUID to update.
  * @returns { Array } - An array of inserted reviews.
  */
-export async function updateBusinessReviews(business_id: number) {
+export async function updateBusinessReviews(business_id: string) {
   const business = await db
     .select()
     .from(businesses)

@@ -10,9 +10,12 @@ import {
   real,
   pgEnum,
   jsonb,
+  uuid,
+  index,
 } from "drizzle-orm/pg-core";
 import { z } from "zod";
 import type { AdapterAccountType } from "next-auth/adapters";
+import { v4 as uuidv4 } from "uuid";
 
 /**
  * NEXT AUTH TABLES
@@ -112,7 +115,9 @@ export const authenticators = pgTable(
  */
 
 export const businesses = pgTable("businesses", {
-  id: serial("id").primaryKey(),
+  id: uuid("id")
+    .primaryKey()
+    .$defaultFn(() => uuidv4()),
   user_id: text("user_id")
     .references(() => users.id, { onDelete: "cascade" })
     .notNull(),
@@ -122,8 +127,10 @@ export const businesses = pgTable("businesses", {
 });
 
 export const reviews = pgTable("reviews", {
-  id: serial("id").primaryKey(),
-  business_id: integer("business_id")
+  id: uuid("id")
+    .primaryKey()
+    .$defaultFn(() => uuidv4()),
+  business_id: uuid("business_id")
     .references(() => businesses.id, { onDelete: "cascade" })
     .notNull(),
   lookup_id: text("lookup_id"), // ID on the review platform
@@ -138,7 +145,7 @@ export const reviews = pgTable("reviews", {
 
 export const business_stats = pgTable("business_stats", {
   id: serial("id").primaryKey(),
-  business_id: integer("business_id")
+  business_id: uuid("business_id")
     .references(() => businesses.id, { onDelete: "cascade" })
     .notNull(),
   review_count: integer("review_count"),
@@ -156,7 +163,7 @@ export const dbEvents = pgEnum("event_types", [
 export type DBEvent = (typeof dbEvents.enumValues)[number];
 
 export const eventMetadataSchema = z.object({
-  business_id: z.number().optional(),
+  business_id: z.string().uuid().optional(),
 });
 
 export type EventMetadata = z.infer<typeof eventMetadataSchema>;
@@ -206,3 +213,25 @@ export const subscription_payments = pgTable("subscription_payments", {
   }).notNull(),
   created_at: timestamp("created_at", { withTimezone: true }).notNull(),
 });
+
+/**
+ * RATE LIMITING
+ */
+export const rate_limit_events = pgTable(
+  "rate_limit_events",
+  {
+    id: serial("id").primaryKey(),
+    user_id: text("user_id")
+      .references(() => users.id, { onDelete: "cascade" })
+      .notNull(),
+    event_type: text("event_type").notNull(),
+    timestamp: timestamp("timestamp", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (t) => ({
+    idx_rate_limit_events_user_event_time: index(
+      "idx_rate_limit_events_user_event_time",
+    ).on(t.user_id, t.event_type, t.timestamp),
+  }),
+);

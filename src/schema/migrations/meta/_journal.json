@@ -5,71 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1734016081697,
-      "tag": "0000_curvy_xorn",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1737849780559,
-      "tag": "0001_foamy_tattoo",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1737853862501,
-      "tag": "0002_ordinary_lyja",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1737905830339,
-      "tag": "0003_pretty_black_widow",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "7",
-      "when": 1737920530145,
-      "tag": "0004_violet_human_fly",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "7",
-      "when": 1747582616081,
-      "tag": "0005_cynical_molly_hayes",
-      "breakpoints": true
-    },
-    {
-      "idx": 6,
-      "version": "7",
-      "when": 1747583128074,
-      "tag": "0006_noisy_wrecker",
-      "breakpoints": true
-    },
-    {
-      "idx": 7,
-      "version": "7",
-      "when": 1751151997815,
-      "tag": "0007_fantastic_jazinda",
-      "breakpoints": true
-    },
-    {
-      "idx": 8,
-      "version": "7",
-      "when": 1751821936378,
-      "tag": "0008_nice_white_queen",
-      "breakpoints": true
-    },
-    {
-      "idx": 9,
-      "version": "7",
-      "when": 1754924019631,
-      "tag": "0009_tiny_the_santerians",
+      "when": 1758253713675,
+      "tag": "0000_table-initialization",
       "breakpoints": true
     }
   ]

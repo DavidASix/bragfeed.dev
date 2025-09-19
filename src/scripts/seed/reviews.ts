@@ -1,12 +1,14 @@
 import { db } from "@/schema/db";
 import { reviews } from "@/schema/schema";
 
+import { businessId } from "./businesses";
+
 export async function up() {
   console.log("Seeding reviews table...");
 
   await db.insert(reviews).values([
     {
-      business_id: 1,
+      business_id: businessId,
       lookup_id:
         "Ci9DQUlRQUNvZENodHljRjlvT2sxQ2FrSlZja0pJUlVkT1pUQTVPVU5KU1VGbVRHYxAB",
       author_name: "Mieke Kanmacher",
@@ -19,7 +21,7 @@ export async function up() {
       created_at: new Date("2025-07-27T04:22:09.483Z"),
     },
     {
-      business_id: 1,
+      business_id: businessId,
       lookup_id:
         "Ci9DQUlRQUNvZENodHljRjlvT214QmJEbDFNMGRTY0RsYVFqbDZkak5OV0VGQ05uYxAB",
       author_name: "Angela",
@@ -33,7 +35,7 @@ export async function up() {
       created_at: new Date("2025-07-27T04:22:09.483Z"),
     },
     {
-      business_id: 1,
+      business_id: businessId,
       lookup_id:
         "Ci9DQUlRQUNvZENodHljRjlvT25GUVJUSXRNak5TTmpadVh6VlpaREJSWDBWUVpFRRAB",
       author_name: "Andy Madison",
@@ -47,7 +49,7 @@ export async function up() {
       created_at: new Date("2025-07-27T04:22:09.483Z"),
     },
     {
-      business_id: 1,
+      business_id: businessId,
       lookup_id:
         "Ci9DQUlRQUNvZENodHljRjlvT214NmVsQk1PRmgwVUZsVlNFUTVjRVZSVVRsWVEzYxAB",
       author_name: "Justin Chhay",
@@ -60,7 +62,7 @@ export async function up() {
       created_at: new Date("2025-07-27T04:22:09.483Z"),
     },
     {
-      business_id: 1,
+      business_id: businessId,
       lookup_id:
         "Ci9DQUlRQUNvZENodHljRjlvT2xGTmRraE1SMGt5T0dRMGNpMWFZMmRDTVZkWVozYxAB",
       author_name: "J A",
@@ -74,7 +76,7 @@ export async function up() {
       created_at: new Date("2025-07-27T04:22:09.483Z"),
     },
     {
-      business_id: 1,
+      business_id: businessId,
       lookup_id:
         "Ci9DQUlRQUNvZENodHljRjlvT2pKWU9VWk9PVEJ2U2xKclVFcDBPVFF5VjBodlNuYxAB",
       author_name: "Luca",
@@ -87,7 +89,7 @@ export async function up() {
       created_at: new Date("2025-07-27T04:22:09.483Z"),
     },
     {
-      business_id: 1,
+      business_id: businessId,
       lookup_id:
         "Ci9DQUlRQUNvZENodHljRjlvT25OZldYQTBVVEZNZVV3eWQwTmpRelJMWlVJMmVFRRAB",
       author_name: "Samuel C.",
@@ -101,7 +103,7 @@ export async function up() {
       created_at: new Date("2025-07-27T04:22:09.483Z"),
     },
     {
-      business_id: 1,
+      business_id: businessId,
       lookup_id:
         "Ci9DQUlRQUNvZENodHljRjlvT2w5UGJETkpiR05EYlRkQmIwTnRiRXhyVlVSUFVXYxAB",
       author_name: "Beckie Richards",
@@ -115,7 +117,7 @@ export async function up() {
       created_at: new Date("2025-07-27T04:22:09.483Z"),
     },
     {
-      business_id: 1,
+      business_id: businessId,
       lookup_id:
         "Ci9DQUlRQUNvZENodHljRjlvT2tkSFRGVldlSE10ZFZNeVpHdHpaMGx3UW14dldWRRAB",
       author_name: "Kareem Saleh",
@@ -128,7 +130,7 @@ export async function up() {
       created_at: new Date("2025-07-27T04:22:09.483Z"),
     },
     {
-      business_id: 1,
+      business_id: businessId,
       lookup_id:
         "Ci9DQUlRQUNvZENodHljRjlvT2pCbmQxSktWMTgxV1hKR1dYRkdkRWhRYWt0Mk5GRRAB",
       author_name: "Joanne Moniz",
