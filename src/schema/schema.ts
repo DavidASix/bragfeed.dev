@@ -15,6 +15,7 @@ import {
 } from "drizzle-orm/pg-core";
 import { z } from "zod";
 import type { AdapterAccountType } from "next-auth/adapters";
+import { v4 as uuidv4 } from "uuid";
 
 /**
  * NEXT AUTH TABLES
@@ -124,7 +125,9 @@ export const businesses = pgTable("businesses", {
 });
 
 export const reviews = pgTable("reviews", {
-  id: serial("id").primaryKey(),
+  id: uuid("id")
+    .primaryKey()
+    .$defaultFn(() => uuidv4()),
   business_id: uuid("business_id")
     .references(() => businesses.id, { onDelete: "cascade" })
     .notNull(),
