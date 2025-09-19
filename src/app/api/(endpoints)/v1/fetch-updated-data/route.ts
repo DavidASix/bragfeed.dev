@@ -40,7 +40,7 @@ export const POST: RequestHandler<NextRouteContext> = withApiKey(
           eventType: "fetch_updated_data",
           maxRequests: 10,
           windowMs: 5 * 60 * 1000,
-        }, // 15 minutes
+        }, // 5 minutes
         withBody(schema, async (_, context) => {
           try {
             const { business_id } = context.body;
