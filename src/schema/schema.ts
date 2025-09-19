@@ -11,6 +11,7 @@ import {
   pgEnum,
   jsonb,
   uuid,
+  index,
 } from "drizzle-orm/pg-core";
 import { z } from "zod";
 import type { AdapterAccountType } from "next-auth/adapters";
@@ -207,3 +208,25 @@ export const subscription_payments = pgTable("subscription_payments", {
   }).notNull(),
   created_at: timestamp("created_at", { withTimezone: true }).notNull(),
 });
+
+/**
+ * RATE LIMITING
+ */
+export const rate_limit_events = pgTable(
+  "rate_limit_events",
+  {
+    id: serial("id").primaryKey(),
+    user_id: text("user_id")
+      .references(() => users.id, { onDelete: "cascade" })
+      .notNull(),
+    event_type: text("event_type").notNull(),
+    timestamp: timestamp("timestamp", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (t) => ({
+    idx_rate_limit_events_user_event_time: index(
+      "idx_rate_limit_events_user_event_time",
+    ).on(t.user_id, t.event_type, t.timestamp),
+  }),
+);
