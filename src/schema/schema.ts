@@ -115,7 +115,9 @@ export const authenticators = pgTable(
  */
 
 export const businesses = pgTable("businesses", {
-  id: uuid("id").primaryKey(),
+  id: uuid("id")
+    .primaryKey()
+    .$defaultFn(() => uuidv4()),
   user_id: text("user_id")
     .references(() => users.id, { onDelete: "cascade" })
     .notNull(),
