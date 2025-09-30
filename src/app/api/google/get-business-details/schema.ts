@@ -13,6 +13,7 @@ const schema = {
         name: z.string().nullable(),
         place_id: z.string().nullable(),
         address: z.string().nullable(),
+        minimum_score: z.number().nullable(),
         stats: z
           .object({
             review_count: z.number().nullable(),

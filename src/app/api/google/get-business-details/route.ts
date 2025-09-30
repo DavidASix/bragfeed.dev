@@ -21,6 +21,7 @@ export const POST: RequestHandler<NextRouteContext> = withAuth(
         name: businesses.name,
         place_id: businesses.place_id,
         address: businesses.address,
+        minimum_score: businesses.minimum_score,
         stats: {
           review_count: business_stats.review_count,
           review_score: business_stats.review_score,
