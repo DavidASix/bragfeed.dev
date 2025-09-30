@@ -16,7 +16,7 @@ export const POST: RequestHandler<NextRouteContext> = withAuth(
       const { business_id } = context.body;
 
       await userHasOwnership(context.user_id, business_id, businesses);
-      const businessReviews = await selectBusinessReviews(business_id);
+      const businessReviews = await selectBusinessReviews(business_id, 1);
       const response = schema.response.parse(businessReviews);
       await recordEvent("fetch_reviews", context.user_id, {
         business_id: business_id,
