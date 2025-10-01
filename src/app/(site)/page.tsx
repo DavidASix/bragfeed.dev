@@ -12,6 +12,7 @@ import { ShimmerButton } from "@/components/magicui/shimmer-button";
 import PricingOptions from "@/components/common/pricing-options";
 
 import { MockReviewsWindow } from "./_components/mock-reviews";
+import { FrameworkMarquee } from "./_components/framework-marquee";
 
 const devCount = 24;
 const reviews = {
@@ -39,13 +40,6 @@ const reviews = {
     },
   ],
 };
-
-const frameworks = [
-  { name: "Gatsby", logo: "/logos/gatsby.webp" },
-  { name: "Hugo", logo: "/logos/hugo.webp" },
-  { name: "Jekyll", logo: "/logos/jekyll.webp" },
-  { name: "11ty", logo: "/logos/11ty.webp" },
-];
 
 const steps = [
   {
@@ -121,70 +115,7 @@ export default function Home() {
           </div>
 
           {/* Company/Framework Logos */}
-
-          <h2 className="text-2xl font-bold text-gray-900 mb-8">Used in</h2>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 items-center">
-            {frameworks.map((fw) => (
-              <div
-                key={fw.name}
-                className="flex flex-col items-center justify-center gap-4 group cursor-pointer bg-gray-100 p-6 rounded-lg aspect-square hover:scale-[0.98] transition-all duration-200"
-              >
-                <Image
-                  src={fw.logo}
-                  alt={`${fw.name} logo`}
-                  width={110}
-                  height={110}
-                  className="object-contain grayscale brightness-150 group-hover:grayscale-0 group-hover:brightness-100 group-hover:scale-[1.05] transition-all duration-300"
-                />
-                <span className="font-bold text-lg text-gray-800">
-                  {fw.name}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* User Personas Section */}
-      <section className="section section-padding bg-secondary">
-        <div className="content">
-          <div className="grid md:grid-cols-3 gap-8">
-            <Card className="p-8 text-center bg-white">
-              <div className="w-16 h-16 bg-secondary/20 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                <Code className="w-8 h-8 text-primary" />
-              </div>
-              <h3 className="text-2xl font-bold mb-4">Developers</h3>
-              <p className="text-gray-600 leading-relaxed">
-                SSG.tools enables developers to integrate Google Reviews into
-                any static site generator, eliminating API complexity and rate
-                limiting issues for faster client delivery.
-              </p>
-            </Card>
-
-            <Card className="p-8 text-center bg-white">
-              <div className="w-16 h-16 bg-secondary/20 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                <Users className="w-8 h-8 text-primary" />
-              </div>
-              <h3 className="text-2xl font-bold mb-4">Agencies</h3>
-              <p className="text-gray-600 leading-relaxed">
-                SSG.tools helps agencies streamline client projects by providing
-                reliable review data, reducing development time and ensuring
-                consistent review updates across all client sites.
-              </p>
-            </Card>
-
-            <Card className="p-8 text-center bg-white">
-              <div className="w-16 h-16 bg-secondary/20 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                <Globe className="w-8 h-8 text-primary" />
-              </div>
-              <h3 className="text-2xl font-bold mb-4">Freelancers</h3>
-              <p className="text-gray-600 leading-relaxed">
-                SSG.tools empowers freelancers to offer professional review
-                integration services, impressing clients with automated,
-                always-fresh Google Reviews on their websites.
-              </p>
-            </Card>
-          </div>
+          <FrameworkMarquee />
         </div>
       </section>
 
@@ -258,7 +189,7 @@ export default function Home() {
       </section>
 
       {/* CTA Section */}
-      <section className="section section-padding bg-primary">
+      <section className="section section-padding bg-secondary">
         <div className="content text-center">
           <div className="max-w-4xl mx-auto">
             <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
@@ -273,13 +204,6 @@ export default function Home() {
               <PricingOptions />
             </div>
             <div className="flex flex-col gap-4 justify-center items-center">
-              <ShimmerButton
-                className="h-14 px-10 text-lg"
-                shimmerSize="0.15em"
-                onClick={() => router.push("/login")}
-              >
-                ✨ Get Started Today
-              </ShimmerButton>
               <p className="text-white/70 text-sm">
                 Credit card required, billed through Stripe
               </p>
