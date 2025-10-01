@@ -1,16 +1,20 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { Star, Code, Users, Globe } from "lucide-react";
+import { Star, Code, Users, Globe, RefreshCw } from "lucide-react";
 
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Card } from "@/components/ui/card";
 import { MockWindow } from "@/components/ui/mock-window";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 
 import { ShimmerButton } from "@/components/magicui/shimmer-button";
 import PricingOptions from "@/components/common/pricing-options";
+
+import { mockReviews } from "./_components/mock-reviews";
 
 const devCount = 24;
 const reviews = {
@@ -73,6 +77,20 @@ const steps = [
 
 export default function Home() {
   const router = useRouter();
+  const [displayedReviews, setDisplayedReviews] = useState(exampleReviews);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const fetchRandomReviews = () => {
+    setIsLoading(true);
+
+    setTimeout(() => {
+      const shuffled = [...mockReviews].sort(() => 0.5 - Math.random());
+      const selected = shuffled.slice(0, 3);
+      setDisplayedReviews(selected);
+      setIsLoading(false);
+    }, 800);
+  };
+
   return (
     <>
       {/* Hero Section */}
@@ -106,35 +124,63 @@ export default function Home() {
                   </span>
                   <span className="text-yellow-400">{"{business-id}"}</span>
                 </div>
+                <div className="flex content-end justify-end">
+                  <Button
+                    onClick={fetchRandomReviews}
+                    disabled={isLoading}
+                    className="mt-4 rounded-full"
+                    variant="default"
+                    size="sm"
+                  >
+                    Fetch
+                    <RefreshCw
+                      className={`w-3 h-3 ml-1 ${isLoading ? "animate-spin" : ""}`}
+                    />
+                  </Button>
+                </div>
               </div>
               <div className="text-left">
                 <h3 className="text-lg font-semibold mb-4">Fresh Reviews</h3>
                 <div className="space-y-3">
-                  {exampleReviews.map((review, i) => (
-                    <div
-                      key={i}
-                      className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg"
-                    >
-                      <div className="w-10 h-10 bg-secondary/20 rounded-full flex items-center justify-center">
-                        <span className="text-secondary font-semibold">
-                          {i + 1}
-                        </span>
-                      </div>
-                      <div className="flex-1">
-                        <div className="flex items-center gap-1 mb-1">
-                          {[...Array(5)].map((_, j) => (
-                            <Star
-                              key={j}
-                              className="w-4 h-4 fill-yellow-400 text-yellow-400"
-                            />
-                          ))}
+                  {isLoading
+                    ? Array.from({ length: 3 }).map((_, i) => (
+                        <div
+                          key={i}
+                          className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg h-[72px]"
+                        >
+                          <Skeleton className="w-10 h-10 rounded-full flex-shrink-0" />
+                          <div className="flex-1 space-y-2">
+                            <Skeleton className="h-4 w-24" />
+                            <Skeleton className="h-3 w-full" />
+                            <Skeleton className="h-3 w-4/5" />
+                          </div>
                         </div>
-                        <div className="text-sm text-gray-600">
-                          &quot;{review}&quot;
+                      ))
+                    : displayedReviews.map((review, i) => (
+                        <div
+                          key={i}
+                          className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg h-[72px]"
+                        >
+                          <div className="w-10 h-10 bg-secondary/20 rounded-full flex items-center justify-center flex-shrink-0">
+                            <span className="text-secondary font-semibold">
+                              {i + 1}
+                            </span>
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-1 mb-1">
+                              {[...Array(5)].map((_, j) => (
+                                <Star
+                                  key={j}
+                                  className="w-4 h-4 fill-yellow-400 text-yellow-400"
+                                />
+                              ))}
+                            </div>
+                            <div className="text-sm text-gray-600 line-clamp-2">
+                              &quot;{review}&quot;
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                    </div>
-                  ))}
+                      ))}
                 </div>
               </div>
             </div>
