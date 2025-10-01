@@ -41,10 +41,10 @@ const reviews = {
 };
 
 const frameworks = [
-  { name: "Gatsby" },
-  { name: "Hugo" },
-  { name: "Jekyll" },
-  { name: "11ty" },
+  { name: "Gatsby", logo: "/logos/gatsby.webp" },
+  { name: "Hugo", logo: "/logos/hugo.webp" },
+  { name: "Jekyll", logo: "/logos/jekyll.webp" },
+  { name: "11ty", logo: "/logos/11ty.webp" },
 ];
 
 const steps = [
@@ -92,7 +92,7 @@ export default function Home() {
       </section>
 
       {/* Social Proof Section */}
-      <section className="section section-padding bg-white">
+      <section className="section section-padding-b bg-white">
         <div className="content text-center">
           <h2 className="text-2xl font-bold text-gray-900 mb-8">
             Loved by Over {devCount} Developers Worldwide
@@ -121,13 +121,24 @@ export default function Home() {
           </div>
 
           {/* Company/Framework Logos */}
-          <div className="flex flex-wrap gap-8 items-center justify-around opacity-60">
+
+          <h2 className="text-2xl font-bold text-gray-900 mb-8">Used in</h2>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 items-center">
             {frameworks.map((fw) => (
               <div
                 key={fw.name}
-                className="font-bold text-lg text-gray-800 flex-1 min-w-40 md:min-w-80"
+                className="flex flex-col items-center justify-center gap-4 group cursor-pointer bg-gray-100 p-6 rounded-lg aspect-square hover:scale-[0.98] transition-all duration-200"
               >
-                {fw.name}
+                <Image
+                  src={fw.logo}
+                  alt={`${fw.name} logo`}
+                  width={110}
+                  height={110}
+                  className="object-contain grayscale brightness-150 group-hover:grayscale-0 group-hover:brightness-100 group-hover:scale-[1.05] transition-all duration-300"
+                />
+                <span className="font-bold text-lg text-gray-800">
+                  {fw.name}
+                </span>
               </div>
             ))}
           </div>
