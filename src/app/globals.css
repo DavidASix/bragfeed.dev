@@ -97,3 +97,21 @@ body {
     @apply w-full max-w-[1600px] mx-auto;
   }
 }
+
+@keyframes marquee-infinite {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(calc(-100% / 3));
+  }
+}
+
+.animate-marquee-infinite {
+  animation: marquee-infinite 30s linear infinite;
+  display: inline-flex;
+}
+
+.animate-marquee-infinite:hover {
+  animation-play-state: paused;
+}
