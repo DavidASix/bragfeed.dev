@@ -13,6 +13,7 @@ import Link from "next/link";
 import { signOut, useSession } from "next-auth/react";
 import { LoadingSpinner } from "@/components/ui/custom/loading-spinner";
 import { Button } from "@/components/ui/button";
+import { LogIn } from "lucide-react";
 
 export default function UserNav({ noAuth }: { noAuth?: boolean }) {
   const session = useSession();
@@ -21,7 +22,10 @@ export default function UserNav({ noAuth }: { noAuth?: boolean }) {
   if (session.status === "unauthenticated" || noAuth) {
     return (
       <Button asChild>
-        <Link href="/login">Login</Link>
+        <Link href="/login" className="flex items-center gap-2">
+          <LogIn className="h-4 w-4" />
+          <span className="font-bold">Login</span>
+        </Link>
       </Button>
     );
   }
