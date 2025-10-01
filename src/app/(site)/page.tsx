@@ -46,6 +46,12 @@ const frameworks = [
   { name: "11ty" },
 ];
 
+const exampleReviews = [
+  "Amazing service! They were quick, professional, and went above expectations. Highly recommend to anyone looking for quality work.",
+  "Best experience I've had in years. The attention to detail and customer care was outstanding. Will definitely be coming back!",
+  "Exceeded all my expectations. From start to finish, everything was handled perfectly. Five stars all the way!",
+];
+
 const steps = [
   {
     step: "01",
@@ -82,68 +88,57 @@ export default function Home() {
               static site. <br />
               Purely static—<b>no JavaScript required</b>.
             </p>
-
           </div>
 
           {/* Product Screenshot */}
-          <div className="max-w-5xl mx-auto">
-            <MockWindow title="ssg.tools - Google Reviews API" theme="light" className="shadow-2xl">
-              <div className="grid lg:grid-cols-2 gap-8 items-center">
-                <div className="text-left">
-                  <h3 className="text-lg font-semibold mb-4">API Endpoint</h3>
-                  <div className="bg-gray-900 rounded-lg p-4 font-mono text-sm">
-                    <span className="text-green-400">GET</span>{" "}
-                    <span className="text-secondary">
-                      https://api.ssg.tools/reviews/
-                    </span>
-                    <span className="text-yellow-400">{"{business-id}"}</span>
-                  </div>
-                </div>
-                <div className="text-left">
-                  <h3 className="text-lg font-semibold mb-4">
-                    Fresh Reviews
-                  </h3>
-                  <div className="space-y-3">
-                    {[1, 2, 3].map((i) => (
-                      <div
-                        key={i}
-                        className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg"
-                      >
-                        <div className="w-10 h-10 bg-secondary/20 rounded-full flex items-center justify-center">
-                          <span className="text-secondary font-semibold">
-                            {i}
-                          </span>
-                        </div>
-                        <div className="flex-1">
-                          <div className="flex items-center gap-1 mb-1">
-                            {[...Array(5)].map((_, j) => (
-                              <Star
-                                key={j}
-                                className="w-4 h-4 fill-yellow-400 text-yellow-400"
-                              />
-                            ))}
-                          </div>
-                          <div className="text-sm text-gray-600">
-                            &quot;Example review text for demo...&quot;
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+          <MockWindow
+            title="ssg.tools - Google Reviews API"
+            theme="light"
+            className="shadow-2xl max-w-5xl mx-auto"
+          >
+            <div className="grid lg:grid-cols-2 gap-8 items-center p-2">
+              <div className="text-left">
+                <h3 className="text-lg font-semibold mb-4">API Endpoint</h3>
+                <div className="bg-gray-900 rounded-lg p-4 font-mono text-sm">
+                  <span className="text-green-400">GET</span>{" "}
+                  <span className="text-secondary">
+                    https://api.ssg.tools/reviews/
+                  </span>
+                  <span className="text-yellow-400">{"{business-id}"}</span>
                 </div>
               </div>
-            </MockWindow>
-          </div>
-
-          <div className="flex justify-center mt-8">
-            <ShimmerButton
-              className="h-12 px-12"
-              shimmerSize="0.15em"
-              onClick={() => router.push("/login")}
-            >
-              ✨ Get Started Today
-            </ShimmerButton>
-          </div>
+              <div className="text-left">
+                <h3 className="text-lg font-semibold mb-4">Fresh Reviews</h3>
+                <div className="space-y-3">
+                  {exampleReviews.map((review, i) => (
+                    <div
+                      key={i}
+                      className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg"
+                    >
+                      <div className="w-10 h-10 bg-secondary/20 rounded-full flex items-center justify-center">
+                        <span className="text-secondary font-semibold">
+                          {i + 1}
+                        </span>
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex items-center gap-1 mb-1">
+                          {[...Array(5)].map((_, j) => (
+                            <Star
+                              key={j}
+                              className="w-4 h-4 fill-yellow-400 text-yellow-400"
+                            />
+                          ))}
+                        </div>
+                        <div className="text-sm text-gray-600">
+                          &quot;{review}&quot;
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </MockWindow>
         </div>
       </section>
 
