@@ -48,8 +48,11 @@ export function FrameworkMarquee() {
   const secondRow = frameworks.slice(halfLength);
 
   return (
-    <>
-      <h2 className="text-2xl font-bold text-gray-900 mb-8">Used in</h2>
+    <div className="space-y-4">
+      <div className="flex justify-start">
+        <h2 className="text-2xl font-bold text-gray-900">Works with</h2>
+      </div>
+
       <div className="space-y-4">
         {/* Single row on large screens */}
         <div className="hidden lg:block">
@@ -61,6 +64,10 @@ export function FrameworkMarquee() {
           <MarqueeRow items={secondRow} />
         </div>
       </div>
-    </>
+
+      <div className="flex justify-end">
+        <span className="text-xl font-semibold text-gray-600">and more</span>
+      </div>
+    </div>
   );
 }
