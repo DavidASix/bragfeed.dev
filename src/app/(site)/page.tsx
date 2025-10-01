@@ -69,7 +69,7 @@ export default function Home() {
   return (
     <>
       {/* Hero Section */}
-      <section className="section section-padding bg-gradient-to-b from-blue-50 to-white">
+      <section className="section section-padding">
         <div className="content text-center">
           <div className="mx-auto max-w-full pt-12 pb-20 flex justify-center items-center flex-col gap-6">
             <h1 className="text-4xl font-bold tracking-tight text-gray-900 lg:text-6xl">
@@ -82,13 +82,6 @@ export default function Home() {
               Purely static—<b>no JavaScript required</b>.
             </p>
 
-            <ShimmerButton
-              className="h-12 px-12"
-              shimmerSize="0.15em"
-              onClick={() => router.push("/login")}
-            >
-              ✨ Get Started Today
-            </ShimmerButton>
           </div>
 
           {/* Product Screenshot */}
@@ -108,7 +101,7 @@ export default function Home() {
                     <h3 className="text-lg font-semibold mb-4">API Endpoint</h3>
                     <div className="bg-gray-900 rounded-lg p-4 font-mono text-sm">
                       <span className="text-green-400">GET</span>{" "}
-                      <span className="text-blue-400">
+                      <span className="text-secondary">
                         https://api.ssg.tools/reviews/
                       </span>
                       <span className="text-yellow-400">{"{business-id}"}</span>
@@ -124,8 +117,8 @@ export default function Home() {
                           key={i}
                           className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg"
                         >
-                          <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                            <span className="text-blue-600 font-semibold">
+                          <div className="w-10 h-10 bg-secondary/20 rounded-full flex items-center justify-center">
+                            <span className="text-secondary font-semibold">
                               {i}
                             </span>
                           </div>
@@ -149,6 +142,16 @@ export default function Home() {
                 </div>
               </div>
             </div>
+          </div>
+
+          <div className="flex justify-center mt-8">
+            <ShimmerButton
+              className="h-12 px-12"
+              shimmerSize="0.15em"
+              onClick={() => router.push("/login")}
+            >
+              ✨ Get Started Today
+            </ShimmerButton>
           </div>
         </div>
       </section>
@@ -197,11 +200,11 @@ export default function Home() {
       </section>
 
       {/* User Personas Section */}
-      <section className="section section-padding bg-blue-50">
+      <section className="section section-padding bg-secondary">
         <div className="content">
           <div className="grid md:grid-cols-3 gap-8">
             <Card className="p-8 text-center bg-white">
-              <div className="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
+              <div className="w-16 h-16 bg-secondary/20 rounded-2xl flex items-center justify-center mx-auto mb-6">
                 <Code className="w-8 h-8 text-primary" />
               </div>
               <h3 className="text-2xl font-bold mb-4">Developers</h3>
@@ -213,7 +216,7 @@ export default function Home() {
             </Card>
 
             <Card className="p-8 text-center bg-white">
-              <div className="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
+              <div className="w-16 h-16 bg-secondary/20 rounded-2xl flex items-center justify-center mx-auto mb-6">
                 <Users className="w-8 h-8 text-primary" />
               </div>
               <h3 className="text-2xl font-bold mb-4">Agencies</h3>
@@ -225,7 +228,7 @@ export default function Home() {
             </Card>
 
             <Card className="p-8 text-center bg-white">
-              <div className="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
+              <div className="w-16 h-16 bg-secondary/20 rounded-2xl flex items-center justify-center mx-auto mb-6">
                 <Globe className="w-8 h-8 text-primary" />
               </div>
               <h3 className="text-2xl font-bold mb-4">Freelancers</h3>
@@ -284,19 +287,19 @@ export default function Home() {
                   {"// Works with any static site generator"}
                 </span>
                 <br />
-                <span className="text-blue-400">const</span>{" "}
+                <span className="text-secondary">const</span>{" "}
                 <span className="text-yellow-300">reviews</span> ={" "}
-                <span className="text-blue-400">await</span>{" "}
-                <span className="text-blue-400">fetch</span>(<br />
+                <span className="text-secondary">await</span>{" "}
+                <span className="text-secondary">fetch</span>(<br />
                 &nbsp;&nbsp;
                 <span className="text-green-400">
                   &apos;https://api.ssg.tools/reviews/your-business-id&apos;
                 </span>
                 <br />
-                ).<span className="text-blue-400">then</span>(
+                ).<span className="text-secondary">then</span>(
                 <span className="text-orange-300">res</span> =&gt;{" "}
                 <span className="text-orange-300">res</span>.
-                <span className="text-blue-400">json</span>())
+                <span className="text-secondary">json</span>())
                 <br />
                 <br />
                 <span className="text-gray-500">
