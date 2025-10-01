@@ -2,13 +2,9 @@
 
 import React from "react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { Star, Code, Users, Globe } from "lucide-react";
+import { Star } from "lucide-react";
 
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
-import { Card } from "@/components/ui/card";
-
-import { ShimmerButton } from "@/components/magicui/shimmer-button";
 import PricingOptions from "@/components/common/pricing-options";
 
 import { MockReviewsWindow } from "./_components/mock-reviews";
@@ -61,8 +57,6 @@ const steps = [
 ];
 
 export default function Home() {
-  const router = useRouter();
-
   return (
     <>
       {/* Hero Section */}
