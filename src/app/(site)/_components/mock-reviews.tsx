@@ -107,7 +107,7 @@ export function MockReviewsWindow() {
           </div>
         </div>
         <div className="text-left">
-          <h3 className="text-lg font-semibold mb-4">Fresh Reviews</h3>
+          <h3 className="text-lg font-semibold mb-4">Build</h3>
           <div className="space-y-3">
             {isLoading
               ? Array.from({ length: 3 }).map((_, i) => (
