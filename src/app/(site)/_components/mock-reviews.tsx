@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Star, RefreshCw } from "lucide-react";
 
 import { MockWindow } from "@/components/ui/mock-window";
@@ -39,17 +39,38 @@ const initialReviews = [
 export function MockReviewsWindow() {
   const [displayedReviews, setDisplayedReviews] = useState(initialReviews);
   const [isLoading, setIsLoading] = useState(false);
+  const [countdown, setCountdown] = useState(4);
 
   const fetchRandomReviews = () => {
     setIsLoading(true);
+    setCountdown(0);
 
     setTimeout(() => {
       const shuffled = [...mockReviews].sort(() => 0.5 - Math.random());
       const selected = shuffled.slice(0, 3);
       setDisplayedReviews(selected);
       setIsLoading(false);
+      setCountdown(4);
     }, 800);
   };
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      fetchRandomReviews();
+    }, 4800);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    if (isLoading) return;
+
+    const timer = setInterval(() => {
+      setCountdown((prev) => Math.max(1, prev - 1));
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [isLoading]);
 
   return (
     <MockWindow
@@ -67,11 +88,11 @@ export function MockReviewsWindow() {
             </span>
             <span className="text-yellow-400">{"{business-id}"}</span>
           </div>
-          <div className="flex content-end justify-end">
+          <div className="flex items-center gap-2 content-end justify-end mt-4">
             <Button
               onClick={fetchRandomReviews}
               disabled={isLoading}
-              className="mt-4 rounded-full"
+              className="rounded-full"
               variant="secondary"
               size="sm"
             >
@@ -80,6 +101,9 @@ export function MockReviewsWindow() {
                 className={`w-3 h-3 ml-1 ${isLoading ? "animate-spin" : ""}`}
               />
             </Button>
+            <span className="text-sm text-gray-500 tabular-nums">
+              {isLoading ? 0 : countdown}s
+            </span>
           </div>
         </div>
         <div className="text-left">
