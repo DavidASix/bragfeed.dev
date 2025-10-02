@@ -191,7 +191,7 @@ export default function Home() {
             <div className="md:hidden w-full max-w-md">{loginCard}</div>
 
             {/* Desktop: Show Dummy Image Placeholder */}
-            <div className="hidden md:flex relative w-full max-w-md aspect-video bg-white/10 backdrop-blur-sm rounded-lg border border-white/20 items-center justify-center">
+            {/* <div className="hidden md:flex relative w-full max-w-md aspect-video bg-white/10 backdrop-blur-sm rounded-lg border border-white/20 items-center justify-center">
               <div className="text-center p-6">
                 <div className="w-16 h-16 mx-auto mb-4 bg-white/20 rounded-full flex items-center justify-center">
                   <Star className="w-8 h-8 text-white" />
@@ -201,7 +201,7 @@ export default function Home() {
                   static site generators
                 </p>
               </div>
-            </div>
+            </div> */}
           </div>
 
           {/* Bottom Section - Social Proof */}
