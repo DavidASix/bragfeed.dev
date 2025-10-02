@@ -41,16 +41,14 @@ export default function Home() {
         redirectTo: "/",
       });
 
-      if (!signInAttempt?.ok || !signInAttempt) {
+      if (!signInAttempt?.ok || !signInAttempt || signInAttempt.error) {
         throw new Error(signInAttempt?.error || "Failed to sign in");
       }
 
       toast.success("Check your email for a sign in link");
-    } catch (error) {
-      const message =
-        error instanceof Error ? error.message : "Error signing in";
-      console.error("Error signing in:", error);
-      toast.error(message);
+    } catch {
+      //console.error("Error signing in:", error);
+      toast.error("Error signing in, please try again.");
     }
   };
 
