@@ -17,7 +17,7 @@ export default function PricingOptions() {
       {/* Individual Tool Pricing */}
       {/* Pro Subscription */}
       <Card className="border-primary relative">
-        <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-secondary text-secondary-foreground border-secondary-foreground border px-4 py-1 rounded-full text-sm font-medium">
+        <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground border-secondary-foreground border px-4 py-1 rounded-full text-sm font-medium">
           Most Popular
         </div>
         <CardHeader>

@@ -2,14 +2,14 @@
 
 import React from "react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { Star, Code, Users, Globe } from "lucide-react";
+import { Star } from "lucide-react";
 
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
-import { Card } from "@/components/ui/card";
-
-import { ShimmerButton } from "@/components/magicui/shimmer-button";
 import PricingOptions from "@/components/common/pricing-options";
+import { CodeBlock } from "@/components/ui/code-block";
+
+import { MockReviewsWindow } from "./_components/mock-reviews";
+import { FrameworkMarquee } from "./_components/framework-marquee";
 
 const devCount = 24;
 const reviews = {
@@ -38,13 +38,6 @@ const reviews = {
   ],
 };
 
-const frameworks = [
-  { name: "Gatsby" },
-  { name: "Hugo" },
-  { name: "Jekyll" },
-  { name: "11ty" },
-];
-
 const steps = [
   {
     step: "01",
@@ -65,11 +58,10 @@ const steps = [
 ];
 
 export default function Home() {
-  const router = useRouter();
   return (
     <>
       {/* Hero Section */}
-      <section className="section section-padding bg-gradient-to-b from-blue-50 to-white">
+      <section className="section section-padding">
         <div className="content text-center">
           <div className="mx-auto max-w-full pt-12 pb-20 flex justify-center items-center flex-col gap-6">
             <h1 className="text-4xl font-bold tracking-tight text-gray-900 lg:text-6xl">
@@ -81,80 +73,15 @@ export default function Home() {
               static site. <br />
               Purely static—<b>no JavaScript required</b>.
             </p>
-
-            <ShimmerButton
-              className="h-12 px-12"
-              shimmerSize="0.15em"
-              onClick={() => router.push("/login")}
-            >
-              ✨ Get Started Today
-            </ShimmerButton>
           </div>
 
           {/* Product Screenshot */}
-          <div className="max-w-5xl mx-auto">
-            <div className="bg-white rounded-2xl shadow-2xl border overflow-hidden">
-              <div className="bg-gray-100 px-6 py-4 border-b flex items-center gap-2">
-                <div className="w-3 h-3 bg-red-400 rounded-full"></div>
-                <div className="w-3 h-3 bg-yellow-400 rounded-full"></div>
-                <div className="w-3 h-3 bg-green-400 rounded-full"></div>
-                <span className="text-sm text-gray-600 ml-4">
-                  ssg.tools - Google Reviews API
-                </span>
-              </div>
-              <div className="p-8">
-                <div className="grid lg:grid-cols-2 gap-8 items-center">
-                  <div className="text-left">
-                    <h3 className="text-lg font-semibold mb-4">API Endpoint</h3>
-                    <div className="bg-gray-900 rounded-lg p-4 font-mono text-sm">
-                      <span className="text-green-400">GET</span>{" "}
-                      <span className="text-blue-400">
-                        https://api.ssg.tools/reviews/
-                      </span>
-                      <span className="text-yellow-400">{"{business-id}"}</span>
-                    </div>
-                  </div>
-                  <div className="text-left">
-                    <h3 className="text-lg font-semibold mb-4">
-                      Fresh Reviews
-                    </h3>
-                    <div className="space-y-3">
-                      {[1, 2, 3].map((i) => (
-                        <div
-                          key={i}
-                          className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg"
-                        >
-                          <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                            <span className="text-blue-600 font-semibold">
-                              {i}
-                            </span>
-                          </div>
-                          <div className="flex-1">
-                            <div className="flex items-center gap-1 mb-1">
-                              {[...Array(5)].map((_, j) => (
-                                <Star
-                                  key={j}
-                                  className="w-4 h-4 fill-yellow-400 text-yellow-400"
-                                />
-                              ))}
-                            </div>
-                            <div className="text-sm text-gray-600">
-                              &quot;Example review text for demo...&quot;
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+          <MockReviewsWindow />
         </div>
       </section>
 
       {/* Social Proof Section */}
-      <section className="section section-padding bg-white">
+      <section className="section section-padding-b bg-white">
         <div className="content text-center">
           <h2 className="text-2xl font-bold text-gray-900 mb-8">
             Loved by Over {devCount} Developers Worldwide
@@ -183,59 +110,7 @@ export default function Home() {
           </div>
 
           {/* Company/Framework Logos */}
-          <div className="flex flex-wrap gap-8 items-center justify-around opacity-60">
-            {frameworks.map((fw) => (
-              <div
-                key={fw.name}
-                className="font-bold text-lg text-gray-800 flex-1 min-w-40 md:min-w-80"
-              >
-                {fw.name}
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* User Personas Section */}
-      <section className="section section-padding bg-blue-50">
-        <div className="content">
-          <div className="grid md:grid-cols-3 gap-8">
-            <Card className="p-8 text-center bg-white">
-              <div className="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                <Code className="w-8 h-8 text-primary" />
-              </div>
-              <h3 className="text-2xl font-bold mb-4">Developers</h3>
-              <p className="text-gray-600 leading-relaxed">
-                SSG.tools enables developers to integrate Google Reviews into
-                any static site generator, eliminating API complexity and rate
-                limiting issues for faster client delivery.
-              </p>
-            </Card>
-
-            <Card className="p-8 text-center bg-white">
-              <div className="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                <Users className="w-8 h-8 text-primary" />
-              </div>
-              <h3 className="text-2xl font-bold mb-4">Agencies</h3>
-              <p className="text-gray-600 leading-relaxed">
-                SSG.tools helps agencies streamline client projects by providing
-                reliable review data, reducing development time and ensuring
-                consistent review updates across all client sites.
-              </p>
-            </Card>
-
-            <Card className="p-8 text-center bg-white">
-              <div className="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                <Globe className="w-8 h-8 text-primary" />
-              </div>
-              <h3 className="text-2xl font-bold mb-4">Freelancers</h3>
-              <p className="text-gray-600 leading-relaxed">
-                SSG.tools empowers freelancers to offer professional review
-                integration services, impressing clients with automated,
-                always-fresh Google Reviews on their websites.
-              </p>
-            </Card>
-          </div>
+          <FrameworkMarquee />
         </div>
       </section>
 
@@ -269,47 +144,26 @@ export default function Home() {
           </div>
 
           {/* Code Example */}
-          <div className="mt-16 text-center overflow-hidden">
-            <div className="bg-gray-900 rounded-2xl p-8 max-w-3xl mx-auto">
-              <div className="flex items-center gap-2 mb-6">
-                <div className="w-3 h-3 bg-red-400 rounded-full"></div>
-                <div className="w-3 h-3 bg-yellow-400 rounded-full"></div>
-                <div className="w-3 h-3 bg-green-400 rounded-full"></div>
-                <span className="text-gray-400 text-sm ml-4">
-                  Integration Example
-                </span>
-              </div>
-              <div className="text-left font-mono text-base text-gray-100 leading-relaxed">
-                <span className="text-gray-500">
-                  {"// Works with any static site generator"}
-                </span>
-                <br />
-                <span className="text-blue-400">const</span>{" "}
-                <span className="text-yellow-300">reviews</span> ={" "}
-                <span className="text-blue-400">await</span>{" "}
-                <span className="text-blue-400">fetch</span>(<br />
-                &nbsp;&nbsp;
-                <span className="text-green-400">
-                  &apos;https://api.ssg.tools/reviews/your-business-id&apos;
-                </span>
-                <br />
-                ).<span className="text-blue-400">then</span>(
-                <span className="text-orange-300">res</span> =&gt;{" "}
-                <span className="text-orange-300">res</span>.
-                <span className="text-blue-400">json</span>())
-                <br />
-                <br />
-                <span className="text-gray-500">
-                  {"// Fresh Google Reviews in your static build! ✨"}
-                </span>
-              </div>
-            </div>
+          <div className="mt-16 max-w-3xl mx-auto">
+            <CodeBlock
+              code={`// Works with any static site generator
+const reviews = await fetch(
+  'https://api.ssg.tools/reviews/your-business-id'
+).then(res => res.json())
+
+// Fresh Google Reviews in your static build! ✨`}
+              language="javascript"
+              title="Integration Example"
+              theme="dark"
+              showCopy={false}
+              fontSize={17}
+            />
           </div>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="section section-padding bg-primary">
+      <section className="section section-padding bg-secondary">
         <div className="content text-center">
           <div className="max-w-4xl mx-auto">
             <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
@@ -324,13 +178,6 @@ export default function Home() {
               <PricingOptions />
             </div>
             <div className="flex flex-col gap-4 justify-center items-center">
-              <ShimmerButton
-                className="h-14 px-10 text-lg"
-                shimmerSize="0.15em"
-                onClick={() => router.push("/login")}
-              >
-                ✨ Get Started Today
-              </ShimmerButton>
               <p className="text-white/70 text-sm">
                 Credit card required, billed through Stripe
               </p>
