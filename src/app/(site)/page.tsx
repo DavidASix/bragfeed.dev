@@ -6,6 +6,7 @@ import { Star } from "lucide-react";
 
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import PricingOptions from "@/components/common/pricing-options";
+import { CodeBlock } from "@/components/ui/code-block";
 
 import { MockReviewsWindow } from "./_components/mock-reviews";
 import { FrameworkMarquee } from "./_components/framework-marquee";
@@ -143,41 +144,20 @@ export default function Home() {
           </div>
 
           {/* Code Example */}
-          <div className="mt-16 text-center overflow-hidden">
-            <div className="bg-gray-900 rounded-2xl p-8 max-w-3xl mx-auto">
-              <div className="flex items-center gap-2 mb-6">
-                <div className="w-3 h-3 bg-red-400 rounded-full"></div>
-                <div className="w-3 h-3 bg-yellow-400 rounded-full"></div>
-                <div className="w-3 h-3 bg-green-400 rounded-full"></div>
-                <span className="text-gray-400 text-sm ml-4">
-                  Integration Example
-                </span>
-              </div>
-              <div className="text-left font-mono text-base text-gray-100 leading-relaxed">
-                <span className="text-gray-500">
-                  {"// Works with any static site generator"}
-                </span>
-                <br />
-                <span className="text-secondary">const</span>{" "}
-                <span className="text-yellow-300">reviews</span> ={" "}
-                <span className="text-secondary">await</span>{" "}
-                <span className="text-secondary">fetch</span>(<br />
-                &nbsp;&nbsp;
-                <span className="text-green-400">
-                  &apos;https://api.ssg.tools/reviews/your-business-id&apos;
-                </span>
-                <br />
-                ).<span className="text-secondary">then</span>(
-                <span className="text-orange-300">res</span> =&gt;{" "}
-                <span className="text-orange-300">res</span>.
-                <span className="text-secondary">json</span>())
-                <br />
-                <br />
-                <span className="text-gray-500">
-                  {"// Fresh Google Reviews in your static build! ✨"}
-                </span>
-              </div>
-            </div>
+          <div className="mt-16 max-w-3xl mx-auto">
+            <CodeBlock
+              code={`// Works with any static site generator
+const reviews = await fetch(
+  'https://api.ssg.tools/reviews/your-business-id'
+).then(res => res.json())
+
+// Fresh Google Reviews in your static build! ✨`}
+              language="javascript"
+              title="Integration Example"
+              theme="dark"
+              showCopy={false}
+              fontSize={17}
+            />
           </div>
         </div>
       </section>

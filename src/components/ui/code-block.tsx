@@ -14,6 +14,8 @@ interface CodeBlockProps {
   language?: string;
   title?: string;
   showLineNumbers?: boolean;
+  showCopy?: boolean;
+  fontSize?: number;
   onCopy?: () => void;
   className?: string;
   theme?: "light" | "dark";
@@ -24,6 +26,8 @@ export function CodeBlock({
   language = "javascript",
   title = "Code",
   showLineNumbers = false,
+  showCopy = true,
+  fontSize = 14,
   onCopy,
   className = "",
   theme = "dark",
@@ -41,15 +45,17 @@ export function CodeBlock({
         className="overflow-hidden relative"
         theme={theme}
       >
-        <div className="flex justify-end absolute right-4">
-          <Button
-            onClick={handleCopy}
-            variant={theme === "dark" ? "outline" : "ghost"}
-            className="flex items-center opacity-60"
-          >
-            <ClipboardCopy className="w-4 h-4" />
-          </Button>
-        </div>
+        {showCopy && (
+          <div className="flex justify-end absolute right-4">
+            <Button
+              onClick={handleCopy}
+              variant={theme === "dark" ? "outline" : "ghost"}
+              className="flex items-center opacity-60"
+            >
+              <ClipboardCopy className="w-4 h-4" />
+            </Button>
+          </div>
+        )}
         <ReactCodeBlock
           text={code}
           language={language}
@@ -60,7 +66,7 @@ export function CodeBlock({
           }}
           customStyle={{
             fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', monospace",
-            fontSize: "14px",
+            fontSize: `${fontSize}px`,
             lineHeight: "1.5",
             overflow: "hidden",
             whiteSpace: "pre-wrap",
