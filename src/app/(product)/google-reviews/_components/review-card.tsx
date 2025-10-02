@@ -5,11 +5,20 @@ interface ReviewCardProps {
   rating: number;
   text: string;
   date: Date | null;
+  dimmed?: boolean;
 }
 
-export function ReviewCard({ author, rating, text, date }: ReviewCardProps) {
+export function ReviewCard({
+  author,
+  rating,
+  text,
+  date,
+  dimmed = false,
+}: ReviewCardProps) {
   return (
-    <div className="flex items-start space-x-3 p-4 bg-white rounded-lg border">
+    <div
+      className={`flex items-start space-x-3 p-4 bg-white rounded-lg border transition-opacity ${dimmed ? "opacity-40" : "opacity-100"}`}
+    >
       <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
         <span className="text-blue-600 font-semibold text-sm">
           {author.charAt(0)}

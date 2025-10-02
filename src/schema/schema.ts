@@ -124,6 +124,7 @@ export const businesses = pgTable("businesses", {
   name: text("name"),
   place_id: varchar("place_id", { length: 256 }),
   address: text("address"),
+  minimum_score: integer("minimum_score").default(5),
 });
 
 export const reviews = pgTable("reviews", {

@@ -19,6 +19,8 @@ import {
 } from "@/lib/server/google/select";
 import { userHasOwnership } from "@/lib/ownership";
 import { businesses } from "@/schema/schema";
+import { db } from "@/schema/db";
+import { eq } from "drizzle-orm";
 
 /**
  * Checks if reviews/stats need updating, updates if needed, then returns latest data. This endpoint is called by 11ty in the clients
@@ -74,9 +76,18 @@ export const POST: RequestHandler<NextRouteContext> = withApiKey(
               await updateBusinessStats(business_id);
             }
 
+            // Get business minimum_score
+            const [business] = await db
+              .select({ minimum_score: businesses.minimum_score })
+              .from(businesses)
+              .where(eq(businesses.id, business_id))
+              .limit(1);
+
+            const minimumScore = business?.minimum_score ?? 1;
+
             // Get the data
             const [reviews, stats] = await Promise.all([
-              selectBusinessReviews(business_id),
+              selectBusinessReviews(business_id, minimumScore),
               selectBusinessStats(business_id),
             ]);
 

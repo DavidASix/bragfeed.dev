@@ -28,9 +28,13 @@ export async function selectBusinessStats(business_id: string): Promise<{
 /**
  * Fetch the reviews for a given business
  * @param { business_id: string } - The database UUID of the business to fetch reviews for
+ * @param { minimum_score: number } - The minimum rating to filter reviews by (1-5)
  * @returns { reviews: Review[] } - The reviews for the given business
  */
-export async function selectBusinessReviews(business_id: string): Promise<
+export async function selectBusinessReviews(
+  business_id: string,
+  minimum_score: number,
+): Promise<
   {
     author_name: string | null;
     author_image: string | null;
@@ -54,5 +58,8 @@ export async function selectBusinessReviews(business_id: string): Promise<
     .orderBy(desc(reviews.datetime))
     .limit(30);
 
-  return businessReviews;
+  // Filter reviews by minimum_score (doing it in memory to handle null ratings)
+  return businessReviews.filter(
+    (review) => review.rating !== null && review.rating >= minimum_score,
+  );
 }
