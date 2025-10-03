@@ -15,6 +15,13 @@
       "when": 1759448884147,
       "tag": "0001_fearless_leper_queen",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1759452124722,
+      "tag": "0002_common_ravenous",
+      "breakpoints": true
     }
   ]
 }
