@@ -37,26 +37,43 @@ export default function DashboardPage() {
   if (isLoading) {
     return (
       <div className="space-y-16 py-16">
+        {/* Spotlight Section Skeleton */}
         <section className="section">
           <div className="content">
-            <Skeleton className="h-64 w-full" />
+            <Skeleton className="h-48 w-full rounded-lg" />
           </div>
         </section>
+
+        {/* Usage Statistics Section Skeleton */}
         <section className="section">
           <div className="content">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <Skeleton className="h-48" />
-              <Skeleton className="h-48" />
-              <Skeleton className="h-48" />
+            <div className="space-y-6">
+              <div>
+                <Skeleton className="h-8 w-48 mb-2" />
+                <Skeleton className="h-4 w-96" />
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <Skeleton className="h-40 rounded-lg" />
+                <Skeleton className="h-40 rounded-lg" />
+                <Skeleton className="h-40 rounded-lg" />
+              </div>
             </div>
           </div>
         </section>
+
+        {/* Businesses Section Skeleton */}
         <section className="section">
           <div className="content">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <Skeleton className="h-48" />
-              <Skeleton className="h-48" />
-              <Skeleton className="h-48" />
+            <div className="space-y-6">
+              <div>
+                <Skeleton className="h-8 w-48 mb-2" />
+                <Skeleton className="h-4 w-96" />
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <Skeleton className="h-48 rounded-lg" />
+                <Skeleton className="h-48 rounded-lg" />
+                <Skeleton className="h-48 rounded-lg" />
+              </div>
             </div>
           </div>
         </section>
