@@ -5,6 +5,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import requests from "@/lib/requests";
 import dashboardStatsSchema from "@/app/api/dashboard/api-stats/schema";
 import getUserBusinessesSchema from "@/app/api/dashboard/get-user-businesses/schema";
+import getSubscriptionDetailsSchema from "@/app/api/purchases/get-subscription-details/schema";
 
 import { SpotlightSection } from "./_components/spotlight-section";
 import { BusinessesGrid } from "./_components/businesses-grid";
@@ -32,7 +33,17 @@ export default function DashboardPage() {
     },
   });
 
-  const isLoading = statsLoading || businessesLoading;
+  const { data: subscriptionData, isLoading: subscriptionLoading } = useQuery({
+    queryKey: ["subscription-status"],
+    queryFn: async () => {
+      return await requests.get(getSubscriptionDetailsSchema);
+    },
+    meta: {
+      errorMessage: "Failed to load subscription status",
+    },
+  });
+
+  const isLoading = statsLoading || businessesLoading || subscriptionLoading;
 
   if (isLoading) {
     return (
@@ -92,6 +103,9 @@ export default function DashboardPage() {
           <SpotlightSection
             hasBusinesses={hasBusinesses}
             monthlyApiCalls={statsData?.monthlyApiCalls ?? 0}
+            hasActiveSubscription={
+              subscriptionData?.hasActiveSubscription ?? false
+            }
           />
         </div>
       </section>

@@ -1,5 +1,11 @@
 import Link from "next/link";
-import { Sparkles, Plus, AlertTriangle, XCircle } from "lucide-react";
+import {
+  Sparkles,
+  Plus,
+  AlertTriangle,
+  XCircle,
+  CreditCard,
+} from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { MONTHLY_API_LIMIT } from "@/lib/config";
@@ -7,6 +13,7 @@ import { MONTHLY_API_LIMIT } from "@/lib/config";
 interface SpotlightSectionProps {
   hasBusinesses: boolean;
   monthlyApiCalls: number;
+  hasActiveSubscription: boolean;
 }
 
 /**
@@ -133,9 +140,33 @@ function LimitReachedSpotlight({ resetDate }: { resetDate: string }) {
   );
 }
 
+function NoSubscriptionSpotlight() {
+  return (
+    <Card className="p-8 text-center bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20 border-blue-200 dark:border-blue-800">
+      <div className="max-w-2xl mx-auto space-y-3">
+        <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center mx-auto">
+          <CreditCard className="w-6 h-6 text-white" />
+        </div>
+        <div>
+          <h2 className="text-2xl font-bold mb-1">
+            Subscribe to Access Reviews
+          </h2>
+          <p className="text-muted-foreground">
+            You need an active subscription to access your Google Reviews data
+          </p>
+        </div>
+        <Button asChild size="lg">
+          <Link href="/subscription">View Subscription Plans</Link>
+        </Button>
+      </div>
+    </Card>
+  );
+}
+
 export function SpotlightSection({
   hasBusinesses,
   monthlyApiCalls,
+  hasActiveSubscription,
 }: SpotlightSectionProps) {
   // Calculate next reset date (first day of next month)
   const getNextResetDate = () => {
@@ -175,14 +206,23 @@ export function SpotlightSection({
       ) : null,
       priority: 80,
     },
+    // Important: Has business but no active subscription
+    {
+      component:
+        hasBusinesses && !hasActiveSubscription ? (
+          <NoSubscriptionSpotlight />
+        ) : null,
+      priority: 50,
+    },
     // Onboarding: No businesses added yet
     {
       component: !hasBusinesses ? <NoBusinessesSpotlight /> : null,
       priority: 0,
     },
-    // Default: Welcome message (when user has businesses)
+    // Default: Welcome message (when user has businesses and subscription)
     {
-      component: hasBusinesses ? <WelcomeSpotlight /> : null,
+      component:
+        hasBusinesses && hasActiveSubscription ? <WelcomeSpotlight /> : null,
       priority: 10,
     },
     // Example: Add urgent announcements here with priority 100+
