@@ -178,7 +178,9 @@ export const events = pgTable("events", {
     .references(() => users.id, { onDelete: "cascade" })
     .notNull(),
   metadata: jsonb("metadata").$type<EventMetadata>(),
-  timestamp: timestamp("timestamp", { withTimezone: true }).defaultNow(),
+  timestamp: timestamp("timestamp", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
 });
 
 /**
