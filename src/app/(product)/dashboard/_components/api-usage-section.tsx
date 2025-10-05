@@ -24,8 +24,7 @@ export function ApiUsageSection({
     100,
   );
 
-  const formatRelativeTime = (timestamp: Date) => {
-    const date = timestamp;
+  const formatRelativeTime = (date: Date) => {
     const now = new Date();
     const diffMs = now.getTime() - date.getTime();
     const diffMins = Math.floor(diffMs / 60000);
