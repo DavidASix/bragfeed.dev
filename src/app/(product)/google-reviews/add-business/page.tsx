@@ -150,14 +150,21 @@ export default function AddBusinessPage() {
     <>
       {/* Header Section */}
       <section className="section section-padding bg-gradient-to-b from-blue-50 to-white">
-        <div className="content text-center">
-          <h1 className="text-4xl font-bold tracking-tight text-gray-900 lg:text-5xl">
-            Add New Business
-          </h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto mt-4">
-            Connect your Google Business Profile to display reviews on your
-            static website
-          </p>
+        <div className="content">
+          <div className="flex items-center gap-4 mb-6">
+            <Button variant="outline" asChild>
+              <Link href="/dashboard">← Dashboard</Link>
+            </Button>
+          </div>
+          <div className="text-center">
+            <h1 className="text-4xl font-bold tracking-tight text-gray-900 lg:text-5xl">
+              Add New Business
+            </h1>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto mt-4">
+              Connect your Google Business Profile to display reviews on your
+              static website
+            </p>
+          </div>
         </div>
       </section>
 

@@ -87,7 +87,7 @@ export default function BusinessDetailsPage() {
             don&apos;t have access to it.
           </p>
           <Button asChild>
-            <Link href="/google-reviews">Back to Businesses</Link>
+            <Link href="/dashboard">Back to Dashboard</Link>
           </Button>
         </div>
       </section>
@@ -103,7 +103,7 @@ export default function BusinessDetailsPage() {
         <div className="content">
           <div className="flex items-center gap-4 mb-6">
             <Button variant="outline" asChild>
-              <Link href="/google-reviews">← Back</Link>
+              <Link href="/dashboard">← Dashboard</Link>
             </Button>
           </div>
           <div className="text-center">
