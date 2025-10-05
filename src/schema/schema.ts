@@ -159,12 +159,14 @@ export const dbEvents = pgEnum("event_types", [
   "update_reviews",
   "fetch_stats",
   "update_stats",
+  "api_response",
 ]);
 
 export type DBEvent = (typeof dbEvents.enumValues)[number];
 
 export const eventMetadataSchema = z.object({
   business_id: z.string().uuid().optional(),
+  api_endpoint: z.string().optional(),
 });
 
 export type EventMetadata = z.infer<typeof eventMetadataSchema>;
@@ -176,7 +178,9 @@ export const events = pgTable("events", {
     .references(() => users.id, { onDelete: "cascade" })
     .notNull(),
   metadata: jsonb("metadata").$type<EventMetadata>(),
-  timestamp: timestamp("timestamp", { withTimezone: true }).defaultNow(),
+  timestamp: timestamp("timestamp", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
 });
 
 /**

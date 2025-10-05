@@ -7,7 +7,7 @@ import { withApiKey } from "@/middleware/withApiKey";
 import { withPaidAccess } from "@/middleware/withPaidAccess";
 import { withEventRateLimit } from "@/middleware/withEventRateLimit";
 
-import { getLastEvent } from "@/lib/server/events";
+import { getLastEvent, recordEvent } from "@/lib/server/events";
 
 import {
   updateBusinessStats,
@@ -75,6 +75,11 @@ export const POST: RequestHandler<NextRouteContext> = withApiKey(
             ) {
               await updateBusinessStats(business_id);
             }
+
+            await recordEvent("api_response", context.user_id, {
+              business_id,
+              api_endpoint: "fetch-updated-data",
+            });
 
             // Get business minimum_score
             const [business] = await db
