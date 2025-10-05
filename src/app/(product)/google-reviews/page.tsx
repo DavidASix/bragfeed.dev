@@ -3,7 +3,7 @@
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 
-import getUserBusinessesSchema from "@/app/api/google/get-user-businesses/schema";
+import getUserBusinessesSchema from "@/app/api/dashboard/get-user-businesses/schema";
 import requests from "@/lib/requests";
 
 import { Button } from "@/components/ui/button";
