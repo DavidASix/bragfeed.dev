@@ -19,8 +19,8 @@ export function ReviewCard({
     <div
       className={`flex items-start space-x-3 p-4 bg-white rounded-lg border transition-opacity ${dimmed ? "opacity-40" : "opacity-100"}`}
     >
-      <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-        <span className="text-blue-600 font-semibold text-sm">
+      <div className="w-10 h-10 bg-secondary rounded-full flex items-center justify-center">
+        <span className="text-secondary-foreground font-semibold text-sm">
           {author.charAt(0)}
         </span>
       </div>

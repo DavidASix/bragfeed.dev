@@ -149,10 +149,10 @@ export default function AddBusinessPage() {
   return (
     <>
       {/* Header Section */}
-      <section className="section section-padding bg-gradient-to-b from-blue-50 to-white">
+      <section className="section section-padding bg-gradient-to-b from-primary/10 to-white">
         <div className="content">
           <div className="flex items-center gap-4 mb-6">
-            <Button variant="outline" asChild>
+            <Button variant="default" asChild>
               <Link href="/dashboard">← Dashboard</Link>
             </Button>
           </div>
@@ -206,8 +206,8 @@ export default function AddBusinessPage() {
                 {placeId && !checkBusinessQuery.isFetching && (
                   <div className="mt-4 space-y-3">
                     {existingBusinessId ? (
-                      <div className="p-3 bg-blue-50 border border-blue-200 rounded-md">
-                        <p className="text-sm text-blue-800 mb-2">
+                      <div className="p-3 bg-secondary/20 border border-secondary rounded-md">
+                        <p className="text-sm text-secondary-foreground mb-2">
                           ✓ This business is already added to your profile
                         </p>
                         <Button
@@ -296,13 +296,13 @@ export default function AddBusinessPage() {
                         ))}
                       </>
                     ) : fetchReviewsMutation.isSuccess ? (
-                      <div className="p-3 bg-blue-50 border border-blue-200 rounded-md">
-                        <p className="text-sm text-blue-800">
+                      <div className="p-3 bg-secondary/20 border border-secondary rounded-md">
+                        <p className="text-sm text-secondary-foreground">
                           No reviews found for this business. You can still
                           proceed to set up monitoring for future reviews.
                         </p>
                         {businessStats && (
-                          <div className="mt-2 text-sm text-blue-700">
+                          <div className="mt-2 text-sm text-secondary-foreground">
                             <p>
                               Total Reviews: {businessStats.review_count ?? 0}
                             </p>

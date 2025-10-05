@@ -45,8 +45,8 @@ export function FrameworkIntegrationTabs({
           value={framework.id}
           className="space-y-4"
         >
-          <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-            <p className="text-sm text-blue-800">{framework.description}</p>
+          <div className="p-4 rounded-lg">
+            <p className="text-sm">{framework.description}</p>
           </div>
 
           <CodeBlock

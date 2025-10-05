@@ -99,10 +99,10 @@ export default function BusinessDetailsPage() {
   return (
     <>
       {/* Header Section */}
-      <section className="section section-padding bg-gradient-to-b from-blue-50 to-white">
+      <section className="section section-padding bg-gradient-to-b from-primary/10 to-white">
         <div className="content">
           <div className="flex items-center gap-4 mb-6">
-            <Button variant="outline" asChild>
+            <Button variant="default" asChild>
               <Link href="/dashboard">← Dashboard</Link>
             </Button>
           </div>
@@ -118,7 +118,7 @@ export default function BusinessDetailsPage() {
             {business.stats && (
               <div className="flex justify-center gap-8 mb-6">
                 <div className="text-center">
-                  <div className="text-3xl font-bold text-blue-600">
+                  <div className="text-3xl font-bold text-secondary">
                     {business.stats.review_count || 0}
                   </div>
                   <div className="text-sm text-gray-600">Total Reviews</div>
