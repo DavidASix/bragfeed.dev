@@ -65,7 +65,7 @@ export const GET: RequestHandler<NextRouteContext> = withAuth(
     }
 
     // Get last API call with business name
-    const [latestApiCall] = await db
+    const [latestApiCallQuery] = await db
       .select({
         timestamp: events.timestamp,
         businessName: businesses.name,
@@ -81,6 +81,8 @@ export const GET: RequestHandler<NextRouteContext> = withAuth(
       .where(and(eq(events.user_id, user_id), eq(events.event, "api_response")))
       .orderBy(desc(events.timestamp))
       .limit(1);
+
+    const latestApiCall = latestApiCallQuery ? latestApiCallQuery : null;
 
     const response = schema.response.parse({
       totalApiCalls,
