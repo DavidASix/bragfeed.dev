@@ -148,7 +148,7 @@ export default function Home() {
             <CodeBlock
               code={`// Works with any static site generator
 const reviews = await fetch(
-  'https://api.ssg.tools/reviews/your-business-id'
+  'https://bragfeed.dev/reviews/your-business-id'
 ).then(res => res.json())
 
 // Fresh Google Reviews in your static build! ✨`}
@@ -236,7 +236,7 @@ const reviews = await fetch(
                 </p>
                 <p className="text-gray-700 leading-relaxed">
                   I think that one of the greatest joys in life is building
-                  something that makes people&apos;s lives better. SSG.tools
+                  something that makes people&apos;s lives better. Bragfeed.dev
                   represents exactly that - solving a real problem that
                   developers face every day.
                 </p>
