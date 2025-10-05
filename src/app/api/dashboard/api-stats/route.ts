@@ -82,7 +82,12 @@ export const GET: RequestHandler<NextRouteContext> = withAuth(
       .orderBy(desc(events.timestamp))
       .limit(1);
 
-    const latestApiCall = latestApiCallQuery ? latestApiCallQuery : null;
+    const latestApiCall = latestApiCallQuery
+      ? {
+          ...latestApiCallQuery,
+          timestamp: latestApiCallQuery.timestamp.toISOString(),
+        }
+      : null;
 
     const response = schema.response.parse({
       totalApiCalls,
