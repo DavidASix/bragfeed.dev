@@ -18,6 +18,12 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { LoadingSpinner } from "@/components/ui/custom/loading-spinner";
 import { ReviewCard } from "../_components/review-card";
 import { StarRatingSelector } from "../_components/star-rating-selector";
@@ -94,7 +100,8 @@ export default function BusinessDetailsPage() {
     );
   }
 
-  const { business, reviews, available_reviews, last_refreshed } = businessQuery.data;
+  const { business, reviews, available_reviews, last_refreshed } =
+    businessQuery.data;
 
   return (
     <>
@@ -116,36 +123,58 @@ export default function BusinessDetailsPage() {
 
             {/* Business Stats */}
             {business.stats && (
-              <div className="flex justify-center gap-8 mb-6 flex-wrap">
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-secondary">
-                    {business.stats.review_count || 0}
+              <TooltipProvider>
+                <div className="flex justify-center gap-8 mb-6 flex-wrap">
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div className="text-center">
+                        <div className="text-3xl font-bold text-secondary">
+                          {business.stats.review_count || 0}
+                        </div>
+                        <div className="text-sm text-gray-600">
+                          Total Reviews
+                        </div>
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Total number of reviews on Google for this business</p>
+                    </TooltipContent>
+                  </Tooltip>
+                  <div className="text-center">
+                    <div className="text-3xl font-bold text-yellow-500">
+                      {business.stats.review_score
+                        ? business.stats.review_score.toFixed(1)
+                        : "—"}
+                    </div>
+                    <div className="text-sm text-gray-600">Average Rating</div>
                   </div>
-                  <div className="text-sm text-gray-600">Total Reviews</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-yellow-500">
-                    {business.stats.review_score
-                      ? business.stats.review_score.toFixed(1)
-                      : "—"}
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div className="text-center">
+                        <div className="text-3xl font-bold text-primary">
+                          {available_reviews || 0}
+                        </div>
+                        <div className="text-sm text-gray-600">
+                          Available Reviews
+                        </div>
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>
+                        Number of reviews stored in Bragfeed&apos;s database
+                      </p>
+                    </TooltipContent>
+                  </Tooltip>
+                  <div className="text-center">
+                    <div className="text-3xl font-bold text-gray-700">
+                      {last_refreshed
+                        ? new Date(last_refreshed).toLocaleDateString()
+                        : "—"}
+                    </div>
+                    <div className="text-sm text-gray-600">Data Refreshed</div>
                   </div>
-                  <div className="text-sm text-gray-600">Average Rating</div>
                 </div>
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-primary">
-                    {available_reviews || 0}
-                  </div>
-                  <div className="text-sm text-gray-600">Available Reviews</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-gray-700">
-                    {last_refreshed
-                      ? new Date(last_refreshed).toLocaleDateString()
-                      : "—"}
-                  </div>
-                  <div className="text-sm text-gray-600">Data Refreshed</div>
-                </div>
-              </div>
+              </TooltipProvider>
             )}
           </div>
         </div>
