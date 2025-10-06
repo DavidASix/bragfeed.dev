@@ -1,4 +1,4 @@
-import { eq, and, desc } from "drizzle-orm";
+import { eq, and, desc, count } from "drizzle-orm";
 import { NextResponse } from "next/server";
 
 import { NextRouteContext, RequestHandler } from "@/middleware/types";
@@ -26,6 +26,7 @@ export const POST: RequestHandler<NextRouteContext> = withAuth(
           review_count: business_stats.review_count,
           review_score: business_stats.review_score,
         },
+        stats_created_at: business_stats.created_at,
       })
       .from(businesses)
       .leftJoin(business_stats, eq(businesses.id, business_stats.business_id))
@@ -40,6 +41,30 @@ export const POST: RequestHandler<NextRouteContext> = withAuth(
         { status: 404 },
       );
     }
+
+    // Get count of available reviews
+    const reviewCount = await db
+      .select({ count: count() })
+      .from(reviews)
+      .where(eq(reviews.business_id, businessId));
+
+    // Get the most recent review timestamp
+    const [latestReview] = await db
+      .select({ created_at: reviews.created_at })
+      .from(reviews)
+      .where(eq(reviews.business_id, businessId))
+      .orderBy(desc(reviews.created_at))
+      .limit(1);
+
+    // Determine last refreshed date (latest between stats and reviews)
+    const statsDate = businessData[0].stats_created_at;
+    const reviewDate = latestReview?.created_at;
+    const lastRefreshed =
+      statsDate && reviewDate
+        ? statsDate > reviewDate
+          ? statsDate
+          : reviewDate
+        : (statsDate ?? reviewDate ?? null);
 
     // Get reviews for this business
     const businessReviews = await db
@@ -62,6 +87,8 @@ export const POST: RequestHandler<NextRouteContext> = withAuth(
         ...review,
         datetime: review.datetime ? review.datetime.toISOString() : null,
       })),
+      available_reviews: reviewCount[0].count,
+      last_refreshed: lastRefreshed ? lastRefreshed.toISOString() : null,
     });
 
     return NextResponse.json(response);

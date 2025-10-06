@@ -94,7 +94,7 @@ export default function BusinessDetailsPage() {
     );
   }
 
-  const { business, reviews } = businessQuery.data;
+  const { business, reviews, available_reviews, last_refreshed } = businessQuery.data;
 
   return (
     <>
@@ -116,7 +116,7 @@ export default function BusinessDetailsPage() {
 
             {/* Business Stats */}
             {business.stats && (
-              <div className="flex justify-center gap-8 mb-6">
+              <div className="flex justify-center gap-8 mb-6 flex-wrap">
                 <div className="text-center">
                   <div className="text-3xl font-bold text-secondary">
                     {business.stats.review_count || 0}
@@ -130,6 +130,20 @@ export default function BusinessDetailsPage() {
                       : "—"}
                   </div>
                   <div className="text-sm text-gray-600">Average Rating</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-primary">
+                    {available_reviews || 0}
+                  </div>
+                  <div className="text-sm text-gray-600">Available Reviews</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-gray-700">
+                    {last_refreshed
+                      ? new Date(last_refreshed).toLocaleDateString()
+                      : "—"}
+                  </div>
+                  <div className="text-sm text-gray-600">Data Refreshed</div>
                 </div>
               </div>
             )}
