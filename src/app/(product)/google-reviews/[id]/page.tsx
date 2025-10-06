@@ -3,10 +3,12 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
+import { RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 
 import getBusinessDetailsSchema from "@/app/api/google/get-business-details/schema";
 import updateMinimumScoreSchema from "@/app/api/google/update-minimum-score/schema";
+import refreshBusinessDetailsSchema from "@/app/api/google/refresh-business-details/schema";
 import requests from "@/lib/requests";
 
 import { Button } from "@/components/ui/button";
@@ -69,6 +71,21 @@ export default function BusinessDetailsPage() {
     },
   });
 
+  const refreshBusinessDataMutation = useMutation({
+    mutationFn: async () => {
+      return requests.post(refreshBusinessDetailsSchema, { businessId });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["businessDetails", businessId],
+      });
+      toast.success("Data refreshed successfully!");
+    },
+    onError: () => {
+      toast.error("Failed to refresh business data");
+    },
+  });
+
   if (businessQuery.isLoading) {
     return (
       <section className="section section-padding">
@@ -108,7 +125,7 @@ export default function BusinessDetailsPage() {
       {/* Header Section */}
       <section className="section section-padding bg-gradient-to-b from-primary/10 to-white">
         <div className="content">
-          <div className="flex items-center gap-4 mb-6">
+          <div className="flex items-center justify-between gap-4 mb-6">
             <Button variant="default" asChild>
               <Link href="/dashboard">← Dashboard</Link>
             </Button>
@@ -193,11 +210,33 @@ export default function BusinessDetailsPage() {
               <TabsContent value="details" className="space-y-6">
                 <Card>
                   <CardHeader>
-                    <CardTitle>Review Filtering</CardTitle>
-                    <CardDescription>
-                      Set the minimum star rating for reviews to be returned by
-                      the API
-                    </CardDescription>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <CardTitle>Review Filtering</CardTitle>
+                        <CardDescription>
+                          Set the minimum star rating for reviews to be returned
+                          by the API
+                        </CardDescription>
+                      </div>
+                      <div className="flex flex-col items-end gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => refreshBusinessDataMutation.mutate()}
+                          disabled={refreshBusinessDataMutation.isPending}
+                          className="gap-2"
+                        >
+                          <RefreshCw
+                            className={`h-4 w-4 ${refreshBusinessDataMutation.isPending ? "animate-spin" : ""}`}
+                          />
+                          Refresh Data
+                        </Button>
+                        <p className="text-xs text-gray-500 max-w-xs text-right">
+                          Your data is also re-fetched during each API request
+                          so that your API calls always return fresh data.
+                        </p>
+                      </div>
+                    </div>
                   </CardHeader>
                   <CardContent>
                     <StarRatingSelector
