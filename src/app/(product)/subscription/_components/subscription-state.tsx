@@ -1,6 +1,12 @@
 "use client";
 
-import { Loader2, CheckCircle, XCircle, Calendar, CreditCard } from "lucide-react";
+import {
+  Loader2,
+  CheckCircle,
+  XCircle,
+  Calendar,
+  CreditCard,
+} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
