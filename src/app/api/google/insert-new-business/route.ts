@@ -57,7 +57,7 @@ export const POST: RequestHandler<NextRouteContext> = withAuth(
       await userHasOwnership(context.user_id, business.id, businesses);
 
       const insertedStats = await updateBusinessStats(business.id);
-      const insertedReviews = await updateBusinessReviews(business.id);
+      const insertedReviews = await updateBusinessReviews(business.id, 100);
       await recordEvent("update_reviews", context.user_id, {
         business_id: business.id,
       });
