@@ -74,40 +74,102 @@ export default function SubscriptionPage() {
   });
 
   return (
-    <section className="section section-padding">
-      <div className="content">
-        <div className="space-y-6">
-          <div className="text-center">
-            <h1 className="text-4xl font-bold">Subscription Status</h1>
-            <p className="text-muted-foreground text-lg max-w-2xl mx-auto mt-4">
-              Manage your subscription and access to all tools
-            </p>
-          </div>
+    <div className="space-y-16 py-16">
+      {/* Header Section */}
+      <section className="section">
+        <div className="content text-center">
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">
+            Subscription Management
+          </h1>
+          <p className="text-muted-foreground text-lg md:text-xl max-w-2xl mx-auto">
+            Manage your subscription and access to all Bragfeed tools
+          </p>
+        </div>
+      </section>
 
-          <Card className="max-w-2xl mx-auto">
+      {/* Subscription Status Section */}
+      <section className="section">
+        <div className="content">
+          <SubscriptionState
+            dataIsLoading={subscriptionQuery.isLoading}
+            cancelIsLoading={cancelSubscriptionMutation.isPending}
+            hasActiveSubscription={
+              subscriptionQuery.data?.hasActiveSubscription ?? false
+            }
+            endDate={subscriptionQuery.data?.subscriptionEnd}
+            onClickCheckout={onClickCheckout}
+            onClickCancel={() => {
+              cancelSubscriptionMutation.mutate();
+            }}
+          />
+        </div>
+      </section>
+
+      {/* Subscription Benefits Section */}
+      <section className="section">
+        <div className="content">
+          <Card className="max-w-4xl mx-auto border-primary/20">
             <CardHeader>
-              <CardTitle>Current Subscription</CardTitle>
-              <CardDescription>
-                Your subscription status and details
+              <CardTitle className="text-2xl">
+                What&apos;s Included in Your Subscription
+              </CardTitle>
+              <CardDescription className="text-base">
+                Get full access to all Bragfeed features
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <SubscriptionState
-                dataIsLoading={subscriptionQuery.isLoading}
-                cancelIsLoading={cancelSubscriptionMutation.isPending}
-                hasActiveSubscription={
-                  subscriptionQuery.data?.hasActiveSubscription ?? false
-                }
-                endDate={subscriptionQuery.data?.subscriptionEnd}
-                onClickCheckout={onClickCheckout}
-                onClickCancel={() => {
-                  cancelSubscriptionMutation.mutate();
-                }}
-              />
+            <CardContent>
+              <div className="grid md:grid-cols-2 gap-6">
+                <div className="flex gap-3">
+                  <div className="flex-shrink-0 w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
+                    <span className="text-primary font-bold">✓</span>
+                  </div>
+                  <div>
+                    <h3 className="font-semibold mb-1">
+                      Unlimited Google Reviews
+                    </h3>
+                    <p className="text-sm text-muted-foreground">
+                      Fetch reviews from unlimited Google Business Profiles
+                    </p>
+                  </div>
+                </div>
+                <div className="flex gap-3">
+                  <div className="flex-shrink-0 w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
+                    <span className="text-primary font-bold">✓</span>
+                  </div>
+                  <div>
+                    <h3 className="font-semibold mb-1">API Access</h3>
+                    <p className="text-sm text-muted-foreground">
+                      Full programmatic access to your reviews data
+                    </p>
+                  </div>
+                </div>
+                <div className="flex gap-3">
+                  <div className="flex-shrink-0 w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
+                    <span className="text-primary font-bold">✓</span>
+                  </div>
+                  <div>
+                    <h3 className="font-semibold mb-1">Real-time Updates</h3>
+                    <p className="text-sm text-muted-foreground">
+                      Reviews sync automatically with your Google Business
+                    </p>
+                  </div>
+                </div>
+                <div className="flex gap-3">
+                  <div className="flex-shrink-0 w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
+                    <span className="text-primary font-bold">✓</span>
+                  </div>
+                  <div>
+                    <h3 className="font-semibold mb-1">Priority Support</h3>
+                    <p className="text-sm text-muted-foreground">
+                      Get help when you need it from our support team
+                    </p>
+                  </div>
+                </div>
+              </div>
             </CardContent>
           </Card>
         </div>
-      </div>
-    </section>
+      </section>
+    </div>
   );
 }
