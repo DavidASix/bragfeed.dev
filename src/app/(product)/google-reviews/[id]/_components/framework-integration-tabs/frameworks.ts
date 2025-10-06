@@ -20,7 +20,7 @@ export function getFrameworks(
         "For Next.js applications, fetch reviews during static generation using getStaticProps or in your build process.",
       code: `// pages/index.js or app/page.js
 export async function getStaticProps() {
-  const response = await fetch('https://api.ssg.tools/reviews/${placeholderPlaceId}', {
+  const response = await fetch('https://bragfeed.dev/reviews/${placeholderPlaceId}', {
     headers: {
       'Authorization': 'Bearer ${placeholderApiKey}',
     }
@@ -60,7 +60,7 @@ export default function HomePage({ reviews }) {
 exports.sourceNodes = async ({ actions, createContentDigest }) => {
   const { createNode } = actions;
   
-  const response = await fetch('https://api.ssg.tools/reviews/${placeholderPlaceId}', {
+  const response = await fetch('https://bragfeed.dev/reviews/${placeholderPlaceId}', {
     headers: {
       'Authorization': 'Bearer ${placeholderApiKey}',
     }
@@ -126,7 +126,7 @@ module.exports = async function() {
   const fetch = require('node-fetch');
   
   try {
-    const response = await fetch('https://api.ssg.tools/reviews/${placeholderPlaceId}', {
+    const response = await fetch('https://bragfeed.dev/reviews/${placeholderPlaceId}', {
       headers: {
         'Authorization': 'Bearer ${placeholderApiKey}',
       }
@@ -162,7 +162,7 @@ layout: base.njk
       description:
         "For Hugo, you can fetch reviews using Hugo's data templates or external data sources.",
       code: `<!-- layouts/partials/reviews.html -->
-{{ $reviews := getJSON "https://api.ssg.tools/reviews/${placeholderPlaceId}" }}
+{{ $reviews := getJSON "https://bragfeed.dev/reviews/${placeholderPlaceId}" }}
 
 <section class="reviews">
   <h2>Customer Reviews</h2>
@@ -193,7 +193,7 @@ params:
         "In Astro, fetch reviews in the frontmatter of your pages or components for static generation.",
       code: `---
 // src/pages/reviews.astro
-const response = await fetch('https://api.ssg.tools/reviews/${placeholderPlaceId}', {
+const response = await fetch('https://bragfeed.dev/reviews/${placeholderPlaceId}', {
   headers: {
     'Authorization': 'Bearer ${placeholderApiKey}',
   }

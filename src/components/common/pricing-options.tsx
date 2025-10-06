@@ -21,8 +21,8 @@ export default function PricingOptions() {
           Most Popular
         </div>
         <CardHeader>
-          <CardTitle>All Access</CardTitle>
-          <CardDescription>Access to all tools</CardDescription>
+          <CardTitle>Bragfeed</CardTitle>
+          <CardDescription>Access reviews with ease</CardDescription>
           <div className="mt-4">
             <span className="text-3xl font-bold">$8.99</span>
             <span className="text-muted-foreground ml-2">per month</span>
@@ -32,23 +32,23 @@ export default function PricingOptions() {
           <ul className="space-y-2">
             <li className="flex items-center">
               <CheckCircle2 className="w-5 h-5 text-primary mr-2" />
-              <span>Access to all tools</span>
+              <span>Unlimited Businesses</span>
             </li>
             <li className="flex items-center">
               <CheckCircle2 className="w-5 h-5 text-primary mr-2" />
-              <span>30,000 API requests</span>
+              <span>10,000 API requests</span>
             </li>
             <li className="flex items-center">
               <CheckCircle2 className="w-5 h-5 text-primary mr-2" />
-              <span>50 AI Credits per month</span>
+              <span>Google review API access</span>
             </li>
             <li className="flex items-center">
               <CheckCircle2 className="w-5 h-5 text-primary mr-2" />
-              <span>Email support</span>
+              <span>New reviews fetched on request</span>
             </li>
             <li className="flex items-center">
               <CheckCircle2 className="w-5 h-5 text-primary mr-2" />
-              <span>Instant access to new tools</span>
+              <span>Tool email support</span>
             </li>
           </ul>
         </CardContent>
@@ -63,7 +63,9 @@ export default function PricingOptions() {
       <Card>
         <CardHeader>
           <CardTitle>Enterprise</CardTitle>
-          <CardDescription>Custom solutions for larger teams</CardDescription>
+          <CardDescription>
+            Custom solutions for (very) large teams
+          </CardDescription>
           <div className="mt-4">
             <span className="text-3xl font-bold">Custom</span>
             <span className="text-muted-foreground ml-2">pricing</span>
@@ -77,7 +79,7 @@ export default function PricingOptions() {
             </li>
             <li className="flex items-center">
               <CheckCircle2 className="w-5 h-5 text-primary mr-2" />
-              <span>30,000+ API requests</span>
+              <span>10,000+ API requests</span>
             </li>
             <li className="flex items-center">
               <CheckCircle2 className="w-5 h-5 text-primary mr-2" />
@@ -95,7 +97,9 @@ export default function PricingOptions() {
         </CardContent>
         <CardFooter>
           <Button variant="outline" className="w-full" asChild>
-            <Link href="mailto:david@redoxfordonline.com?subject=Enterprise Level ssg.tools&body=Hello, I'm interested in getting more information about an enterprise level agreement to ssg.tools">
+            <Link
+              href={`mailto:david@redoxfordonline.com?subject=${encodeURIComponent('Enterprise Level bragfeed.dev')}&body=${encodeURIComponent("Hello, I'm interested in getting more information about an enterprise level agreement to bragfeed.dev")}`}
+            >
               Contact Sales
             </Link>
           </Button>

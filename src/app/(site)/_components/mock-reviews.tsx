@@ -74,7 +74,7 @@ export function MockReviewsWindow() {
 
   return (
     <MockWindow
-      title="ssg.tools - Google Reviews API"
+      title="bragfeed.dev - Google Reviews API"
       theme="light"
       className="shadow-2xl max-w-5xl mx-auto"
     >
@@ -84,7 +84,7 @@ export function MockReviewsWindow() {
           <div className="bg-gray-900 rounded-lg p-4 font-mono text-sm">
             <span className="text-green-400">GET</span>{" "}
             <span className="text-secondary">
-              https://api.ssg.tools/reviews/
+              https://bragfeed.dev/reviews/
             </span>
             <span className="text-yellow-400">{"{business-id}"}</span>
           </div>
