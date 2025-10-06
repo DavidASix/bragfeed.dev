@@ -98,7 +98,7 @@ export default function PricingOptions() {
         <CardFooter>
           <Button variant="outline" className="w-full" asChild>
             <Link
-              href={`mailto:david@redoxfordonline.com?subject=${encodeURIComponent('Enterprise Level bragfeed.dev')}&body=${encodeURIComponent("Hello, I'm interested in getting more information about an enterprise level agreement to bragfeed.dev")}`}
+              href={`mailto:david@redoxfordonline.com?subject=${encodeURIComponent("Enterprise Level bragfeed.dev")}&body=${encodeURIComponent("Hello, I'm interested in getting more information about an enterprise level agreement to bragfeed.dev")}`}
             >
               Contact Sales
             </Link>
