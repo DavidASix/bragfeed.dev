@@ -2,13 +2,13 @@ import { z } from "zod";
 import type { APISchema } from "@/schema/types";
 
 const schema = {
-  url: "/api/google/fetch-business-stats",
+  url: "/api/google/update-minimum-score",
   request: z.object({
-    business_id: z.string().uuid(),
+    businessId: z.string().uuid(),
+    minimumScore: z.number().int().min(1).max(5),
   }),
   response: z.object({
-    review_count: z.number().nullable(),
-    review_score: z.number().nullable(),
+    success: z.boolean(),
   }),
 } satisfies APISchema;
 

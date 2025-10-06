@@ -1,0 +1,1 @@
+ALTER TYPE "public"."event_types" ADD VALUE 'api_response';

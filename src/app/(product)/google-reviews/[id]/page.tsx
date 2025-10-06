@@ -1,10 +1,12 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
+import { toast } from "sonner";
 
 import getBusinessDetailsSchema from "@/app/api/google/get-business-details/schema";
+import updateMinimumScoreSchema from "@/app/api/google/update-minimum-score/schema";
 import requests from "@/lib/requests";
 
 import { Button } from "@/components/ui/button";
@@ -18,12 +20,14 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LoadingSpinner } from "@/components/ui/custom/loading-spinner";
 import { ReviewCard } from "../_components/review-card";
+import { StarRatingSelector } from "../_components/star-rating-selector";
 import { FrameworkIntegrationTabs } from "./_components/framework-integration-tabs";
 
 export default function BusinessDetailsPage() {
   const params = useParams();
   const searchParams = useSearchParams();
   const businessId = params.id as string;
+  const queryClient = useQueryClient();
 
   // Determine default tab from query param
   const tabParam = searchParams.get("tab");
@@ -38,6 +42,24 @@ export default function BusinessDetailsPage() {
     enabled: !!businessId,
     meta: {
       errorMessage: "Failed to fetch business details",
+    },
+  });
+
+  const updateMinimumScoreMutation = useMutation({
+    mutationFn: async (minimumScore: number) => {
+      return requests.post(updateMinimumScoreSchema, {
+        businessId,
+        minimumScore,
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["businessDetails", businessId],
+      });
+      toast.success("Minimum review score updated");
+    },
+    onError: () => {
+      toast.error("Failed to update minimum review score");
     },
   });
 
@@ -65,7 +87,7 @@ export default function BusinessDetailsPage() {
             don&apos;t have access to it.
           </p>
           <Button asChild>
-            <Link href="/google-reviews">Back to Businesses</Link>
+            <Link href="/dashboard">Back to Dashboard</Link>
           </Button>
         </div>
       </section>
@@ -77,11 +99,11 @@ export default function BusinessDetailsPage() {
   return (
     <>
       {/* Header Section */}
-      <section className="section section-padding bg-gradient-to-b from-blue-50 to-white">
+      <section className="section section-padding bg-gradient-to-b from-primary/10 to-white">
         <div className="content">
           <div className="flex items-center gap-4 mb-6">
-            <Button variant="outline" asChild>
-              <Link href="/google-reviews">← Back</Link>
+            <Button variant="default" asChild>
+              <Link href="/dashboard">← Dashboard</Link>
             </Button>
           </div>
           <div className="text-center">
@@ -96,7 +118,7 @@ export default function BusinessDetailsPage() {
             {business.stats && (
               <div className="flex justify-center gap-8 mb-6">
                 <div className="text-center">
-                  <div className="text-3xl font-bold text-blue-600">
+                  <div className="text-3xl font-bold text-secondary">
                     {business.stats.review_count || 0}
                   </div>
                   <div className="text-sm text-gray-600">Total Reviews</div>
@@ -126,6 +148,25 @@ export default function BusinessDetailsPage() {
               </TabsList>
 
               <TabsContent value="details" className="space-y-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Review Filtering</CardTitle>
+                    <CardDescription>
+                      Set the minimum star rating for reviews to be returned by
+                      the API
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <StarRatingSelector
+                      value={business.minimum_score ?? 1}
+                      onChange={(value) =>
+                        updateMinimumScoreMutation.mutate(value)
+                      }
+                      disabled={updateMinimumScoreMutation.isPending}
+                    />
+                  </CardContent>
+                </Card>
+
                 <div className="flex justify-between items-center mb-8">
                   <h2 className="text-2xl font-bold text-gray-900">
                     Recent Reviews ({reviews.length})
@@ -156,6 +197,9 @@ export default function BusinessDetailsPage() {
                           review.datetime && !isNaN(Date.parse(review.datetime))
                             ? new Date(review.datetime)
                             : null
+                        }
+                        dimmed={
+                          (review.rating || 0) < (business.minimum_score ?? 1)
                         }
                       />
                     ))}

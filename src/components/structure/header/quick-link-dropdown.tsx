@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { ChevronDown } from "lucide-react";
 import { LoadingSpinner } from "@/components/ui/custom/loading-spinner";
 import Link from "next/link";
+import Image from "next/image";
 import { applications } from "./quick-links";
 
 import {
@@ -15,10 +16,26 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-const HeaderText = () => {
+const HeaderLogoImage = () => {
   return (
-    <Link href="/" className="font-bold text-lg">
-      Web Dev Tools
+    <div className="flex items-center justify-center">
+      <Image
+        src="/logo.webp"
+        alt="Web Dev Tools"
+        width={40}
+        height={40}
+        className="h-8 w-auto"
+      />
+
+      <span className="ml-2 mb-1 font-bold text-xl text-primary">Bragfeed</span>
+    </div>
+  );
+};
+
+const HeaderLogo = () => {
+  return (
+    <Link href="/">
+      <HeaderLogoImage />
     </Link>
   );
 };
@@ -27,13 +44,13 @@ export default function QuickLinkDropdown({ noAuth }: { noAuth?: boolean }) {
   const session = useSession();
 
   if (session.status === "unauthenticated" || noAuth) {
-    return <HeaderText />;
+    return <HeaderLogo />;
   }
 
   if (session.status === "loading") {
     return (
       <div className="flex items-center gap-2">
-        <HeaderText />
+        <HeaderLogo />
         <LoadingSpinner />
       </div>
     );
@@ -42,8 +59,8 @@ export default function QuickLinkDropdown({ noAuth }: { noAuth?: boolean }) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="flex items-center gap-2">
-          <span className="font-bold">Web Dev Tools</span>
+        <Button variant="ghost" className="flex items-center gap-2 px-2">
+          <HeaderLogoImage />
           <ChevronDown className="h-4 w-4" />
         </Button>
       </DropdownMenuTrigger>
