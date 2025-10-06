@@ -148,17 +148,6 @@ export default function SubscriptionPage() {
                     <span className="text-primary font-bold">✓</span>
                   </div>
                   <div>
-                    <h3 className="font-semibold mb-1">Real-time Updates</h3>
-                    <p className="text-sm text-muted-foreground">
-                      Reviews sync automatically with your Google Business
-                    </p>
-                  </div>
-                </div>
-                <div className="flex gap-3">
-                  <div className="flex-shrink-0 w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
-                    <span className="text-primary font-bold">✓</span>
-                  </div>
-                  <div>
                     <h3 className="font-semibold mb-1">Priority Support</h3>
                     <p className="text-sm text-muted-foreground">
                       Get help when you need it from our support team

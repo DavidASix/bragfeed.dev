@@ -220,7 +220,6 @@ export function SubscriptionState({
                   <ul className="text-sm space-y-1 ml-4 list-disc">
                     <li>Unlimited Google Reviews integration</li>
                     <li>Full API access for your projects</li>
-                    <li>Real-time review synchronization</li>
                     <li>Priority customer support</li>
                   </ul>
                 </AlertDescription>
@@ -233,7 +232,7 @@ export function SubscriptionState({
                   onClick={onClickCheckout}
                   className="w-full md:w-auto"
                 >
-                  Subscribe Now - $19/month
+                  Subscribe Now - $8.99/month
                 </Button>
               </div>
             </div>
