@@ -5,7 +5,8 @@ import { NextRouteContext, RequestHandler } from "@/middleware/types";
 import { withAuth } from "@/middleware/withAuth";
 import { withBody } from "@/middleware/withBody";
 import { db } from "@/schema/db";
-import { business_stats, businesses, reviews } from "@/schema/schema";
+import { businesses, reviews } from "@/schema/schema";
+import { selectBusinessStats } from "@/lib/server/google/select";
 
 import schema from "./schema";
 
@@ -14,7 +15,7 @@ export const POST: RequestHandler<NextRouteContext> = withAuth(
     const { user_id, body } = context;
     const businessId = body.businessId;
 
-    // Get business details with stats
+    // Get business details
     const businessData = await db
       .select({
         id: businesses.id,
@@ -22,14 +23,8 @@ export const POST: RequestHandler<NextRouteContext> = withAuth(
         place_id: businesses.place_id,
         address: businesses.address,
         minimum_score: businesses.minimum_score,
-        stats: {
-          review_count: business_stats.review_count,
-          review_score: business_stats.review_score,
-        },
-        stats_created_at: business_stats.created_at,
       })
       .from(businesses)
-      .leftJoin(business_stats, eq(businesses.id, business_stats.business_id))
       .where(
         and(eq(businesses.id, businessId), eq(businesses.user_id, user_id)),
       )
@@ -41,6 +36,9 @@ export const POST: RequestHandler<NextRouteContext> = withAuth(
         { status: 404 },
       );
     }
+
+    // Get business stats separately
+    const stats = await selectBusinessStats(businessId);
 
     // Get count of available reviews
     const reviewCount = await db
@@ -56,15 +54,8 @@ export const POST: RequestHandler<NextRouteContext> = withAuth(
       .orderBy(desc(reviews.created_at))
       .limit(1);
 
-    // Determine last refreshed date (latest between stats and reviews)
-    const statsDate = businessData[0].stats_created_at;
-    const reviewDate = latestReview?.created_at;
-    const lastRefreshed =
-      statsDate && reviewDate
-        ? statsDate > reviewDate
-          ? statsDate
-          : reviewDate
-        : (statsDate ?? reviewDate ?? null);
+    // Determine last refreshed date (use latest review as proxy)
+    const lastRefreshed = latestReview?.created_at ?? null;
 
     // Get reviews for this business
     const businessReviews = await db
@@ -82,7 +73,13 @@ export const POST: RequestHandler<NextRouteContext> = withAuth(
       .orderBy(desc(reviews.datetime));
 
     const response = schema.response.parse({
-      business: businessData[0],
+      business: {
+        ...businessData[0],
+        stats: {
+          review_count: stats.review_count,
+          review_score: stats.review_score,
+        },
+      },
       reviews: businessReviews.map((review) => ({
         ...review,
         datetime: review.datetime ? review.datetime.toISOString() : null,
