@@ -2,11 +2,13 @@ import { z } from "zod";
 import type { APISchema } from "@/schema/types";
 
 const schema = {
-  url: "/api/google/update-reviews",
+  url: "/api/google/refresh-business-details",
   request: z.object({
-    business_id: z.string().uuid(),
+    businessId: z.string().uuid(),
   }),
-  response: z.object({}),
+  response: z.object({
+    success: z.boolean(),
+  }),
 } satisfies APISchema;
 
 export default schema;

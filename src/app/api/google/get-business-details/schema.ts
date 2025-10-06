@@ -1,5 +1,5 @@
 import { z } from "zod";
-import type { APISchema } from "@/schema/types";
+import { type APISchema, stringDate } from "@/schema/types";
 
 const schema = {
   url: "/api/google/get-business-details",
@@ -33,6 +33,8 @@ const schema = {
         comments: z.string().nullable(),
       }),
     ),
+    available_reviews: z.number().nullable(),
+    last_refreshed: stringDate.nullable(),
   }),
 } satisfies APISchema;
 

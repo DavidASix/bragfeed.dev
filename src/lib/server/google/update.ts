@@ -52,9 +52,13 @@ export async function updateBusinessStats(business_id: string): Promise<{
  * This function will only insert new reviews that do not already exist in the database.
  *
  * @param { business_id } - The database business UUID to update.
+ * @param { reviewsToFetch } - The number of recent reviews to fetch from Google (default is 10).
  * @returns { Array } - An array of inserted reviews.
  */
-export async function updateBusinessReviews(business_id: string) {
+export async function updateBusinessReviews(
+  business_id: string,
+  reviewsToFetch = 10,
+) {
   const business = await db
     .select()
     .from(businesses)
@@ -68,7 +72,7 @@ export async function updateBusinessReviews(business_id: string) {
 
   // Get the google business class
   const googleReviews = new GoogleReviews(placeId);
-  const recentReviews = await googleReviews.getRecent();
+  const recentReviews = await googleReviews.getRecent(reviewsToFetch);
 
   // Get the existing reviews for the business which appear in the recentReviews array
   const existingReviews = await db
