@@ -14,7 +14,7 @@ const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!;
  * Custom error class for expected errors that should still return 200 to Stripe.
  *
  * Stripe webhooks require a 200 status code to acknowledge successful receipt of the event.
- * If we return 500 too much, Stripe will eventually disable the webhook..
+ * If we return 500 too much, Stripe will eventually disable the webhook.
  * This error class represents situations where:
  * - We successfully received and processed the webhook
  * - We encountered an expected/handled error condition (e.g., missing customer ID in DB)
