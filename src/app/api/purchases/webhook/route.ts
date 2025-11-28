@@ -245,7 +245,7 @@ export async function POST(request: NextRequest) {
         console.error(`Error handling event ${event.type}:`, error);
         return NextResponse.json(
           { error: `Failed to handle event ${event.type}` },
-          { status: 500 },
+          { status: 202 },
         );
       }
     }
@@ -255,7 +255,7 @@ export async function POST(request: NextRequest) {
     console.error("Webhook error:", error);
     return NextResponse.json(
       { error: "Webhook handler failed" },
-      { status: 400 },
+      { status: 202 },
     );
   }
 }
