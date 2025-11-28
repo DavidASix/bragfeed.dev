@@ -11,6 +11,37 @@ import { users, subscription_payments } from "@/schema/schema";
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!;
 
 /**
+ * Custom error class for expected errors that should still return 200 to Stripe.
+ *
+ * Stripe webhooks require a 200 status code to acknowledge successful receipt of the event.
+ * If we return 500 too much, Stripe will eventually disable the webhook..
+ * This error class represents situations where:
+ * - We successfully received and processed the webhook
+ * - We encountered an expected/handled error condition (e.g., missing customer ID in DB)
+ * - We don't want Stripe to retry the webhook
+ *
+ * Only throw regular errors (which return 500) for truly unexpected failures that
+ * might be resolved on retry (e.g., database connection issues, temporary failures).
+ *
+ * @example
+ * // Customer not found - expected condition, no need to retry
+ * if (!userId) {
+ *   throw new HandledError(`No user found with Stripe customer ID: ${customerId}`);
+ * }
+ *
+ * // Database connection failed - unexpected, should retry
+ * if (dbConnectionFailed) {
+ *   throw new Error("Database connection failed");
+ * }
+ */
+class HandledError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "HandledError";
+  }
+}
+
+/**
  * Handles checkout.session.completed events
  *
  * This event is triggered when a user successfully completes a checkout session
@@ -31,7 +62,7 @@ const handleCheckoutSessionCompleted: Handler = async ({ type, data }) => {
   if (!appUserId) {
     // Orphaned record - we have a successful checkout but can't identify the user
     // TODO: Add notification emails to alert about orphaned checkout sessions
-    throw new Error(
+    throw new HandledError(
       "Checkout session completed without app_user_id metadata, cannot link to user",
     );
   }
@@ -43,7 +74,7 @@ const handleCheckoutSessionCompleted: Handler = async ({ type, data }) => {
 
   // Validate that customer is a string (it could be a Customer object or null)
   if (!customerId) {
-    throw new Error(
+    throw new HandledError(
       "Checkout session completed without a valid Stripe customer ID, cannot link to user",
     );
   }
@@ -55,7 +86,10 @@ const handleCheckoutSessionCompleted: Handler = async ({ type, data }) => {
       .set({ stripe_customer_id: customerId, has_active_subscription: true })
       .where(eq(users.id, appUserId));
   } catch (error) {
-    throw error;
+    console.error("Error updating user with Stripe customer ID:", error);
+    throw new HandledError(
+      "Failed to update user with Stripe customer ID after checkout completion",
+    );
   }
 };
 
@@ -67,16 +101,18 @@ const handleCheckoutSessionCompleted: Handler = async ({ type, data }) => {
  */
 const handleInvoicePaymentSucceeded: Handler = async ({ type, data }) => {
   if (type !== "invoice.payment_succeeded") {
-    throw new Error(`Expected invoice.payment_succeeded, got ${type}`);
+    throw new HandledError(`Expected invoice.payment_succeeded, got ${type}`);
   }
 
   const invoice = data.object;
 
   if (!invoice?.customer) {
     // Invoice does not have a customer ID, we cannot look up the associated user
-    throw new Error("Invoice is missing customer ID, cannot process payment");
+    throw new HandledError(
+      "Invoice is missing customer ID, cannot process payment",
+    );
   } else if (!invoice.id) {
-    throw new Error(
+    throw new HandledError(
       "Invoice is missing ID and is thus a future invoice, payment not processed",
     );
   }
@@ -106,13 +142,15 @@ const handleInvoicePaymentSucceeded: Handler = async ({ type, data }) => {
       }
     }
     if (!userId) {
-      throw new Error(`No user found with Stripe customer ID: ${customerId}`);
+      throw new HandledError(
+        `No user found with Stripe customer ID: ${customerId}`,
+      );
     }
 
     // Extract subscription period from the first line item
     const [lineItem] = invoice.lines.data;
     if (!lineItem?.period) {
-      throw new Error(
+      throw new HandledError(
         "Invoice line item is missing subscription period information",
       );
     }
@@ -138,7 +176,8 @@ const handleInvoicePaymentSucceeded: Handler = async ({ type, data }) => {
       .set({ has_active_subscription: true })
       .where(eq(users.id, userId));
   } catch (error) {
-    throw error;
+    console.error("Error processing invoice payment succeeded:", error);
+    throw new HandledError("Failed to process invoice payment succeeded event");
   }
 };
 
@@ -199,12 +238,16 @@ export async function POST(request: NextRequest) {
     try {
       await handler(event);
     } catch (error) {
-      console.error(`Error handling event ${event.type}:`, error);
-      // console.log({event})
-      return NextResponse.json(
-        { error: `Failed to handle event ${event.type}` },
-        { status: 500 },
-      );
+      if (error instanceof HandledError) {
+        // Expected error - log it but return 200 to prevent Stripe Disabling the webhook
+        console.warn(`Handled error for event ${event.type}:`, error.message);
+      } else {
+        console.error(`Error handling event ${event.type}:`, error);
+        return NextResponse.json(
+          { error: `Failed to handle event ${event.type}` },
+          { status: 500 },
+        );
+      }
     }
 
     return NextResponse.json({ received: true });
@@ -212,7 +255,7 @@ export async function POST(request: NextRequest) {
     console.error("Webhook error:", error);
     return NextResponse.json(
       { error: "Webhook handler failed" },
-      { status: 500 },
+      { status: 400 },
     );
   }
 }
