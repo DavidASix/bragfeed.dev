@@ -192,9 +192,10 @@ export async function POST(request: NextRequest) {
     if (!handler) {
       console.warn("No handler registered for event type:", event.type);
       return NextResponse.json({ received: true });
-    } else {
-      console.log(`Handling event: ${event.type}`);
     }
+
+    console.log(`Handling event: ${event.type}`);
+
     try {
       await handler(event);
     } catch (error) {
