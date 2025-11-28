@@ -239,7 +239,7 @@ export async function POST(request: NextRequest) {
       await handler(event);
     } catch (error) {
       if (error instanceof HandledError) {
-        // Expected error - log it but return 200 to prevent Stripe Disabling the webhook
+        // Expected error - log it but return 200 to prevent Stripe disabling the webhook
         console.warn(`Handled error for event ${event.type}:`, error.message);
       } else {
         console.error(`Error handling event ${event.type}:`, error);
