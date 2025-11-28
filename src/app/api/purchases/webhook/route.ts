@@ -240,12 +240,14 @@ export async function POST(request: NextRequest) {
     } catch (error) {
       if (error instanceof HandledError) {
         // Expected error - log it but return 200 to prevent Stripe disabling the webhook
-        console.warn(`Handled error for event ${event.type}:`, error.message);
+        // TODO: These actually SHOULD return a 500 so that Stripe retries, BUT I don't currently have a second stripe account set up
+        // which means this endpoint is receiving events from multiple products, which should fail silently.
+        console.error(`Handled error for event ${event.type}:`, error.message);
       } else {
         console.error(`Error handling event ${event.type}:`, error);
         return NextResponse.json(
           { error: `Failed to handle event ${event.type}` },
-          { status: 202 },
+          { status: 500 },
         );
       }
     }
@@ -255,7 +257,7 @@ export async function POST(request: NextRequest) {
     console.error("Webhook error:", error);
     return NextResponse.json(
       { error: "Webhook handler failed" },
-      { status: 202 },
+      { status: 500 },
     );
   }
 }
