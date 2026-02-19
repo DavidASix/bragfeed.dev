@@ -60,12 +60,15 @@ export const POST: RequestHandler<NextRouteContext> = withApiKey(
               "update_stats",
               context.user_id,
             );
+            console.log("Last update reviews:", lastUpdateReviews);
+            console.log("Last update stats:", lastUpdateStats);
 
             // If data is out of date, fetch and update
             if (
               !lastUpdateReviews?.timestamp ||
               lastUpdateReviews.timestamp < oneDayAgo
             ) {
+              console.log("Updating reviews");
               await updateBusinessReviews(business_id);
             }
 
@@ -73,6 +76,7 @@ export const POST: RequestHandler<NextRouteContext> = withApiKey(
               !lastUpdateStats?.timestamp ||
               lastUpdateStats.timestamp < oneDayAgo
             ) {
+              console.log("Updating stats");
               await updateBusinessStats(business_id);
             }
 
