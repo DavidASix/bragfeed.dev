@@ -60,8 +60,6 @@ export const POST: RequestHandler<NextRouteContext> = withApiKey(
               "update_stats",
               context.user_id,
             );
-            console.log("Last update reviews:", lastUpdateReviews);
-            console.log("Last update stats:", lastUpdateStats);
 
             // If data is out of date, fetch and update
             if (

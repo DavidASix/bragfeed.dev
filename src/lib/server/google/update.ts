@@ -2,6 +2,7 @@ import { reviews, businesses, business_stats } from "@/schema/schema";
 import { db } from "@/schema/db";
 import { and, eq, inArray } from "drizzle-orm";
 import GoogleReviews from "@/google-reviews";
+import { recordEvent } from "../events";
 
 /**
  * Add the current business stats to the database for the given business ID, then return the inserted stats.
@@ -43,6 +44,8 @@ export async function updateBusinessStats(business_id: string): Promise<{
       review_score: business_stats.review_score,
     })
     .then((rows) => rows[0]);
+
+  recordEvent("update_stats", business.user_id, { business_id });
 
   return insertedStats;
 }
@@ -106,6 +109,7 @@ export async function updateBusinessReviews(
     );
 
   console.log(`Inserting ${insertableReviews.length} new reviews`);
+  recordEvent("update_reviews", business.user_id, { business_id });
   if (insertableReviews.length > 0) {
     await db.insert(reviews).values(insertableReviews);
   }
