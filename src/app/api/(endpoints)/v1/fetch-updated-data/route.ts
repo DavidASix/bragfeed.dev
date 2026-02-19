@@ -68,16 +68,24 @@ export const POST: RequestHandler<NextRouteContext> = withApiKey(
               !lastUpdateReviews?.timestamp ||
               lastUpdateReviews.timestamp < oneDayAgo
             ) {
-              console.log("Updating reviews");
-              await updateBusinessReviews(business_id);
+              try {
+                console.log("Attempting to update reviews");
+                await updateBusinessReviews(business_id);
+              } catch (err) {
+                console.error("Failed to update reviews", err);
+              }
             }
 
             if (
               !lastUpdateStats?.timestamp ||
               lastUpdateStats.timestamp < oneDayAgo
             ) {
-              console.log("Updating stats");
-              await updateBusinessStats(business_id);
+              try {
+                console.log("Attempting to update stats");
+                await updateBusinessStats(business_id);
+              } catch (err) {
+                console.error("Failed to update stats", err);
+              }
             }
 
             await recordEvent("api_response", context.user_id, {
