@@ -34,13 +34,13 @@ export const POST: RequestHandler<NextRouteContext> = withApiKey(
     withEventRateLimit(
       {
         eventType: "fetch_updated_data_1d",
-        maxRequests: 100,
+        maxRequests: 500,
         windowMs: 24 * 60 * 60 * 1000,
       }, // 24 hours
       withEventRateLimit(
         {
           eventType: "fetch_updated_data_5m",
-          maxRequests: 10,
+          maxRequests: 25,
           windowMs: 5 * 60 * 1000,
         }, // 5 minutes
         withBody(schema, async (_, context) => {
