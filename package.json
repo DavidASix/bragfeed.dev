@@ -2,6 +2,7 @@
   "name": "bragfeed.dev",
   "version": "1.0.0",
   "private": true,
+  "packageManager": "pnpm@10.26.1",
   "engines": {
     "node": "20"
   },
@@ -22,7 +23,7 @@
     "db:migrate": "drizzle-kit migrate",
     "db:clear": "tsx src/scripts/clear-database.ts",
     "db:seed": "tsx src/scripts/seed/seed.ts",
-    "db:fresh": "npm run db:clear && npm run db:migrate && npm run db:seed",
+    "db:fresh": "pnpm db:clear && pnpm db:migrate && pnpm db:seed",
     "db:production:migrate": "tsx src/scripts/migrate-production.ts"
   },
   "dependencies": {
