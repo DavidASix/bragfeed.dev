@@ -13,7 +13,7 @@ services:
   app:
     build:
       context: .
-    command: npm run dev
+    command: pnpm dev
     ports:
       - "3000:3000"
     user: "${UID:-1000}:${GID:-1000}"
