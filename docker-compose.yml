@@ -9,7 +9,7 @@ services:
       - POSTGRES_DB=web-dev-tools
     volumes:
       - db_data:/var/lib/postgresql/data
-    restart: always
+    restart: never
   app:
     build:
       context: .
