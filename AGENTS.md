@@ -5,26 +5,26 @@ See @README.md for project overview and @package.json
 ## Development Commands
 
 ### Building and Testing
-- `docker compose up` - Running this starts the server and runs npm run dev
-- `npm run dev` - Start development server with Turbopack
-- `npm run start` - Start production server
-- `npm run build` - Build production version
+- `docker compose up` - Running this starts the server and runs pnpm dev
+- `pnpm dev` - Start development server with Turbopack
+- `pnpm start` - Start production server
+- `pnpm build` - Build production version
 
 ### Code Quality
-- `npm run check` - Run all checks (types, lint, format, tests)
-- `npm run check:types` - TypeScript type checking
-- `npm run check:lint` - ESLint checking
-- `npm run check:format` - Prettier format checking
-- `npm run test` - Run all tests once
-- `npm run test:watch` - Run tests in watch mode
-- `npm run format` - Format code with Prettier
+- `pnpm check` - Run all checks (types, lint, format, tests)
+- `pnpm check:types` - TypeScript type checking
+- `pnpm check:lint` - ESLint checking
+- `pnpm check:format` - Prettier format checking
+- `pnpm test` - Run all tests once
+- `pnpm test:watch` - Run tests in watch mode
+- `pnpm format` - Format code with Prettier
 
 ### Database Operations
-- `npm run db:generate` - Generate Drizzle migrations
-- `npm run db:migrate` - Run database migrations
-- `npm run db:clear` - Clear all database data
-- `npm run db:fresh` - Clear database and run fresh migrations
-- `npm run db:production:migrate` - Run production migrations. AI Models should NEVER DO THIS.
+- `pnpm db:generate` - Generate Drizzle migrations
+- `pnpm db:migrate` - Run database migrations
+- `pnpm db:clear` - Clear all database data
+- `pnpm db:fresh` - Clear database and run fresh migrations
+- `pnpm db:production:migrate` - Run production migrations. AI Models should NEVER DO THIS.
 
 ## Architecture Overview
 
@@ -56,8 +56,8 @@ See @README.md for project overview and @package.json
 
 ### Database Schema
 Uses Drizzle ORM with PostgreSQL. A full table structure can be found in `src/schema/schema.ts`
-- Generate migrations with `npm run db:generate`
-- If you need a blank or custom migration, you can generate it with the command `npx drizzle-kit generate --custom --name=some-name`
+- Generate migrations with `pnpm db:generate`
+- If you need a blank or custom migration, you can generate it with the command `pnpm exec drizzle-kit generate --custom --name=some-name`
 
 ### Authentication & Security
 - **Session Auth**: NextAuth.js with magic link email authentication
@@ -169,7 +169,7 @@ When writing site contents, respect eslintreact/no-unescaped-entities. This is a
 ## Tools
 
 ### ShadCN
-If you are creating a new ShadCN component you MUST install it with an `npx` command (like `npx shadcn@latest add badge`). You should NEVER write a ShadCN component from scratch, it should ALWAYS be installed.
+If you are creating a new ShadCN component you MUST install it with a `pnpm dlx` command (like `pnpm dlx shadcn@latest add badge`). You should NEVER write a ShadCN component from scratch, it should ALWAYS be installed.
 
 ### Git
 

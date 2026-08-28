@@ -18,7 +18,7 @@ All deployments to `main` must first be opened as a pull request targeting the `
 - If your changes include a Drizzle migration flag it as such as, the production database migration action will need to be run during the merge process:
 
 ```bash
-npm run db:production:migrate
+pnpm db:production:migrate
 ```
 
 
