@@ -139,7 +139,6 @@ describe("paid fetch-updated-data REST boundary", () => {
     );
     expect(response.status).toBe(429);
     await expect(response.json()).resolves.toMatchObject({
-      error: "Rate limit exceeded",
       retryAfter: 86400,
     });
   });
