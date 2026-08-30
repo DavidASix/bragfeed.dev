@@ -1,5 +1,5 @@
 "use client";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   CheckCircle,
   ClipboardCopyIcon,
@@ -12,10 +12,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { toast } from "sonner";
 
-import getSubscriptionDetailsSchema from "@/app/api/purchases/get-subscription-details/schema";
-import createApiKeySchema from "@/app/api/security/create-api-key/schema";
-import getLatestActiveKeySchema from "@/app/api/security/get-latest-active-key/schema";
-import requests from "@/lib/requests";
+import { useTRPC } from "@/lib/trpc/client";
 
 import {
   AlertDialog,
@@ -87,45 +84,44 @@ export default function CreateNewApiKey({
   className = "",
   onKeyGenerated,
 }: CreateNewApiKeyProps) {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
   const [showApiKey, setShowApiKey] = useState(false);
 
-  const subscriptionQuery = useQuery({
-    queryKey: ["activeSubscription"],
-    queryFn: async () => {
-      return await requests.get(getSubscriptionDetailsSchema);
-    },
-    meta: {
-      errorMessage: "Failed to check subscription status",
-    },
-  });
+  const subscriptionQuery = useQuery(
+    trpc.purchases.getSubscriptionDetails.queryOptions(undefined, {
+      meta: {
+        errorMessage: "Failed to check subscription status",
+      },
+    }),
+  );
 
-  const apiKeyQuery = useQuery({
-    queryKey: ["apiKey"],
-    queryFn: async () => {
-      const { apiKey } = await requests.get(getLatestActiveKeySchema);
-      return apiKey;
-    },
-    meta: {
-      errorMessage: "Failed to fetch API key",
-    },
-  });
+  const apiKeyQuery = useQuery(
+    trpc.security.getLatestActiveKey.queryOptions(undefined, {
+      select: (data) => data.apiKey,
+      meta: {
+        errorMessage: "Failed to fetch API key",
+      },
+    }),
+  );
 
-  const generateKeyMutation = useMutation({
-    mutationFn: async () => {
-      await requests.get(createApiKeySchema);
-    },
-    onSuccess: async () => {
-      toast.success("API key generated successfully");
-      const refetchResult = await apiKeyQuery.refetch();
-      if (onKeyGenerated) {
-        onKeyGenerated(refetchResult.data ?? "");
-      }
-    },
-    onError: (error) => {
-      console.log("Error generating API key:", error);
-      toast.error("Error generating API key");
-    },
-  });
+  const generateKeyMutation = useMutation(
+    trpc.security.createApiKey.mutationOptions({
+      onSuccess: async ({ key }) => {
+        toast.success("API key generated successfully");
+        await queryClient.invalidateQueries(
+          trpc.security.getLatestActiveKey.queryFilter(),
+        );
+        if (onKeyGenerated) {
+          onKeyGenerated(key);
+        }
+      },
+      onError: (error) => {
+        console.log("Error generating API key:", error);
+        toast.error("Error generating API key");
+      },
+    }),
+  );
 
   const currentApiKey = apiKeyQuery.data;
 

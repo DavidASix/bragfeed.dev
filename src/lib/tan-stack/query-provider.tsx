@@ -8,6 +8,11 @@ import {
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import React from "react";
 import { toast } from "sonner";
+import { createTRPCClient, httpBatchLink } from "@trpc/client";
+import superjson from "superjson";
+
+import { TRPCProvider } from "@/lib/trpc/client";
+import type { AppRouter } from "@/server/trpc/routers";
 
 function createQueryClient() {
   return new QueryClient({
@@ -24,11 +29,23 @@ function createQueryClient() {
 
 export function QueryProvider({ children }: { children: React.ReactNode }) {
   const [queryClient] = React.useState(createQueryClient);
+  const [trpcClient] = React.useState(() =>
+    createTRPCClient<AppRouter>({
+      links: [
+        httpBatchLink({
+          transformer: superjson,
+          url: "/api/trpc",
+        }),
+      ],
+    }),
+  );
 
   return (
     <QueryClientProvider client={queryClient}>
-      <ReactQueryDevtools />
-      {children}
+      <TRPCProvider trpcClient={trpcClient} queryClient={queryClient}>
+        <ReactQueryDevtools />
+        {children}
+      </TRPCProvider>
     </QueryClientProvider>
   );
 }

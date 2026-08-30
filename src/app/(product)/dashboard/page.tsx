@@ -2,10 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
-import requests from "@/lib/requests";
-import dashboardStatsSchema from "@/app/api/dashboard/api-stats/schema";
-import getUserBusinessesSchema from "@/app/api/dashboard/get-user-businesses/schema";
-import getSubscriptionDetailsSchema from "@/app/api/purchases/get-subscription-details/schema";
+import { useTRPC } from "@/lib/trpc/client";
 
 import { SpotlightSection } from "./_components/spotlight-section";
 import { BusinessesGrid } from "./_components/businesses-grid";
@@ -13,35 +10,30 @@ import { ApiUsageSection } from "./_components/api-usage-section";
 import CreateNewApiKey from "@/components/common/api-keys/create-new-api-key";
 
 export default function DashboardPage() {
-  const { data: statsData, isLoading: statsLoading } = useQuery({
-    queryKey: ["dashboardStats"],
-    queryFn: async () => {
-      return await requests.get(dashboardStatsSchema);
-    },
-    meta: {
-      errorMessage: "Failed to load dashboard statistics",
-    },
-  });
+  const trpc = useTRPC();
+  const { data: statsData, isLoading: statsLoading } = useQuery(
+    trpc.dashboard.getStats.queryOptions(undefined, {
+      meta: {
+        errorMessage: "Failed to load dashboard statistics",
+      },
+    }),
+  );
 
-  const { data: businessesData, isLoading: businessesLoading } = useQuery({
-    queryKey: ["dashboardBusinesses"],
-    queryFn: async () => {
-      return await requests.get(getUserBusinessesSchema);
-    },
-    meta: {
-      errorMessage: "Failed to load businesses",
-    },
-  });
+  const { data: businessesData, isLoading: businessesLoading } = useQuery(
+    trpc.dashboard.getBusinesses.queryOptions(undefined, {
+      meta: {
+        errorMessage: "Failed to load businesses",
+      },
+    }),
+  );
 
-  const { data: subscriptionData, isLoading: subscriptionLoading } = useQuery({
-    queryKey: ["subscription-status"],
-    queryFn: async () => {
-      return await requests.get(getSubscriptionDetailsSchema);
-    },
-    meta: {
-      errorMessage: "Failed to load subscription status",
-    },
-  });
+  const { data: subscriptionData, isLoading: subscriptionLoading } = useQuery(
+    trpc.purchases.getSubscriptionDetails.queryOptions(undefined, {
+      meta: {
+        errorMessage: "Failed to load subscription status",
+      },
+    }),
+  );
 
   const isLoading = statsLoading || businessesLoading || subscriptionLoading;
 

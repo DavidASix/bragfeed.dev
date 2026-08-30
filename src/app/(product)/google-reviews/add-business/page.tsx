@@ -1,13 +1,10 @@
 "use client";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { skipToken, useMutation, useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import Link from "next/link";
 import { toast } from "sonner";
 
-import insertNewBusinessSchema from "@/app/api/google/insert-new-business/schema";
-import getLatestActiveKeySchema from "@/app/api/security/get-latest-active-key/schema";
-import checkBusinessExistsSchema from "@/app/api/google/check-business-exists/schema";
-import requests from "@/lib/requests";
+import { useTRPC } from "@/lib/trpc/client";
 
 import CreateNewApiKey from "@/components/common/api-keys/create-new-api-key";
 import { Button } from "@/components/ui/button";
@@ -49,6 +46,7 @@ const STEPS = [
 ];
 
 export default function AddBusinessPage() {
+  const trpc = useTRPC();
   const [placeId, setPlaceId] = useState<string | null>(null);
   const [placeName, setPlaceName] = useState<string | null>(null);
   const [placeAddress, setPlaceAddress] = useState<string | null>(null);
@@ -59,51 +57,43 @@ export default function AddBusinessPage() {
   const [currentStep, setCurrentStep] = useState(1);
   const [businessId, setBusinessId] = useState<string | null>(null);
 
-  const apiKeyQuery = useQuery({
-    queryKey: ["apiKey"],
-    queryFn: async () => {
-      const { apiKey } = await requests.get(getLatestActiveKeySchema);
-      return apiKey;
-    },
-    meta: {
-      errorMessage: "Failed to fetch API key",
-    },
-  });
+  const apiKeyQuery = useQuery(
+    trpc.security.getLatestActiveKey.queryOptions(undefined, {
+      select: (data) => data.apiKey,
+      meta: {
+        errorMessage: "Failed to fetch API key",
+      },
+    }),
+  );
 
-  const checkBusinessQuery = useQuery({
-    queryKey: ["checkBusiness", placeId],
-    queryFn: async () => {
-      if (!placeId) return { business_id: null };
-      return requests.post(checkBusinessExistsSchema, { place_id: placeId });
-    },
-    enabled: !!placeId,
-    meta: {
-      errorMessage: "Failed to check business",
-    },
-  });
+  const checkBusinessQuery = useQuery(
+    trpc.google.checkBusinessExists.queryOptions(
+      placeId ? { placeId } : skipToken,
+      {
+        meta: {
+          errorMessage: "Failed to check business",
+        },
+      },
+    ),
+  );
 
-  const fetchReviewsMutation = useMutation({
-    mutationFn: async (data: {
-      place_id: string;
-      name?: string;
-      formatted_address?: string;
-    }) => {
-      return requests.post(insertNewBusinessSchema, data);
-    },
-    onSuccess: (data) => {
-      setReviews(data.reviews);
-      setBusinessStats(data.stats);
-      setBusinessId(data.business_id);
-      setCurrentStep(apiKeyQuery.data ? 4 : 3);
-    },
-    onError: (error) => {
-      console.error("Error fetching reviews:", error);
-      toast.error("Failed to fetch reviews. Please try again.");
-    },
-    meta: {
-      errorMessage: "Failed to fetch reviews",
-    },
-  });
+  const fetchReviewsMutation = useMutation(
+    trpc.google.addBusiness.mutationOptions({
+      onSuccess: (data) => {
+        setReviews(data.reviews);
+        setBusinessStats(data.stats);
+        setBusinessId(data.businessId);
+        setCurrentStep(apiKeyQuery.data ? 4 : 3);
+      },
+      onError: (error) => {
+        console.error("Error fetching reviews:", error);
+        toast.error("Failed to fetch reviews. Please try again.");
+      },
+      meta: {
+        errorMessage: "Failed to fetch reviews",
+      },
+    }),
+  );
 
   const onPlaceSelect = (
     selectedPlaceId: string,
@@ -119,15 +109,15 @@ export default function AddBusinessPage() {
     if (!placeId) return;
 
     fetchReviewsMutation.mutate({
-      place_id: placeId,
+      placeId,
       name: placeName || undefined,
-      formatted_address: placeAddress || undefined,
+      formattedAddress: placeAddress || undefined,
     });
   };
 
   const getStepStatus = (step: number): StepStatus => {
     // If business already exists, only step 1 can be active/completed
-    const businessExists = checkBusinessQuery.data?.business_id;
+    const businessExists = checkBusinessQuery.data?.businessId;
     const businessExistFetching = checkBusinessQuery.isFetching;
     if (step > 1) {
       if (businessExists || businessExistFetching) {
@@ -144,7 +134,7 @@ export default function AddBusinessPage() {
     if (step === currentStep) return "active";
     return "inactive";
   };
-  const existingBusinessId = checkBusinessQuery.data?.business_id;
+  const existingBusinessId = checkBusinessQuery.data?.businessId;
 
   return (
     <>
