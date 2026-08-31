@@ -1,5 +1,6 @@
 import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
+import { z } from "zod";
 
 import { getUserIdForApiKey } from "@/lib/server/api-keys";
 import { getLastEvent, recordEvent } from "@/lib/server/events";
@@ -16,7 +17,28 @@ import { getActiveSubscription } from "@/lib/server/subscriptions";
 import { userHasOwnership } from "@/lib/ownership";
 import { db } from "@/schema/db";
 import { businesses } from "@/schema/schema";
-import { inputSchema, outputSchema } from "./schema";
+
+export const schema = {
+  input: z.object({
+    business_id: z.string().uuid(),
+  }),
+  output: z.object({
+    reviews: z.array(
+      z.object({
+        author_name: z.string().nullable(),
+        author_image: z.string().nullable(),
+        datetime: z.string().datetime().nullable(),
+        link: z.string().nullable(),
+        rating: z.number().nullable(),
+        comments: z.string().nullable(),
+      }),
+    ),
+    stats: z.object({
+      review_count: z.number().nullable(),
+      review_score: z.number().nullable(),
+    }),
+  }),
+};
 
 const rateLimits = [
   {
@@ -65,7 +87,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const parsedBody = inputSchema.safeParse(await request.json());
+    const parsedBody = schema.input.safeParse(await request.json());
     if (!parsedBody.success) {
       return NextResponse.json({ error: "Invalid request" }, { status: 400 });
     }
@@ -126,7 +148,7 @@ export async function POST(request: Request) {
       selectBusinessStats(businessId),
     ]);
 
-    const response = outputSchema.parse({
+    const response = schema.output.parse({
       reviews: reviews.map((review) => ({
         ...review,
         datetime: review.datetime?.toISOString() ?? null,
