@@ -2,17 +2,10 @@ import Link from "next/link";
 import { Plus, MapPin, Star, Activity } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import type { RouterOutputs } from "@/trpc/types";
 
-interface Business {
-  id: string;
-  name: string | null;
-  address: string | null;
-  stats: {
-    review_count: number | null;
-    review_score: number | null;
-  } | null;
-  apiCallCount: number;
-}
+type Business =
+  RouterOutputs["dashboard"]["getBusinesses"]["businesses"][number];
 
 interface BusinessesGridProps {
   businesses: Business[];

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { toast } from "sonner";
 
 import { api } from "@/trpc/client";
+import type { RouterOutputs } from "@/trpc/types";
 
 import CreateNewApiKey from "@/components/common/api-keys/create-new-api-key";
 import { Button } from "@/components/ui/button";
@@ -16,19 +17,7 @@ import { ReviewSkeleton } from "./_components/review-skeleton";
 import { StepIndicator } from "./_components/step-indicator";
 import { WizardStep } from "./_components/wizard-step";
 
-interface Review {
-  author_name: string | null;
-  author_image: string | null;
-  datetime: Date | null;
-  link: string | null;
-  rating: number | null;
-  comments: string | null;
-}
-
-interface BusinessStats {
-  review_count: number | null;
-  review_score: number | null;
-}
+type AddBusinessOutput = RouterOutputs["google"]["addBusiness"];
 
 type StepStatus = "completed" | "active" | "inactive";
 
@@ -49,10 +38,10 @@ export default function AddBusinessPage() {
   const [placeId, setPlaceId] = useState<string | null>(null);
   const [placeName, setPlaceName] = useState<string | null>(null);
   const [placeAddress, setPlaceAddress] = useState<string | null>(null);
-  const [reviews, setReviews] = useState<Review[]>([]);
-  const [businessStats, setBusinessStats] = useState<BusinessStats | null>(
-    null,
-  );
+  const [reviews, setReviews] = useState<AddBusinessOutput["reviews"]>([]);
+  const [businessStats, setBusinessStats] = useState<
+    AddBusinessOutput["stats"] | null
+  >(null);
   const [currentStep, setCurrentStep] = useState(1);
   const [businessId, setBusinessId] = useState<string | null>(null);
 
