@@ -36,6 +36,8 @@ const updateMutation = api.google.updateMinimumScore.useMutation({
 
 Use generated tRPC utilities for invalidation and `skipToken` for a query whose input is not yet available. Preserve `meta.errorMessage` in query options so the shared query cache displays a useful toast.
 
+Queries retry transient failures once. Authentication and paid-access failures are not retried because another identical request cannot repair them.
+
 Server components can call or prefetch procedures through `@/trpc/server`. Wrap prefetched client content in `HydrateClient` so the browser reuses the server-populated cache:
 
 ```tsx
