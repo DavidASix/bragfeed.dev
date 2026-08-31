@@ -30,12 +30,19 @@ const utils = api.useUtils();
 const businessQuery = api.google.getBusinessDetails.useQuery({ businessId });
 
 const updateMutation = api.google.updateMinimumScore.useMutation({
-  onSuccess: () =>
-    utils.google.getBusinessDetails.invalidate({ businessId }),
+  onSuccess: () => utils.google.getBusinessDetails.invalidate({ businessId }),
 });
 ```
 
 Use generated tRPC utilities for invalidation and `skipToken` for a query whose input is not yet available. Preserve `meta.errorMessage` in query options so the shared query cache displays a useful toast.
+
+Server components can call or prefetch procedures through `@/trpc/server`. Wrap prefetched client content in `HydrateClient` so the browser reuses the server-populated cache:
+
+```tsx
+void api.purchases.getSubscriptionDetails.prefetch(undefined);
+
+return <HydrateClient>{children}</HydrateClient>;
+```
 
 The paid public API and Stripe webhook remain conventional Next.js route handlers because their callers are external systems with different trust boundaries. These handlers should show authentication, authorization, validation, and policy checks explicitly in top-to-bottom order, while sharing transport-neutral server functions for database-backed decisions.
 

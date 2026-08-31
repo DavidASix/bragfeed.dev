@@ -1,4 +1,4 @@
-import { router } from "..";
+import { createCallerFactory, router } from "..";
 import { dashboardRouter } from "./dashboard";
 import { googleRouter } from "./google";
 import { purchasesRouter } from "./purchases";
@@ -12,3 +12,5 @@ export const appRouter = router({
 });
 
 export type AppRouter = typeof appRouter;
+
+export const createCaller = createCallerFactory(appRouter);

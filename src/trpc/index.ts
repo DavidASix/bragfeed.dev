@@ -7,6 +7,7 @@ import type { TRPCContext } from "./context";
 const t = initTRPC.context<TRPCContext>().create({ transformer: superjson });
 
 export const router = t.router;
+export const createCallerFactory = t.createCallerFactory;
 export const publicProcedure = t.procedure;
 
 export const protectedProcedure = t.procedure.use(async ({ ctx, next }) => {
