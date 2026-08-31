@@ -2,7 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useTRPC } from "@/lib/trpc/client";
+import { useTRPC } from "@/trpc/client";
 
 import { SpotlightSection } from "./_components/spotlight-section";
 import { BusinessesGrid } from "./_components/businesses-grid";

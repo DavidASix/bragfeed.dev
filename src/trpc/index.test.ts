@@ -11,7 +11,7 @@ const { getActiveSubscription } = vi.hoisted(() => ({
 
 vi.mock("@/lib/server/subscriptions", () => ({ getActiveSubscription }));
 
-import { paidProcedure, protectedProcedure, router } from "@/server/trpc/init";
+import { paidProcedure, protectedProcedure, router } from "@/trpc";
 
 const testRouter = router({
   protectedUser: protectedProcedure.query(({ ctx }) => ctx.userId),

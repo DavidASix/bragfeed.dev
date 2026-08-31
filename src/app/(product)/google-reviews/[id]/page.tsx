@@ -6,7 +6,7 @@ import { useParams, useSearchParams } from "next/navigation";
 import { RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 
-import { useTRPC } from "@/lib/trpc/client";
+import { useTRPC } from "@/trpc/client";
 
 import { Button } from "@/components/ui/button";
 import {

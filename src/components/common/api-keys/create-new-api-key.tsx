@@ -12,7 +12,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { toast } from "sonner";
 
-import { useTRPC } from "@/lib/trpc/client";
+import { useTRPC } from "@/trpc/client";
 
 import {
   AlertDialog,

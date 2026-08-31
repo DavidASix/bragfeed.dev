@@ -2,7 +2,7 @@ import { and, count, desc, eq, gte, min, sql } from "drizzle-orm";
 
 import { db } from "@/schema/db";
 import { businesses, business_stats, events } from "@/schema/schema";
-import { protectedProcedure, router } from "../init";
+import { protectedProcedure, router } from "..";
 
 export const dashboardRouter = router({
   getStats: protectedProcedure.query(async ({ ctx }) => {

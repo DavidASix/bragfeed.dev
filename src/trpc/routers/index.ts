@@ -1,4 +1,4 @@
-import { router } from "../init";
+import { router } from "..";
 import { dashboardRouter } from "./dashboard";
 import { googleRouter } from "./google";
 import { purchasesRouter } from "./purchases";

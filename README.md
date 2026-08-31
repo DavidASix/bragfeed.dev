@@ -16,7 +16,7 @@ pnpm db:production:migrate
 
 ## Application API conventions
 
-Browser-facing product operations use tRPC through the single `/api/trpc` route. Feature procedures live in `src/server/trpc/routers`, and the root router only composes those feature routers.
+Browser-facing product operations use tRPC through the single `/api/trpc` route. Feature procedures live in `src/trpc/routers`, and the root router only composes those feature routers.
 
 - Use `protectedProcedure` for operations available to any signed-in user.
 - Use `paidProcedure` only when an active subscription is part of the operation's existing policy.

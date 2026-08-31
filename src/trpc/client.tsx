@@ -11,8 +11,10 @@ import { toast } from "sonner";
 import { createTRPCClient, httpBatchLink } from "@trpc/client";
 import superjson from "superjson";
 
-import { TRPCProvider } from "@/lib/trpc/client";
-import type { AppRouter } from "@/server/trpc/routers";
+import { createTRPCContext } from "@trpc/tanstack-react-query";
+import type { AppRouter } from "@/trpc/routers";
+
+export const { TRPCProvider, useTRPC } = createTRPCContext<AppRouter>();
 
 function createQueryClient() {
   return new QueryClient({

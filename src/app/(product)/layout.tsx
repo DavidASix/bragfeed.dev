@@ -1,4 +1,4 @@
-import { QueryProvider } from "@/lib/tan-stack/query-provider";
+import { QueryProvider } from "@/trpc/client";
 import { redirect } from "next/navigation";
 
 import Navigation from "@/components/structure/header/navigation";

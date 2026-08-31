@@ -10,7 +10,7 @@ import {
 } from "@/lib/server/google/update";
 import { db } from "@/schema/db";
 import { businesses, reviews } from "@/schema/schema";
-import { protectedProcedure, router } from "../init";
+import { protectedProcedure, router } from "..";
 
 const businessIdInput = z.object({ businessId: z.string().uuid() });
 

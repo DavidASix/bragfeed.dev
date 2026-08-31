@@ -3,7 +3,7 @@
 import { loadStripe } from "@stripe/stripe-js";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { useTRPC } from "@/lib/trpc/client";
+import { useTRPC } from "@/trpc/client";
 
 import {
   Card,

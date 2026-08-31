@@ -4,7 +4,7 @@ import { decrypt } from "@/lib/encryption";
 import { generateApiKey } from "@/lib/server/api-keys";
 import { db } from "@/schema/db";
 import { api_keys } from "@/schema/schema";
-import { paidProcedure, protectedProcedure, router } from "../init";
+import { paidProcedure, protectedProcedure, router } from "..";
 
 export const securityRouter = router({
   getLatestActiveKey: protectedProcedure.query(async ({ ctx }) => {

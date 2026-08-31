@@ -8,7 +8,7 @@ import { getSubscriptionDetails } from "@/lib/server/subscriptions";
 import { stripe } from "@/lib/server/stripe";
 import { db } from "@/schema/db";
 import { users } from "@/schema/schema";
-import { protectedProcedure, router } from "../init";
+import { protectedProcedure, router } from "..";
 
 /**
  * Cancels each active Stripe subscription and reports how many completed.
