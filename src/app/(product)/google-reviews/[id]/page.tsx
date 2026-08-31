@@ -1,12 +1,11 @@
 "use client";
 
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
 import { RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 
-import { useTRPC } from "@/trpc/client";
+import { api } from "@/trpc/client";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -29,56 +28,46 @@ import { StarRatingSelector } from "../_components/star-rating-selector";
 import { FrameworkIntegrationTabs } from "./_components/framework-integration-tabs";
 
 export default function BusinessDetailsPage() {
-  const trpc = useTRPC();
+  const utils = api.useUtils();
   const params = useParams();
   const searchParams = useSearchParams();
   const businessId = params.id as string;
-  const queryClient = useQueryClient();
 
   // Determine default tab from query param
   const tabParam = searchParams.get("tab");
   const validTabs = ["details", "integration"];
   const defaultTab = validTabs.includes(tabParam ?? "") ? tabParam! : "details";
 
-  const businessQuery = useQuery(
-    trpc.google.getBusinessDetails.queryOptions(
-      { businessId },
-      {
-        enabled: !!businessId,
-        meta: {
-          errorMessage: "Failed to fetch business details",
-        },
+  const businessQuery = api.google.getBusinessDetails.useQuery(
+    { businessId },
+    {
+      enabled: !!businessId,
+      meta: {
+        errorMessage: "Failed to fetch business details",
       },
-    ),
+    },
   );
 
-  const updateMinimumScoreMutation = useMutation(
-    trpc.google.updateMinimumScore.mutationOptions({
-      onSuccess: () => {
-        queryClient.invalidateQueries(
-          trpc.google.getBusinessDetails.queryFilter({ businessId }),
-        );
-        toast.success("Minimum review score updated");
-      },
-      onError: () => {
-        toast.error("Failed to update minimum review score");
-      },
-    }),
-  );
+  const updateMinimumScoreMutation = api.google.updateMinimumScore.useMutation({
+    onSuccess: () => {
+      utils.google.getBusinessDetails.invalidate({ businessId });
+      toast.success("Minimum review score updated");
+    },
+    onError: () => {
+      toast.error("Failed to update minimum review score");
+    },
+  });
 
-  const refreshBusinessDataMutation = useMutation(
-    trpc.google.refreshBusinessDetails.mutationOptions({
+  const refreshBusinessDataMutation =
+    api.google.refreshBusinessDetails.useMutation({
       onSuccess: () => {
-        queryClient.invalidateQueries(
-          trpc.google.getBusinessDetails.queryFilter({ businessId }),
-        );
+        utils.google.getBusinessDetails.invalidate({ businessId });
         toast.success("Data refreshed successfully!");
       },
       onError: () => {
         toast.error("Failed to refresh business data");
       },
-    }),
-  );
+    });
 
   if (businessQuery.isLoading) {
     return (

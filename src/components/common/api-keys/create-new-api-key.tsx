@@ -1,5 +1,4 @@
 "use client";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   CheckCircle,
   ClipboardCopyIcon,
@@ -12,7 +11,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { toast } from "sonner";
 
-import { useTRPC } from "@/trpc/client";
+import { api } from "@/trpc/client";
 
 import {
   AlertDialog,
@@ -84,44 +83,38 @@ export default function CreateNewApiKey({
   className = "",
   onKeyGenerated,
 }: CreateNewApiKeyProps) {
-  const trpc = useTRPC();
-  const queryClient = useQueryClient();
+  const utils = api.useUtils();
   const [showApiKey, setShowApiKey] = useState(false);
 
-  const subscriptionQuery = useQuery(
-    trpc.purchases.getSubscriptionDetails.queryOptions(undefined, {
+  const subscriptionQuery = api.purchases.getSubscriptionDetails.useQuery(
+    undefined,
+    {
       meta: {
         errorMessage: "Failed to check subscription status",
       },
-    }),
+    },
   );
 
-  const apiKeyQuery = useQuery(
-    trpc.security.getLatestActiveKey.queryOptions(undefined, {
-      select: (data) => data.apiKey,
-      meta: {
-        errorMessage: "Failed to fetch API key",
-      },
-    }),
-  );
+  const apiKeyQuery = api.security.getLatestActiveKey.useQuery(undefined, {
+    select: (data) => data.apiKey,
+    meta: {
+      errorMessage: "Failed to fetch API key",
+    },
+  });
 
-  const generateKeyMutation = useMutation(
-    trpc.security.createApiKey.mutationOptions({
-      onSuccess: async ({ key }) => {
-        toast.success("API key generated successfully");
-        await queryClient.invalidateQueries(
-          trpc.security.getLatestActiveKey.queryFilter(),
-        );
-        if (onKeyGenerated) {
-          onKeyGenerated(key);
-        }
-      },
-      onError: (error) => {
-        console.log("Error generating API key:", error);
-        toast.error("Error generating API key");
-      },
-    }),
-  );
+  const generateKeyMutation = api.security.createApiKey.useMutation({
+    onSuccess: async ({ key }) => {
+      toast.success("API key generated successfully");
+      await utils.security.getLatestActiveKey.invalidate();
+      if (onKeyGenerated) {
+        onKeyGenerated(key);
+      }
+    },
+    onError: (error) => {
+      console.log("Error generating API key:", error);
+      toast.error("Error generating API key");
+    },
+  });
 
   const currentApiKey = apiKeyQuery.data;
 

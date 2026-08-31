@@ -1,9 +1,8 @@
 "use client";
 
 import { loadStripe } from "@stripe/stripe-js";
-import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { useTRPC } from "@/trpc/client";
+import { api } from "@/trpc/client";
 
 import {
   Card,
@@ -16,20 +15,18 @@ import {
 import { SubscriptionState } from "./_components/subscription-state";
 
 export default function SubscriptionPage() {
-  const trpc = useTRPC();
-  const queryClient = useQueryClient();
+  const utils = api.useUtils();
 
-  const subscriptionQuery = useQuery(
-    trpc.purchases.getSubscriptionDetails.queryOptions(undefined, {
+  const subscriptionQuery = api.purchases.getSubscriptionDetails.useQuery(
+    undefined,
+    {
       meta: {
         errorMessage: "Failed to fetch subscription status",
       },
-    }),
+    },
   );
 
-  const checkoutMutation = useMutation(
-    trpc.purchases.initializeCheckout.mutationOptions(),
-  );
+  const checkoutMutation = api.purchases.initializeCheckout.useMutation();
 
   const onClickCheckout = async () => {
     try {
@@ -50,15 +47,13 @@ export default function SubscriptionPage() {
     }
   };
 
-  const cancelSubscriptionMutation = useMutation(
-    trpc.purchases.cancelSubscription.mutationOptions({
+  const cancelSubscriptionMutation =
+    api.purchases.cancelSubscription.useMutation({
       onSuccess: (result) => {
         if (result.success) {
           toast.success(result.message);
           // Refresh subscription status to reflect the cancellation
-          queryClient.invalidateQueries(
-            trpc.purchases.getSubscriptionDetails.queryFilter(),
-          );
+          utils.purchases.getSubscriptionDetails.invalidate();
         } else {
           toast.error(result.message);
         }
@@ -67,8 +62,7 @@ export default function SubscriptionPage() {
         console.error("Cancel subscription error:", error);
         toast.error("Failed to cancel subscription. Please try again later.");
       },
-    }),
-  );
+    });
 
   return (
     <div className="space-y-16 py-16">

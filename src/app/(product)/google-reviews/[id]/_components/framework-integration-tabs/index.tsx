@@ -1,6 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
-
-import { useTRPC } from "@/trpc/client";
+import { api } from "@/trpc/client";
 
 import { CodeBlock } from "@/components/ui/code-block";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -14,15 +12,12 @@ interface FrameworkIntegrationTabsProps {
 export function FrameworkIntegrationTabs({
   placeId,
 }: FrameworkIntegrationTabsProps) {
-  const trpc = useTRPC();
-  const apiKeyQuery = useQuery(
-    trpc.security.getLatestActiveKey.queryOptions(undefined, {
-      select: (data) => data.apiKey,
-      meta: {
-        errorMessage: "Failed to fetch API key",
-      },
-    }),
-  );
+  const apiKeyQuery = api.security.getLatestActiveKey.useQuery(undefined, {
+    select: (data) => data.apiKey,
+    meta: {
+      errorMessage: "Failed to fetch API key",
+    },
+  });
 
   const apiKey = apiKeyQuery.data ?? null;
   const frameworks = getFrameworks(placeId, apiKey);

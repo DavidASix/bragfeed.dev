@@ -1,8 +1,7 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useTRPC } from "@/trpc/client";
+import { api } from "@/trpc/client";
 
 import { SpotlightSection } from "./_components/spotlight-section";
 import { BusinessesGrid } from "./_components/businesses-grid";
@@ -10,30 +9,26 @@ import { ApiUsageSection } from "./_components/api-usage-section";
 import CreateNewApiKey from "@/components/common/api-keys/create-new-api-key";
 
 export default function DashboardPage() {
-  const trpc = useTRPC();
-  const { data: statsData, isLoading: statsLoading } = useQuery(
-    trpc.dashboard.getStats.queryOptions(undefined, {
+  const { data: statsData, isLoading: statsLoading } =
+    api.dashboard.getStats.useQuery(undefined, {
       meta: {
         errorMessage: "Failed to load dashboard statistics",
       },
-    }),
-  );
+    });
 
-  const { data: businessesData, isLoading: businessesLoading } = useQuery(
-    trpc.dashboard.getBusinesses.queryOptions(undefined, {
+  const { data: businessesData, isLoading: businessesLoading } =
+    api.dashboard.getBusinesses.useQuery(undefined, {
       meta: {
         errorMessage: "Failed to load businesses",
       },
-    }),
-  );
+    });
 
-  const { data: subscriptionData, isLoading: subscriptionLoading } = useQuery(
-    trpc.purchases.getSubscriptionDetails.queryOptions(undefined, {
+  const { data: subscriptionData, isLoading: subscriptionLoading } =
+    api.purchases.getSubscriptionDetails.useQuery(undefined, {
       meta: {
         errorMessage: "Failed to load subscription status",
       },
-    }),
-  );
+    });
 
   const isLoading = statsLoading || businessesLoading || subscriptionLoading;
 

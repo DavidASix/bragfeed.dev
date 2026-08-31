@@ -23,25 +23,19 @@ Browser-facing product operations use tRPC through the single `/api/trpc` route.
 - Validate every procedure input with Zod through `.input(...)`.
 - Return domain data directly. SuperJSON preserves values such as `Date` across the browser boundary.
 
-Add a query or mutation to the router that owns its feature. Client components consume it with the existing TanStack Query cache:
+Add a query or mutation to the router that owns its feature. Client components consume it through the generated `api` hooks:
 
 ```typescript
-const trpc = useTRPC();
-const businessQuery = useQuery(
-  trpc.google.getBusinessDetails.queryOptions({ businessId }),
-);
+const utils = api.useUtils();
+const businessQuery = api.google.getBusinessDetails.useQuery({ businessId });
 
-const updateMutation = useMutation(
-  trpc.google.updateMinimumScore.mutationOptions({
-    onSuccess: () =>
-      queryClient.invalidateQueries(
-        trpc.google.getBusinessDetails.queryFilter({ businessId }),
-      ),
-  }),
-);
+const updateMutation = api.google.updateMinimumScore.useMutation({
+  onSuccess: () =>
+    utils.google.getBusinessDetails.invalidate({ businessId }),
+});
 ```
 
-Use generated tRPC query filters for invalidation and `skipToken` for a query whose input is not yet available. Preserve `meta.errorMessage` when adding query options so the shared query cache displays a useful toast.
+Use generated tRPC utilities for invalidation and `skipToken` for a query whose input is not yet available. Preserve `meta.errorMessage` in query options so the shared query cache displays a useful toast.
 
 The paid public API and Stripe webhook remain conventional Next.js route handlers because their callers are external systems with different trust boundaries. These handlers should show authentication, authorization, validation, and policy checks explicitly in top-to-bottom order, while sharing transport-neutral server functions for database-backed decisions.
 

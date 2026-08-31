@@ -1,10 +1,10 @@
 "use client";
-import { skipToken, useMutation, useQuery } from "@tanstack/react-query";
+import { skipToken } from "@tanstack/react-query";
 import { useState } from "react";
 import Link from "next/link";
 import { toast } from "sonner";
 
-import { useTRPC } from "@/trpc/client";
+import { api } from "@/trpc/client";
 
 import CreateNewApiKey from "@/components/common/api-keys/create-new-api-key";
 import { Button } from "@/components/ui/button";
@@ -46,7 +46,6 @@ const STEPS = [
 ];
 
 export default function AddBusinessPage() {
-  const trpc = useTRPC();
   const [placeId, setPlaceId] = useState<string | null>(null);
   const [placeName, setPlaceName] = useState<string | null>(null);
   const [placeAddress, setPlaceAddress] = useState<string | null>(null);
@@ -57,43 +56,37 @@ export default function AddBusinessPage() {
   const [currentStep, setCurrentStep] = useState(1);
   const [businessId, setBusinessId] = useState<string | null>(null);
 
-  const apiKeyQuery = useQuery(
-    trpc.security.getLatestActiveKey.queryOptions(undefined, {
-      select: (data) => data.apiKey,
+  const apiKeyQuery = api.security.getLatestActiveKey.useQuery(undefined, {
+    select: (data) => data.apiKey,
+    meta: {
+      errorMessage: "Failed to fetch API key",
+    },
+  });
+
+  const checkBusinessQuery = api.google.checkBusinessExists.useQuery(
+    placeId ? { placeId } : skipToken,
+    {
       meta: {
-        errorMessage: "Failed to fetch API key",
+        errorMessage: "Failed to check business",
       },
-    }),
+    },
   );
 
-  const checkBusinessQuery = useQuery(
-    trpc.google.checkBusinessExists.queryOptions(
-      placeId ? { placeId } : skipToken,
-      {
-        meta: {
-          errorMessage: "Failed to check business",
-        },
-      },
-    ),
-  );
-
-  const fetchReviewsMutation = useMutation(
-    trpc.google.addBusiness.mutationOptions({
-      onSuccess: (data) => {
-        setReviews(data.reviews);
-        setBusinessStats(data.stats);
-        setBusinessId(data.businessId);
-        setCurrentStep(apiKeyQuery.data ? 4 : 3);
-      },
-      onError: (error) => {
-        console.error("Error fetching reviews:", error);
-        toast.error("Failed to fetch reviews. Please try again.");
-      },
-      meta: {
-        errorMessage: "Failed to fetch reviews",
-      },
-    }),
-  );
+  const fetchReviewsMutation = api.google.addBusiness.useMutation({
+    onSuccess: (data) => {
+      setReviews(data.reviews);
+      setBusinessStats(data.stats);
+      setBusinessId(data.businessId);
+      setCurrentStep(apiKeyQuery.data ? 4 : 3);
+    },
+    onError: (error) => {
+      console.error("Error fetching reviews:", error);
+      toast.error("Failed to fetch reviews. Please try again.");
+    },
+    meta: {
+      errorMessage: "Failed to fetch reviews",
+    },
+  });
 
   const onPlaceSelect = (
     selectedPlaceId: string,
