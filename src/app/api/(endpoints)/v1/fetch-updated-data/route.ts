@@ -40,7 +40,7 @@ const rateLimits = [
 function getBearerKey(request: Request): string | null {
   const authorization = request.headers.get("authorization");
   const [scheme, key, extra] = authorization?.split(" ") ?? [];
-  return scheme === "Bearer" && key && !extra ? key : null;
+  return scheme?.toLowerCase() === "bearer" && key && !extra ? key : null;
 }
 
 /**

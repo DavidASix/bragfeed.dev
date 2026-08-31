@@ -100,6 +100,17 @@ describe("paid fetch-updated-data REST boundary", () => {
     expect(mocks.getUserIdForApiKey).not.toHaveBeenCalled();
   });
 
+  it("accepts the case-insensitive Bearer authorization scheme", async () => {
+    const response = await POST(
+      createRequest(
+        JSON.stringify({ business_id: businessId }),
+        "bearer customer-key",
+      ),
+    );
+    expect(response.status).toBe(200);
+    expect(mocks.getUserIdForApiKey).toHaveBeenCalledWith("customer-key");
+  });
+
   it("returns 401 for an invalid API key", async () => {
     mocks.getUserIdForApiKey.mockResolvedValue(null);
     const response = await POST(
