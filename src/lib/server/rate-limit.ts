@@ -10,8 +10,7 @@ export type RateLimitConfig = {
 };
 
 export type RateLimitResult =
-  | { allowed: true }
-  | { allowed: false; retryAfterSeconds: number };
+  { allowed: true } | { allowed: false; retryAfterSeconds: number };
 
 /**
  * Checks and records a rate-limit event, failing open when persistence is unavailable.
