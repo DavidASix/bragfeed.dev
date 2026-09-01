@@ -73,6 +73,7 @@ export const dashboardRouter = router({
   }),
 
   getBusinesses: protectedProcedure.query(async ({ ctx }) => {
+    // Aggregate API call counts by business_id
     const apiCallCounts = db
       .select({
         businessId: sql<string>`${events.metadata}->>'business_id'`.as(
@@ -85,6 +86,7 @@ export const dashboardRouter = router({
       .groupBy(sql`${events.metadata}->>'business_id'`)
       .as("api_call_counts");
 
+    // Get latest stats for each business (pre-filtered to one row per business)
     const latestStats = db.$with("latest_stats").as(
       db
         .select({

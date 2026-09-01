@@ -10,6 +10,10 @@ export type ActiveSubscription = {
 };
 
 export type SubscriptionDetails = {
+  /**
+   * A user can have a subscription start and end date while having a `hasActiveSubscription`
+   * value of false; more details in the users table.
+   */
   hasActiveSubscription: boolean;
   subscriptionStart?: Date;
   subscriptionEnd?: Date;

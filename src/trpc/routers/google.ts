@@ -82,6 +82,7 @@ export const googleRouter = router({
             .orderBy(desc(reviews.datetime)),
         ]);
 
+      // Determine last refreshed date (use latest review as proxy)
       return {
         business: {
           ...business,
@@ -96,6 +97,10 @@ export const googleRouter = router({
       };
     }),
 
+  /**
+   * This endpoint inserts a new business into the database using the provided Google Place ID.
+   * It then fetches the initial reviews and business stats for that business.
+   */
   addBusiness: protectedProcedure
     .input(
       z.object({
@@ -141,6 +146,9 @@ export const googleRouter = router({
       return { businessId: business.id, reviews: insertedReviews, stats };
     }),
 
+  /**
+   * This endpoint refreshes business data by fetching the latest reviews and stats from Google.
+   */
   refreshBusinessDetails: protectedProcedure
     .input(businessIdInput)
     .mutation(async ({ ctx, input }) => {

@@ -66,6 +66,9 @@ function getBearerKey(request: Request): string | null {
 }
 
 /**
+ * Checks if reviews/stats need updating, updates if needed, then returns latest data. This endpoint is called by 11ty in the clients
+ * website to ensure that their google reviews are updated any time the clients site is rebuilt.
+ *
  * Returns fresh-enough reviews and statistics for a business owned by an authenticated paid API user.
  *
  * @param request - Public REST request with a Bearer API key and JSON body.
