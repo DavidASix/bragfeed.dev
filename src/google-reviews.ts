@@ -70,14 +70,14 @@ const ReviewSchema = z.object({
   owner_response_language: z.string().nullable(),
   author_reviews_link: z.string().nullable(),
   author_local_guide_level: z.number().nullable(),
-  service_quality: z.string().nullable(),
+  service_quality: z.string().nullish(),
   hotel_rating_breakdown: z
     .object({
       Food: z.number(),
       Service: z.number(),
       Atmosphere: z.number(),
     })
-    .nullable(),
+    .nullish(),
   //review_form: z.string().nullable(), // This is a nullable object of some kind
   review_source: z.string().nullable(),
 });
