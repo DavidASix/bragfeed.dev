@@ -1,11 +1,11 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi, type Mock } from "vitest";
 
 type PolicyMocks = {
   selectRows: unknown[];
   selectError: Error | null;
   insertError: Error | null;
-  insertValues: ReturnType<typeof vi.fn>;
-  encryptDeterministic: ReturnType<typeof vi.fn>;
+  insertValues: Mock<(value: unknown) => void>;
+  encryptDeterministic: Mock<(value: string) => Promise<string>>;
 };
 
 const mocks = vi.hoisted<PolicyMocks>(() => ({
