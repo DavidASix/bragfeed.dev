@@ -16,7 +16,7 @@ export default async function ProductLayout({
     redirect("/login");
   }
 
-  void api.purchases.getSubscriptionDetails.prefetch(undefined);
+  await api.purchases.getSubscriptionDetails.prefetch(undefined);
 
   return (
     <QueryProvider>
