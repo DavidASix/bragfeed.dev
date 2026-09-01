@@ -1,6 +1,5 @@
 "use client";
 
-import { loadStripe } from "@stripe/stripe-js";
 import { toast } from "sonner";
 import { api } from "@/trpc/client";
 
@@ -33,14 +32,10 @@ export default function SubscriptionPage() {
       const checkout = await checkoutMutation.mutateAsync({
         product: "all_access",
       });
-      const session = checkout.session;
-      const stripe = await loadStripe(
-        process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!,
-      );
-      if (!session.id || !stripe) {
-        throw new Error("Error initializing checkout session or Stripe");
+      if (!checkout.session.url) {
+        throw new Error("Error initializing checkout session");
       }
-      await stripe.redirectToCheckout({ sessionId: session.id });
+      window.location.assign(checkout.session.url);
     } catch (error) {
       console.error("Checkout error:", error);
       toast.error("Failed to initiate checkout. Please try again later.");
