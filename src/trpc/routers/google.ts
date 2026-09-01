@@ -2,7 +2,6 @@ import { TRPCError } from "@trpc/server";
 import { and, count, desc, eq } from "drizzle-orm";
 import { z } from "zod";
 
-import { recordEvent } from "@/lib/server/events";
 import { selectBusinessStats } from "@/lib/server/google/select";
 import {
   updateBusinessReviews,
@@ -139,12 +138,6 @@ export const googleRouter = router({
       }
       const stats = await updateBusinessStats(business.id);
       const insertedReviews = await updateBusinessReviews(business.id, 100);
-      await recordEvent("update_reviews", ctx.userId, {
-        business_id: business.id,
-      });
-      await recordEvent("update_stats", ctx.userId, {
-        business_id: business.id,
-      });
 
       return { businessId: business.id, reviews: insertedReviews, stats };
     }),
@@ -171,12 +164,6 @@ export const googleRouter = router({
 
       await updateBusinessStats(input.businessId);
       await updateBusinessReviews(input.businessId, 100);
-      await recordEvent("update_reviews", ctx.userId, {
-        business_id: input.businessId,
-      });
-      await recordEvent("update_stats", ctx.userId, {
-        business_id: input.businessId,
-      });
       return { success: true };
     }),
 

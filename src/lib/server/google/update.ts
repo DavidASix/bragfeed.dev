@@ -47,7 +47,7 @@ export async function updateBusinessStats(business_id: string): Promise<{
 
   if (!insertedStats) throw new Error("Failed to insert business stats");
 
-  recordEvent("update_stats", business.user_id, { business_id });
+  await recordEvent("update_stats", business.user_id, { business_id });
 
   return insertedStats;
 }
@@ -111,9 +111,9 @@ export async function updateBusinessReviews(
     );
 
   console.log(`Inserting ${insertableReviews.length} new reviews`);
-  recordEvent("update_reviews", business.user_id, { business_id });
   if (insertableReviews.length > 0) {
     await db.insert(reviews).values(insertableReviews);
   }
+  await recordEvent("update_reviews", business.user_id, { business_id });
   return insertableReviews;
 }
