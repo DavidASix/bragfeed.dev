@@ -40,7 +40,7 @@ export async function checkAndRecordRateLimit(
         ),
       );
 
-    if (eventCount.value >= config.maxRequests) {
+    if ((eventCount?.value ?? 0) >= config.maxRequests) {
       return {
         allowed: false,
         retryAfterSeconds: Math.round(config.windowMs / 1000),

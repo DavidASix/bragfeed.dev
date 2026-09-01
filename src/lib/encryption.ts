@@ -135,13 +135,14 @@ export async function encryptDeterministic(text: string): Promise<string> {
 export async function decrypt(encryptedText: string): Promise<string> {
   // Split the IV and encrypted content
   const parts = encryptedText.split(":");
-  if (parts.length !== 2) {
+  const [ivHex, encryptedDataHex] = parts;
+  if (parts.length !== 2 || !ivHex || !encryptedDataHex) {
     throw new Error("Invalid encrypted text format");
   }
 
   // Convert hex strings back to ArrayBuffer
-  const iv = hexToArrayBuffer(parts[0]);
-  const encryptedData = hexToArrayBuffer(parts[1]);
+  const iv = hexToArrayBuffer(ivHex);
+  const encryptedData = hexToArrayBuffer(encryptedDataHex);
 
   // Get the key
   const key = await deriveKey();

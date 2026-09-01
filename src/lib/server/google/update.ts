@@ -45,6 +45,8 @@ export async function updateBusinessStats(business_id: string): Promise<{
     })
     .then((rows) => rows[0]);
 
+  if (!insertedStats) throw new Error("Failed to insert business stats");
+
   recordEvent("update_stats", business.user_id, { business_id });
 
   return insertedStats;

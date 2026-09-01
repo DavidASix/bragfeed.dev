@@ -39,7 +39,8 @@ export default function UserNav({ noAuth }: { noAuth?: boolean }) {
         .toUpperCase()
         .slice(0, 2);
     } else if (user?.email) {
-      return user.email.split("@")[0].toUpperCase().slice(0, 2);
+      const [localPart] = user.email.split("@");
+      return localPart?.toUpperCase().slice(0, 2) ?? "GR";
     } else {
       return "GR";
     }

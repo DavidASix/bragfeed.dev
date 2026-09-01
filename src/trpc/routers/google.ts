@@ -92,7 +92,7 @@ export const googleRouter = router({
           },
         },
         reviews: businessReviews,
-        available_reviews: reviewCount.count,
+        available_reviews: reviewCount?.count ?? 0,
         last_refreshed: latestReview?.created_at ?? null,
       };
     }),
@@ -134,6 +134,9 @@ export const googleRouter = router({
           user_id: ctx.userId,
         })
         .returning({ id: businesses.id });
+      if (!business) {
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
+      }
       const stats = await updateBusinessStats(business.id);
       const insertedReviews = await updateBusinessReviews(business.id, 100);
       await recordEvent("update_reviews", ctx.userId, {

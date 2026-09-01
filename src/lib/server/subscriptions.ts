@@ -68,6 +68,8 @@ export async function getSubscriptionDetails(
       .where(eq(users.id, userId)),
   ]);
 
+  if (!user) throw new Error("User not found");
+
   return {
     hasActiveSubscription: user.hasActiveSubscription,
     subscriptionStart: subscription?.subscriptionStart,
