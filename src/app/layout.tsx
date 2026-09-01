@@ -1,4 +1,3 @@
-import "tailwindcss/tailwind.css";
 import "./globals.css";
 import { SessionProvider } from "next-auth/react";
 import HolyLoader from "holy-loader";
