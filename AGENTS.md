@@ -102,6 +102,5 @@ When writing site contents, respect eslintreact/no-unescaped-entities. This is a
 ### ShadCN
 If you are creating a new ShadCN component you MUST install it with a `pnpm dlx` command (like `pnpm dlx shadcn@latest add badge`). You should NEVER write a ShadCN component from scratch, it should ALWAYS be installed.
 
-### Git
-
-Never git push
+# Git
+When posting to github, you can attach screenshots you took from agent-browser using the [`--attach`](https://github.blog/changelog/2026-09-01-github-cli-media-in-issues-pull-requests-and-comments/) flag on gh cli.

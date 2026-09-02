@@ -4,15 +4,29 @@ import { users } from "@/schema/schema";
 export async function up() {
   console.log("Seeding user table...");
 
-  await db.insert(users).values({
-    id: "6506bac5-e63a-4fa3-b9c9-a94ab5a549fc",
-    name: null,
-    email: "user@example.com",
-    emailVerified: new Date("2025-07-27T08:14:09.624Z"),
-    image: null,
-    stripe_customer_id: "cus_1234567890example",
-    has_active_subscription: true,
-  });
+  await db
+    .insert(users)
+    .values([
+      {
+        id: "00000000-0000-0000-0000-000000000002",
+        name: "Unsubscribed User",
+        email: "unsubscribed@example.com",
+        emailVerified: new Date("2025-07-27T08:14:09.624Z"),
+        image: null,
+        stripe_customer_id: null,
+        has_active_subscription: false,
+      },
+      {
+        id: "6506bac5-e63a-4fa3-b9c9-a94ab5a549fc",
+        name: null,
+        email: "user@example.com",
+        emailVerified: new Date("2025-07-27T08:14:09.624Z"),
+        image: null,
+        stripe_customer_id: "cus_1234567890example",
+        has_active_subscription: true,
+      },
+    ])
+    .onConflictDoNothing();
 
   console.log("User seeded successfully");
 }

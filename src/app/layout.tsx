@@ -1,4 +1,3 @@
-import "tailwindcss/tailwind.css";
 import "./globals.css";
 import { SessionProvider } from "next-auth/react";
 import HolyLoader from "holy-loader";
@@ -15,7 +14,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" data-scroll-behavior="smooth">
       <SessionProvider>
         <body className="flex flex-col min-h-screen">
           <HolyLoader />

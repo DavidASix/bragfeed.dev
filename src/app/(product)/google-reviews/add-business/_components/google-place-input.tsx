@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useId, useState } from "react";
 import Script from "next/script";
 
 import { cn } from "@/lib/utils";
@@ -35,12 +35,12 @@ export default function GooglePlaceInput({
   onPlaceSelect,
   className,
 }: GooglePlaceInputProps) {
-  const autocompleteRef = useRef<HTMLElement | null>(null);
+  const autocompleteId = useId();
   const [isLoaded, setIsLoaded] = useState(false);
   const [selectedPlaceId, setSelectedPlaceId] = useState<string | null>(null);
 
   useEffect(() => {
-    const autocompleteElement = autocompleteRef.current;
+    const autocompleteElement = document.getElementById(autocompleteId);
     if (!autocompleteElement) return;
 
     let timeoutId: NodeJS.Timeout | null = null;
@@ -123,7 +123,7 @@ export default function GooglePlaceInput({
         clearTimeout(timeoutId);
       }
     };
-  }, [onPlaceSelect, selectedPlaceId]);
+  }, [autocompleteId, onPlaceSelect, selectedPlaceId]);
 
   return (
     <>
@@ -133,9 +133,7 @@ export default function GooglePlaceInput({
         onLoad={() => setIsLoaded(true)}
       />
       {React.createElement("gmp-place-autocomplete", {
-        ref: (node: HTMLElement | null) => {
-          autocompleteRef.current = node;
-        },
+        id: autocompleteId,
         className: cn("w-full  border rounded-lg", className),
         style: {
           display: isLoaded ? "block" : "none",

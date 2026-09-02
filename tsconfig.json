@@ -17,6 +17,10 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "react-jsx",
+    "types": [
+      "google.maps",
+      "node"
+    ],
     "incremental": true,
     "plugins": [
       {
