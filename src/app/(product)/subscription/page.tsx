@@ -1,14 +1,8 @@
 "use client";
 
 import { loadStripe } from "@stripe/stripe-js";
-import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
-import Stripe from "stripe";
-
-import getSubscriptionDetailsSchema from "@/app/api/purchases/get-subscription-details/schema";
-import checkoutContextSchema from "@/app/api/purchases/initialize-checkout/schema";
-import cancelSubscriptionSchema from "@/app/api/purchases/cancel-subscription/schema";
-import requests from "@/lib/requests";
+import { api } from "@/trpc/client";
 
 import {
   Card,
@@ -21,24 +15,25 @@ import {
 import { SubscriptionState } from "./_components/subscription-state";
 
 export default function SubscriptionPage() {
-  const queryClient = useQueryClient();
+  const utils = api.useUtils();
 
-  const subscriptionQuery = useQuery({
-    queryKey: ["subscription-status"],
-    queryFn: async () => {
-      return await requests.get(getSubscriptionDetailsSchema);
+  const subscriptionQuery = api.purchases.getSubscriptionDetails.useQuery(
+    undefined,
+    {
+      meta: {
+        errorMessage: "Failed to fetch subscription status",
+      },
     },
-    meta: {
-      errorMessage: "Failed to fetch subscription status",
-    },
-  });
+  );
+
+  const checkoutMutation = api.purchases.initializeCheckout.useMutation();
 
   const onClickCheckout = async () => {
     try {
-      const checkout = await requests.post(checkoutContextSchema, {
+      const checkout = await checkoutMutation.mutateAsync({
         product: "all_access",
       });
-      const session = checkout.session satisfies Stripe.Checkout.Session;
+      const session = checkout.session;
       const stripe = await loadStripe(
         process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!,
       );
@@ -52,26 +47,22 @@ export default function SubscriptionPage() {
     }
   };
 
-  const cancelSubscriptionMutation = useMutation({
-    mutationFn: async () => {
-      return await requests.post(cancelSubscriptionSchema, undefined);
-    },
-    onSuccess: (result) => {
-      if (result.success) {
-        toast.success(result.message);
-        // Refresh subscription status to reflect the cancellation
-        queryClient.invalidateQueries({
-          queryKey: ["subscription-status"],
-        });
-      } else {
-        toast.error(result.message);
-      }
-    },
-    onError: (error) => {
-      console.error("Cancel subscription error:", error);
-      toast.error("Failed to cancel subscription. Please try again later.");
-    },
-  });
+  const cancelSubscriptionMutation =
+    api.purchases.cancelSubscription.useMutation({
+      onSuccess: (result) => {
+        if (result.success) {
+          toast.success(result.message);
+          // Refresh subscription status to reflect the cancellation
+          utils.purchases.getSubscriptionDetails.invalidate();
+        } else {
+          toast.error(result.message);
+        }
+      },
+      onError: (error) => {
+        console.error("Cancel subscription error:", error);
+        toast.error("Failed to cancel subscription. Please try again later.");
+      },
+    });
 
   return (
     <div className="space-y-16 py-16">

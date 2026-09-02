@@ -22,7 +22,7 @@ export async function selectBusinessStats(business_id: string): Promise<{
     .limit(1)
     .then((rows) => rows[0]);
 
-  return latestStats;
+  return latestStats ?? { review_count: null, review_score: null };
 }
 
 /**

@@ -1,13 +1,11 @@
 "use client";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { skipToken } from "@tanstack/react-query";
 import { useState } from "react";
 import Link from "next/link";
 import { toast } from "sonner";
 
-import insertNewBusinessSchema from "@/app/api/google/insert-new-business/schema";
-import getLatestActiveKeySchema from "@/app/api/security/get-latest-active-key/schema";
-import checkBusinessExistsSchema from "@/app/api/google/check-business-exists/schema";
-import requests from "@/lib/requests";
+import { api } from "@/trpc/client";
+import type { RouterOutputs } from "@/trpc/types";
 
 import CreateNewApiKey from "@/components/common/api-keys/create-new-api-key";
 import { Button } from "@/components/ui/button";
@@ -19,19 +17,7 @@ import { ReviewSkeleton } from "./_components/review-skeleton";
 import { StepIndicator } from "./_components/step-indicator";
 import { WizardStep } from "./_components/wizard-step";
 
-interface Review {
-  author_name: string | null;
-  author_image: string | null;
-  datetime: Date | null;
-  link: string | null;
-  rating: number | null;
-  comments: string | null;
-}
-
-interface BusinessStats {
-  review_count: number | null;
-  review_score: number | null;
-}
+type AddBusinessOutput = RouterOutputs["google"]["addBusiness"];
 
 type StepStatus = "completed" | "active" | "inactive";
 
@@ -52,48 +38,34 @@ export default function AddBusinessPage() {
   const [placeId, setPlaceId] = useState<string | null>(null);
   const [placeName, setPlaceName] = useState<string | null>(null);
   const [placeAddress, setPlaceAddress] = useState<string | null>(null);
-  const [reviews, setReviews] = useState<Review[]>([]);
-  const [businessStats, setBusinessStats] = useState<BusinessStats | null>(
-    null,
-  );
+  const [reviews, setReviews] = useState<AddBusinessOutput["reviews"]>([]);
+  const [businessStats, setBusinessStats] = useState<
+    AddBusinessOutput["stats"] | null
+  >(null);
   const [currentStep, setCurrentStep] = useState(1);
   const [businessId, setBusinessId] = useState<string | null>(null);
 
-  const apiKeyQuery = useQuery({
-    queryKey: ["apiKey"],
-    queryFn: async () => {
-      const { apiKey } = await requests.get(getLatestActiveKeySchema);
-      return apiKey;
-    },
+  const apiKeyQuery = api.security.getLatestActiveKey.useQuery(undefined, {
+    select: (data) => data.apiKey,
     meta: {
       errorMessage: "Failed to fetch API key",
     },
   });
 
-  const checkBusinessQuery = useQuery({
-    queryKey: ["checkBusiness", placeId],
-    queryFn: async () => {
-      if (!placeId) return { business_id: null };
-      return requests.post(checkBusinessExistsSchema, { place_id: placeId });
+  const checkBusinessQuery = api.google.checkBusinessExists.useQuery(
+    placeId ? { placeId } : skipToken,
+    {
+      meta: {
+        errorMessage: "Failed to check business",
+      },
     },
-    enabled: !!placeId,
-    meta: {
-      errorMessage: "Failed to check business",
-    },
-  });
+  );
 
-  const fetchReviewsMutation = useMutation({
-    mutationFn: async (data: {
-      place_id: string;
-      name?: string;
-      formatted_address?: string;
-    }) => {
-      return requests.post(insertNewBusinessSchema, data);
-    },
+  const fetchReviewsMutation = api.google.addBusiness.useMutation({
     onSuccess: (data) => {
       setReviews(data.reviews);
       setBusinessStats(data.stats);
-      setBusinessId(data.business_id);
+      setBusinessId(data.businessId);
       setCurrentStep(apiKeyQuery.data ? 4 : 3);
     },
     onError: (error) => {
@@ -119,15 +91,15 @@ export default function AddBusinessPage() {
     if (!placeId) return;
 
     fetchReviewsMutation.mutate({
-      place_id: placeId,
+      placeId,
       name: placeName || undefined,
-      formatted_address: placeAddress || undefined,
+      formattedAddress: placeAddress || undefined,
     });
   };
 
   const getStepStatus = (step: number): StepStatus => {
     // If business already exists, only step 1 can be active/completed
-    const businessExists = checkBusinessQuery.data?.business_id;
+    const businessExists = checkBusinessQuery.data?.businessId;
     const businessExistFetching = checkBusinessQuery.isFetching;
     if (step > 1) {
       if (businessExists || businessExistFetching) {
@@ -144,7 +116,7 @@ export default function AddBusinessPage() {
     if (step === currentStep) return "active";
     return "inactive";
   };
-  const existingBusinessId = checkBusinessQuery.data?.business_id;
+  const existingBusinessId = checkBusinessQuery.data?.businessId;
 
   return (
     <>

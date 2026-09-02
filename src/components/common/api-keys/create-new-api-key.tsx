@@ -1,5 +1,4 @@
 "use client";
-import { useMutation, useQuery } from "@tanstack/react-query";
 import {
   CheckCircle,
   ClipboardCopyIcon,
@@ -12,10 +11,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { toast } from "sonner";
 
-import getSubscriptionDetailsSchema from "@/app/api/purchases/get-subscription-details/schema";
-import createApiKeySchema from "@/app/api/security/create-api-key/schema";
-import getLatestActiveKeySchema from "@/app/api/security/get-latest-active-key/schema";
-import requests from "@/lib/requests";
+import { api } from "@/trpc/client";
 
 import {
   AlertDialog,
@@ -87,38 +83,31 @@ export default function CreateNewApiKey({
   className = "",
   onKeyGenerated,
 }: CreateNewApiKeyProps) {
+  const utils = api.useUtils();
   const [showApiKey, setShowApiKey] = useState(false);
 
-  const subscriptionQuery = useQuery({
-    queryKey: ["activeSubscription"],
-    queryFn: async () => {
-      return await requests.get(getSubscriptionDetailsSchema);
+  const subscriptionQuery = api.purchases.getSubscriptionDetails.useQuery(
+    undefined,
+    {
+      meta: {
+        errorMessage: "Failed to check subscription status",
+      },
     },
-    meta: {
-      errorMessage: "Failed to check subscription status",
-    },
-  });
+  );
 
-  const apiKeyQuery = useQuery({
-    queryKey: ["apiKey"],
-    queryFn: async () => {
-      const { apiKey } = await requests.get(getLatestActiveKeySchema);
-      return apiKey;
-    },
+  const apiKeyQuery = api.security.getLatestActiveKey.useQuery(undefined, {
+    select: (data) => data.apiKey,
     meta: {
       errorMessage: "Failed to fetch API key",
     },
   });
 
-  const generateKeyMutation = useMutation({
-    mutationFn: async () => {
-      await requests.get(createApiKeySchema);
-    },
-    onSuccess: async () => {
+  const generateKeyMutation = api.security.createApiKey.useMutation({
+    onSuccess: async ({ key }) => {
       toast.success("API key generated successfully");
-      const refetchResult = await apiKeyQuery.refetch();
+      await utils.security.getLatestActiveKey.invalidate();
       if (onKeyGenerated) {
-        onKeyGenerated(refetchResult.data ?? "");
+        onKeyGenerated(key);
       }
     },
     onError: (error) => {

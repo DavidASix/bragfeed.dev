@@ -1,130 +1,172 @@
-import { NextResponse } from "next/server";
-
-import schema from "./schema";
-import { NextRouteContext, RequestHandler } from "@/middleware/types";
-import { withBody } from "@/middleware/withBody";
-import { withApiKey } from "@/middleware/withApiKey";
-import { withPaidAccess } from "@/middleware/withPaidAccess";
-import { withEventRateLimit } from "@/middleware/withEventRateLimit";
-
-import { getLastEvent, recordEvent } from "@/lib/server/events";
-
-import {
-  updateBusinessStats,
-  updateBusinessReviews,
-} from "@/lib/server/google/update";
-import {
-  selectBusinessStats,
-  selectBusinessReviews,
-} from "@/lib/server/google/select";
-import { userHasOwnership } from "@/lib/ownership";
-import { businesses } from "@/schema/schema";
-import { db } from "@/schema/db";
 import { eq } from "drizzle-orm";
+import { NextResponse } from "next/server";
+import { z } from "zod";
+
+import { getUserIdForApiKey } from "@/lib/server/api-keys";
+import { getLastEvent, recordEvent } from "@/lib/server/events";
+import {
+  selectBusinessReviews,
+  selectBusinessStats,
+} from "@/lib/server/google/select";
+import {
+  updateBusinessReviews,
+  updateBusinessStats,
+} from "@/lib/server/google/update";
+import { checkAndRecordRateLimit } from "@/lib/server/rate-limit";
+import { getActiveSubscription } from "@/lib/server/subscriptions";
+import { userHasOwnership } from "@/lib/ownership";
+import { db } from "@/schema/db";
+import { businesses } from "@/schema/schema";
+
+export const schema = {
+  input: z.object({
+    business_id: z.string().uuid(),
+  }),
+  output: z.object({
+    reviews: z.array(
+      z.object({
+        author_name: z.string().nullable(),
+        author_image: z.string().nullable(),
+        datetime: z.string().datetime().nullable(),
+        link: z.string().nullable(),
+        rating: z.number().nullable(),
+        comments: z.string().nullable(),
+      }),
+    ),
+    stats: z.object({
+      review_count: z.number().nullable(),
+      review_score: z.number().nullable(),
+    }),
+  }),
+};
+
+const rateLimits = [
+  {
+    eventType: "fetch_updated_data_1d",
+    maxRequests: 500,
+    windowMs: 24 * 60 * 60 * 1000,
+  },
+  {
+    eventType: "fetch_updated_data_5m",
+    maxRequests: 25,
+    windowMs: 5 * 60 * 1000,
+  },
+] as const;
+
+/**
+ * Reads an API key only from the supported Bearer authorization format.
+ *
+ * @param request - External API request carrying customer credentials.
+ * @returns The key value, or null for a missing or malformed header.
+ */
+function getBearerKey(request: Request): string | null {
+  const authorization = request.headers.get("authorization");
+  const [scheme, key, extra] = authorization?.split(" ") ?? [];
+  return scheme?.toLowerCase() === "bearer" && key && !extra ? key : null;
+}
 
 /**
  * Checks if reviews/stats need updating, updates if needed, then returns latest data. This endpoint is called by 11ty in the clients
  * website to ensure that their google reviews are updated any time the clients site is rebuilt.
  *
- * @param { business_id: string } - The database UUID of the business
- * @returns Latest reviews and stats for the business
+ * Returns fresh-enough reviews and statistics for a business owned by an authenticated paid API user.
+ *
+ * @param request - Public REST request with a Bearer API key and JSON body.
+ * @returns A conventional JSON response with the endpoint's stable status behavior.
  */
-export const POST: RequestHandler<NextRouteContext> = withApiKey(
-  withPaidAccess(
-    withEventRateLimit(
-      {
-        eventType: "fetch_updated_data_1d",
-        maxRequests: 500,
-        windowMs: 24 * 60 * 60 * 1000,
-      }, // 24 hours
-      withEventRateLimit(
-        {
-          eventType: "fetch_updated_data_5m",
-          maxRequests: 25,
-          windowMs: 5 * 60 * 1000,
-        }, // 5 minutes
-        withBody(schema, async (_, context) => {
-          try {
-            const { business_id } = context.body;
+export async function POST(request: Request) {
+  try {
+    const apiKey = getBearerKey(request);
+    const userId = apiKey ? await getUserIdForApiKey(apiKey) : null;
+    if (!userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
-            await userHasOwnership(context.user_id, business_id, businesses);
-            const oneDayAgo = new Date();
-            oneDayAgo.setDate(oneDayAgo.getDate() - 1);
+    const subscription = await getActiveSubscription(userId);
+    if (!subscription) {
+      return NextResponse.json(
+        { error: "Active subscription required" },
+        { status: 403 },
+      );
+    }
 
-            // Check last update times
-            const lastUpdateReviews = await getLastEvent(
-              "update_reviews",
-              context.user_id,
-            );
-            const lastUpdateStats = await getLastEvent(
-              "update_stats",
-              context.user_id,
-            );
+    const parsedBody = schema.input.safeParse(await request.json());
+    if (!parsedBody.success) {
+      return NextResponse.json({ error: "Invalid request" }, { status: 400 });
+    }
 
-            // If data is out of date, fetch and update
-            if (
-              !lastUpdateReviews?.timestamp ||
-              lastUpdateReviews.timestamp < oneDayAgo
-            ) {
-              try {
-                console.log("Attempting to update reviews");
-                await updateBusinessReviews(business_id);
-              } catch (err) {
-                console.error("Failed to update reviews", err);
-              }
-            }
+    for (const config of rateLimits) {
+      const result = await checkAndRecordRateLimit(userId, config);
+      if (!result.allowed) {
+        return NextResponse.json(
+          {
+            error: "Rate limit exceeded",
+            message: `Too many ${config.eventType} requests. Limit: ${config.maxRequests} per ${Math.round(config.windowMs / 1000)} seconds`,
+            retryAfter: result.retryAfterSeconds,
+          },
+          { status: 429 },
+        );
+      }
+    }
 
-            if (
-              !lastUpdateStats?.timestamp ||
-              lastUpdateStats.timestamp < oneDayAgo
-            ) {
-              try {
-                console.log("Attempting to update stats");
-                await updateBusinessStats(business_id);
-              } catch (err) {
-                console.error("Failed to update stats", err);
-              }
-            }
+    const { business_id: businessId } = parsedBody.data;
+    if (!(await userHasOwnership(userId, businessId, businesses))) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
 
-            await recordEvent("api_response", context.user_id, {
-              business_id,
-              api_endpoint: "fetch-updated-data",
-            });
+    const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+    const [lastUpdateReviews, lastUpdateStats] = await Promise.all([
+      getLastEvent("update_reviews", userId),
+      getLastEvent("update_stats", userId),
+    ]);
+    if (
+      !lastUpdateReviews?.timestamp ||
+      lastUpdateReviews.timestamp < oneDayAgo
+    ) {
+      try {
+        await updateBusinessReviews(businessId);
+      } catch (error) {
+        console.error("Failed to update reviews", error);
+      }
+    }
+    if (!lastUpdateStats?.timestamp || lastUpdateStats.timestamp < oneDayAgo) {
+      try {
+        await updateBusinessStats(businessId);
+      } catch (error) {
+        console.error("Failed to update stats", error);
+      }
+    }
 
-            // Get business minimum_score
-            const [business] = await db
-              .select({ minimum_score: businesses.minimum_score })
-              .from(businesses)
-              .where(eq(businesses.id, business_id))
-              .limit(1);
+    await recordEvent("api_response", userId, {
+      business_id: businessId,
+      api_endpoint: "fetch-updated-data",
+    });
+    const [business] = await db
+      .select({ minimum_score: businesses.minimum_score })
+      .from(businesses)
+      .where(eq(businesses.id, businessId))
+      .limit(1);
+    const [reviews, stats] = await Promise.all([
+      selectBusinessReviews(businessId, business?.minimum_score ?? 1),
+      selectBusinessStats(businessId),
+    ]);
 
-            const minimumScore = business?.minimum_score ?? 1;
-
-            // Get the data
-            const [reviews, stats] = await Promise.all([
-              selectBusinessReviews(business_id, minimumScore),
-              selectBusinessStats(business_id),
-            ]);
-
-            const response = schema.response.parse({
-              reviews: reviews.map((review) => ({
-                ...review,
-                datetime: review.datetime
-                  ? review.datetime.toISOString()
-                  : null,
-              })),
-              stats,
-            });
-            return NextResponse.json(response);
-          } catch (error) {
-            console.error("Error processing request:", error);
-            return NextResponse.json(
-              { error: "Internal Server Error" },
-              { status: 500 },
-            );
-          }
-        }),
-      ),
-    ),
-  ),
-);
+    const response = schema.output.parse({
+      reviews: reviews.map((review) => ({
+        ...review,
+        datetime: review.datetime?.toISOString() ?? null,
+      })),
+      stats,
+    });
+    return NextResponse.json(response);
+  } catch (error) {
+    if (error instanceof SyntaxError) {
+      return NextResponse.json({ error: "Invalid request" }, { status: 400 });
+    }
+    console.error("Error processing request:", error);
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 },
+    );
+  }
+}

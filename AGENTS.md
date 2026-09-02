@@ -1,4 +1,4 @@
-# CLAUDE.md
+# AGENTS.md
 
 See @README.md for project overview and @package.json
 
@@ -29,7 +29,7 @@ See @README.md for project overview and @package.json
 ## Architecture Overview
 
 ### Tech Stack
-- **Framework**: Next.js 15 with App Router
+- **Framework**: Next.js 16 with App Router
 - **Database**: PostgreSQL with Drizzle ORM
 - **Authentication**: NextAuth.js v5 with email magic links
 - **Styling**: Tailwind CSS with shadcn/ui components
@@ -42,7 +42,6 @@ See @README.md for project overview and @package.json
 - `src/app/` - Next.js App Router pages and API routes
   - `(product)/` - Product pages (requires auth)
   - `(site)/` - Public marketing/auth pages
-  - `api/` - REST API endpoints with nested structure
 
 #### Key Directories
 - `src/components/` - React components organized by purpose:
@@ -51,7 +50,6 @@ See @README.md for project overview and @package.json
   - `structure/` - Layout components (header, footer, navigation)
   - `ui/` - shadcn/ui base components
 - `src/lib/` - Utility functions and shared logic
-- `src/middleware/` - Request middleware (auth, API key validation, body parsing)
 - `src/schema/` - Database schema and migrations
 
 ### Database Schema
@@ -62,7 +60,8 @@ Uses Drizzle ORM with PostgreSQL. A full table structure can be found in `src/sc
 ### Authentication & Security
 - **Session Auth**: NextAuth.js with magic link email authentication
 - **API Auth**: Custom API key system with encrypted storage for access to programmatic endpoints.
-- **Middleware**: `withAuth` for session-protected routes, `withApiKey` for API endpoints
+- **External API Auth**: Explicit API-key and paid-access checks inside the conventional route handler
+- **Stripe Auth**: Explicit Stripe signature verification inside the webhook route
 - **Development**: Uses console logging for magic links instead of email sending
 
 ### Styling Conventions
@@ -80,74 +79,6 @@ Pages must use semantic `<section>` blocks with consistent layout:
 ```jsx
 <div className="grid grid-cols-1 md:grid-cols-2"> {/* Some card */} </div>
 ```
-
-## Type-Safe API Request Pattern
-
-This codebase uses a custom type-safe API request pattern. When implementing new API endpoints, follow this pattern for consistency and type safety.
-
-### Implementation Steps
-
-1. **Create API Schema** (`/api/endpoint/schema.ts`):
-```typescript
-import { z } from "zod";
-import type { APISchema } from "@/schema/types";
-
-const schema = {
-  url: "/api/endpoint-name",
-  // Define request body schema (use z.undefined() for GET)
-  request: z.object({
-  }),
-  // Define response body schema
-  response: z.object({
-  }),
-} satisfies APISchema;
-
-export default schema;
-```
-
-2. **Implement Route Handler** (`/api/endpoint/route.ts`):
-```typescript
-import schema from "./schema";
-import { NextRouteContext, RequestHandler } from "@/middleware/types";
-import { withAuth } from "@/middleware/withAuth";
-import { withBody } from "@/middleware/withBody"; // For POST/PUT
-
-// GET request
-export const GET: RequestHandler<NextRouteContext> = withAuth(async (_, context) => {
-  // Implementation...
-  const response = schema.response.parse(result);
-  return NextResponse.json(response);
-});
-
-// POST request with body validation
-export const POST = withAuth(
-  withBody(schema, async (_, context) => {
-    const { body } = context; // Typed and validated
-    // Implementation...
-    const response = schema.response.parse(result);
-    return NextResponse.json(response);
-  })
-);
-```
-
-3. **Client-Side Usage**:
-```typescript
-import requests from "@/lib/requests";
-import endpointSchema from "@/app/api/endpoint/schema";
-
-// GET request
-const data = await requests.get(endpointSchema);
-
-// POST request
-const result = await requests.post(endpointSchema, requestBody);
-```
-
-### Conventions
-- Use `z.undefined()` for GET request schemas (no body)
-- Always validate responses with `schema.response.parse()` before sending them to the client
-- Import schema in both route handler and client code
-- Use middleware (`withAuth`, `withBody`, `withApiKey`) for common functionality; These can be chained together.
-- Export default schema from schema files
 
 ## Development Conventions
 

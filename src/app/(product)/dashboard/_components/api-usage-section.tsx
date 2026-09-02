@@ -2,16 +2,9 @@ import { Activity, TrendingUp, Clock } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { MONTHLY_API_LIMIT } from "@/lib/config";
+import type { RouterOutputs } from "@/trpc/types";
 
-interface ApiUsageSectionProps {
-  totalApiCalls: number;
-  monthlyApiCalls: number;
-  dailyAverageApiCalls: number;
-  latestApiCall: {
-    timestamp: Date;
-    businessName: string | null;
-  } | null;
-}
+type ApiUsageSectionProps = RouterOutputs["dashboard"]["getStats"];
 
 export function ApiUsageSection({
   totalApiCalls,

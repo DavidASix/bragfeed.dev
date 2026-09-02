@@ -1,15 +1,11 @@
 "use client";
 
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
 import { RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 
-import getBusinessDetailsSchema from "@/app/api/google/get-business-details/schema";
-import updateMinimumScoreSchema from "@/app/api/google/update-minimum-score/schema";
-import refreshBusinessDetailsSchema from "@/app/api/google/refresh-business-details/schema";
-import requests from "@/lib/requests";
+import { api } from "@/trpc/client";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -32,38 +28,29 @@ import { StarRatingSelector } from "../_components/star-rating-selector";
 import { FrameworkIntegrationTabs } from "./_components/framework-integration-tabs";
 
 export default function BusinessDetailsPage() {
+  const utils = api.useUtils();
   const params = useParams();
   const searchParams = useSearchParams();
   const businessId = params.id as string;
-  const queryClient = useQueryClient();
 
   // Determine default tab from query param
   const tabParam = searchParams.get("tab");
   const validTabs = ["details", "integration"];
   const defaultTab = validTabs.includes(tabParam ?? "") ? tabParam! : "details";
 
-  const businessQuery = useQuery({
-    queryKey: ["businessDetails", businessId],
-    queryFn: async () => {
-      return requests.post(getBusinessDetailsSchema, { businessId });
+  const businessQuery = api.google.getBusinessDetails.useQuery(
+    { businessId },
+    {
+      enabled: !!businessId,
+      meta: {
+        errorMessage: "Failed to fetch business details",
+      },
     },
-    enabled: !!businessId,
-    meta: {
-      errorMessage: "Failed to fetch business details",
-    },
-  });
+  );
 
-  const updateMinimumScoreMutation = useMutation({
-    mutationFn: async (minimumScore: number) => {
-      return requests.post(updateMinimumScoreSchema, {
-        businessId,
-        minimumScore,
-      });
-    },
+  const updateMinimumScoreMutation = api.google.updateMinimumScore.useMutation({
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["businessDetails", businessId],
-      });
+      utils.google.getBusinessDetails.invalidate({ businessId });
       toast.success("Minimum review score updated");
     },
     onError: () => {
@@ -71,20 +58,16 @@ export default function BusinessDetailsPage() {
     },
   });
 
-  const refreshBusinessDataMutation = useMutation({
-    mutationFn: async () => {
-      return requests.post(refreshBusinessDetailsSchema, { businessId });
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["businessDetails", businessId],
-      });
-      toast.success("Data refreshed successfully!");
-    },
-    onError: () => {
-      toast.error("Failed to refresh business data");
-    },
-  });
+  const refreshBusinessDataMutation =
+    api.google.refreshBusinessDetails.useMutation({
+      onSuccess: () => {
+        utils.google.getBusinessDetails.invalidate({ businessId });
+        toast.success("Data refreshed successfully!");
+      },
+      onError: () => {
+        toast.error("Failed to refresh business data");
+      },
+    });
 
   if (businessQuery.isLoading) {
     return (
@@ -222,7 +205,9 @@ export default function BusinessDetailsPage() {
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => refreshBusinessDataMutation.mutate()}
+                          onClick={() =>
+                            refreshBusinessDataMutation.mutate({ businessId })
+                          }
                           disabled={refreshBusinessDataMutation.isPending}
                           className="gap-2"
                         >
@@ -242,7 +227,10 @@ export default function BusinessDetailsPage() {
                     <StarRatingSelector
                       value={business.minimum_score ?? 1}
                       onChange={(value) =>
-                        updateMinimumScoreMutation.mutate(value)
+                        updateMinimumScoreMutation.mutate({
+                          businessId,
+                          minimumScore: value,
+                        })
                       }
                       disabled={updateMinimumScoreMutation.isPending}
                     />
@@ -275,11 +263,7 @@ export default function BusinessDetailsPage() {
                         author={review.author_name || "Anonymous"}
                         rating={review.rating || 0}
                         text={review.comments || "No comment"}
-                        date={
-                          review.datetime && !isNaN(Date.parse(review.datetime))
-                            ? new Date(review.datetime)
-                            : null
-                        }
+                        date={review.datetime}
                         dimmed={
                           (review.rating || 0) < (business.minimum_score ?? 1)
                         }
