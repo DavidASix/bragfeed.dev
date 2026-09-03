@@ -163,7 +163,7 @@ const reviews = await fetch(
       </section>
 
       {/* CTA Section */}
-      <section className="section section-padding bg-secondary">
+      <section className="section section-padding bg-secondary dark:bg-secondary/20">
         <div className="content text-center">
           <div className="max-w-4xl mx-auto">
             <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
