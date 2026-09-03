@@ -141,7 +141,7 @@ export default function AddBusinessPage() {
       </section>
 
       {/* Wizard Steps */}
-      <section className="section section-padding bg-background">
+      <section className="section section-padding">
         <div className="content">
           <div className="max-w-4xl mx-auto">
             {/* Step Progress Indicator */}

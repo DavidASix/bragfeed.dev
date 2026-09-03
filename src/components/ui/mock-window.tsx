@@ -19,7 +19,7 @@ export function MockWindow({
         isDark
           ? "bg-gray-900"
           : isSystem
-            ? "bg-card border border-border"
+            ? "bg-card border"
             : "bg-white border border-gray-200"
       } rounded-lg overflow-hidden ${className}`}
     >
@@ -28,7 +28,7 @@ export function MockWindow({
           isDark
             ? "bg-gray-800 border-b border-gray-700"
             : isSystem
-              ? "bg-muted border-b border-border"
+              ? "bg-muted border-b"
               : "bg-gray-50 border-b border-gray-200"
         }`}
       >

@@ -81,7 +81,7 @@ export default function Home() {
       </section>
 
       {/* Social Proof Section */}
-      <section className="section section-padding-b bg-background">
+      <section className="section section-padding-b">
         <div className="content text-center">
           <h2 className="text-2xl font-bold text-foreground mb-8">
             Loved by Over {devCount} Developers Worldwide
@@ -115,7 +115,7 @@ export default function Home() {
       </section>
 
       {/* How It Works Section */}
-      <section className="section section-padding bg-background">
+      <section className="section section-padding">
         <div className="content">
           <div className="text-center mb-16">
             <h2 className="text-3xl font-bold text-foreground mb-4">
