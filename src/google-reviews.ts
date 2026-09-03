@@ -20,7 +20,11 @@ export default class GoogleReviews {
 
   constructor(businessId: string) {
     this.businessId = businessId;
-    this.defaultQueries = `business_id=${this.businessId}&region=us&language=en`;
+    this.defaultQueries = new URLSearchParams({
+      business_id: this.businessId,
+      region: "us",
+      language: "en",
+    }).toString();
   }
 
   public async getRecent(inputLimit = 10) {

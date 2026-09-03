@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const mocks = vi.hoisted(() => ({
   getUserIdForApiKey: vi.fn(),
@@ -72,6 +72,8 @@ function createRequest(body: string, authorization?: string): Request {
 
 describe("paid fetch-updated-data REST boundary", () => {
   beforeEach(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-09-02T12:00:00.000Z"));
     vi.clearAllMocks();
     mocks.getUserIdForApiKey.mockResolvedValue("user-1");
     mocks.getActiveSubscription.mockResolvedValue({ id: 1 });
@@ -92,6 +94,10 @@ describe("paid fetch-updated-data REST boundary", () => {
       review_count: 1,
       review_score: 5,
     });
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
   });
 
   it("returns 401 when authorization is missing", async () => {
@@ -151,6 +157,78 @@ describe("paid fetch-updated-data REST boundary", () => {
     expect(response.status).toBe(429);
     await expect(response.json()).resolves.toMatchObject({
       retryAfter: 86400,
+    });
+  });
+
+  it("returns 403 without reading or refreshing a business owned by another user", async () => {
+    mocks.userHasOwnership.mockResolvedValue(false);
+
+    const response = await POST(
+      createRequest(JSON.stringify({ business_id: businessId }), "Bearer key"),
+    );
+
+    expect(response.status).toBe(403);
+    expect(mocks.getLastEvent).not.toHaveBeenCalled();
+    expect(mocks.updateBusinessReviews).not.toHaveBeenCalled();
+    expect(mocks.updateBusinessStats).not.toHaveBeenCalled();
+    expect(mocks.selectBusinessReviews).not.toHaveBeenCalled();
+  });
+
+  it("skips provider refreshes when both update events are fresh", async () => {
+    const response = await POST(
+      createRequest(JSON.stringify({ business_id: businessId }), "Bearer key"),
+    );
+
+    expect(response.status).toBe(200);
+    expect(mocks.updateBusinessReviews).not.toHaveBeenCalled();
+    expect(mocks.updateBusinessStats).not.toHaveBeenCalled();
+  });
+
+  it("refreshes both datasets when this business has no update events", async () => {
+    mocks.getLastEvent.mockResolvedValue(undefined);
+
+    const response = await POST(
+      createRequest(JSON.stringify({ business_id: businessId }), "Bearer key"),
+    );
+
+    expect(response.status).toBe(200);
+    expect(mocks.updateBusinessReviews).toHaveBeenCalledWith(businessId);
+    expect(mocks.updateBusinessStats).toHaveBeenCalledWith(businessId);
+  });
+
+  it("refreshes only the stale dataset", async () => {
+    mocks.getLastEvent.mockImplementation((event) =>
+      Promise.resolve({
+        timestamp:
+          event === "update_reviews"
+            ? new Date("2026-08-31T12:00:00.000Z")
+            : new Date("2026-09-02T06:00:00.000Z"),
+      }),
+    );
+
+    const response = await POST(
+      createRequest(JSON.stringify({ business_id: businessId }), "Bearer key"),
+    );
+
+    expect(response.status).toBe(200);
+    expect(mocks.updateBusinessReviews).toHaveBeenCalledWith(businessId);
+    expect(mocks.updateBusinessStats).not.toHaveBeenCalled();
+  });
+
+  it("returns cached data when the provider refresh fails", async () => {
+    mocks.getLastEvent.mockResolvedValue(undefined);
+    mocks.updateBusinessReviews.mockRejectedValue(new Error("reviews failed"));
+    mocks.updateBusinessStats.mockRejectedValue(new Error("stats failed"));
+    vi.spyOn(console, "error").mockImplementation(() => undefined);
+
+    const response = await POST(
+      createRequest(JSON.stringify({ business_id: businessId }), "Bearer key"),
+    );
+
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toMatchObject({
+      reviews: [{ comments: "Great" }],
+      stats: { review_count: 1, review_score: 5 },
     });
   });
 
