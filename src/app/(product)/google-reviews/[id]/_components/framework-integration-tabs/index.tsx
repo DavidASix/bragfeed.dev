@@ -43,7 +43,7 @@ export function FrameworkIntegrationTabs({
           </div>
 
           <CodeBlock
-            theme="light"
+            theme="dark"
             code={framework.code}
             language={framework.id === "hugo" ? "html" : "javascript"}
             title={`${framework.name} Integration`}

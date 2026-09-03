@@ -64,11 +64,11 @@ export default function Home() {
       <section className="section section-padding">
         <div className="content text-center">
           <div className="mx-auto max-w-full pt-12 pb-20 flex justify-center items-center flex-col gap-6">
-            <h1 className="text-4xl font-bold tracking-tight text-gray-900 lg:text-6xl">
+            <h1 className="text-4xl font-bold tracking-tight text-foreground lg:text-6xl">
               Fetch your <span className="text-primary">Google Reviews</span> at
               build time
             </h1>
-            <p className="text-xl text-gray-600 max-w-3xl leading-relaxed">
+            <p className="text-xl text-muted-foreground max-w-3xl leading-relaxed">
               Embed fresh Google Reviews in Gatsby, Eleventy, Hugo, or any
               static site. <br />
               Purely static—<b>no JavaScript required</b>.
@@ -81,9 +81,9 @@ export default function Home() {
       </section>
 
       {/* Social Proof Section */}
-      <section className="section section-padding-b bg-white">
+      <section className="section section-padding-b">
         <div className="content text-center">
-          <h2 className="text-2xl font-bold text-gray-900 mb-8">
+          <h2 className="text-2xl font-bold text-foreground mb-8">
             Loved by Over {devCount} Developers Worldwide
           </h2>
           <div className="mx-auto my-10 flex w-fit flex-col items-center gap-4 sm:flex-row">
@@ -115,13 +115,13 @@ export default function Home() {
       </section>
 
       {/* How It Works Section */}
-      <section className="section section-padding bg-white">
+      <section className="section section-padding">
         <div className="content">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+            <h2 className="text-3xl font-bold text-foreground mb-4">
               How It Works
             </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
               Setup takes 5 minutes. Then your reviews update automatically
               forever.
             </p>
@@ -133,10 +133,10 @@ export default function Home() {
                 <div className="w-16 h-16 bg-primary text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6">
                   {step.step}
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-3">
+                <h3 className="text-xl font-bold text-foreground mb-3">
                   {step.title}
                 </h3>
-                <p className="text-gray-600 leading-relaxed">
+                <p className="text-muted-foreground leading-relaxed">
                   {step.description}
                 </p>
               </div>
@@ -163,7 +163,7 @@ const reviews = await fetch(
       </section>
 
       {/* CTA Section */}
-      <section className="section section-padding bg-secondary">
+      <section className="section section-padding bg-secondary dark:bg-secondary/20">
         <div className="content text-center">
           <div className="max-w-4xl mx-auto">
             <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
@@ -187,13 +187,13 @@ const reviews = await fetch(
       </section>
 
       {/* About The Developer Section */}
-      <section className="section section-padding bg-gray-50">
+      <section className="section section-padding bg-muted/40">
         <div className="content">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+            <h2 className="text-3xl font-bold text-foreground mb-4">
               About the Developer
             </h2>
-            <p className="text-xl text-gray-600">
+            <p className="text-xl text-muted-foreground">
               Created by RedOxfordOnline in Waterloo Ontario
             </p>
           </div>
@@ -208,13 +208,13 @@ const reviews = await fetch(
                 className="w-48 h-48 rounded-full mx-auto md:mx-0  shadow-lg"
               />
               <div className="text-center md:text-left space-y-2">
-                <h3 className="text-2xl font-bold text-gray-900">
+                <h3 className="text-2xl font-bold text-foreground">
                   David Anderson Six
                 </h3>
                 <p className="text-lg text-primary font-semibold">
                   Founder & Lead Developer
                 </p>
-                <p className="text-gray-600">
+                <p className="text-muted-foreground">
                   Red Oxford Online • Waterloo, Ontario
                 </p>
               </div>
@@ -222,19 +222,19 @@ const reviews = await fetch(
 
             <div className="space-y-6 col-span-2">
               <div>
-                <p className="text-gray-700 leading-relaxed mb-4">
+                <p className="text-foreground/80 leading-relaxed mb-4">
                   Run by its founder David Anderson,{" "}
                   <strong>Red Oxford Online</strong> is a small but powerful
                   company, passionate about bringing your business to the next
                   level with easy to use tools.
                 </p>
-                <p className="text-gray-700 leading-relaxed mb-4">
+                <p className="text-foreground/80 leading-relaxed mb-4">
                   David is a full-stack developer with nearly a decade of
                   programming & server management experience, specializing in
                   creating websites, mobile & web applications, data pipelines,
                   and server infrastructure.
                 </p>
-                <p className="text-gray-700 leading-relaxed">
+                <p className="text-foreground/80 leading-relaxed">
                   I think that one of the greatest joys in life is building
                   something that makes people&apos;s lives better. Bragfeed.dev
                   represents exactly that - solving a real problem that
@@ -243,7 +243,7 @@ const reviews = await fetch(
               </div>
 
               <div className="border-l-4 border-primary pl-6">
-                <p className="text-gray-600 italic">
+                <p className="text-muted-foreground italic">
                   Proudly developing in Waterloo, Ontario 🇨🇦
                 </p>
               </div>

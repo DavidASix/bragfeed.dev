@@ -40,18 +40,22 @@ export function StepIndicator({
       case "completed":
         return "bg-green-500 text-white";
       case "active":
-        return "bg-primary text-white";
+        return "bg-primary text-primary-foreground";
       case "inactive":
-        return "bg-gray-200 text-gray-500";
+        return "bg-muted text-muted-foreground";
     }
   };
 
   const getTextClasses = () => {
-    return status === "inactive" ? "text-gray-400" : "text-gray-900";
+    return status === "inactive"
+      ? "text-muted-foreground/60"
+      : "text-foreground";
   };
 
   const getDescClasses = () => {
-    return status === "inactive" ? "text-gray-400" : "text-gray-600";
+    return status === "inactive"
+      ? "text-muted-foreground/60"
+      : "text-muted-foreground";
   };
 
   //TODO: Why claude did it this a mystery; couldn't just use responsive styles? insane.

@@ -5,10 +5,8 @@ See @README.md for project overview and @package.json
 ## Development Commands
 
 ### Building and Testing
+NOTE: If you need to access the server, ALWAYS try to reach localhost:3000 or check if docker is running before trying to start it, as it may already be running as started by the user.
 - `docker compose up` - Running this starts the server and runs pnpm dev
-- `pnpm dev` - Start development server with Turbopack
-- `pnpm start` - Start production server
-- `pnpm build` - Build production version
 
 ### Code Quality
 - `pnpm check` - Run all checks (types, lint, format, tests)
@@ -20,11 +18,7 @@ See @README.md for project overview and @package.json
 - `pnpm format` - Format code with Prettier
 
 ### Database Operations
-- `pnpm db:generate` - Generate Drizzle migrations
-- `pnpm db:migrate` - Run database migrations
-- `pnpm db:clear` - Clear all database data
-- `pnpm db:fresh` - Clear database and run fresh migrations
-- `pnpm db:production:migrate` - Run production migrations. AI Models should NEVER DO THIS.
+Agents are not permitted to use the pnpm database commands directly.
 
 ## Architecture Overview
 

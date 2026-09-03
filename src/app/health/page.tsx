@@ -38,7 +38,7 @@ export default async function HealthPage() {
         <div
           className={`mb-6 flex items-center gap-3 rounded-xl border p-4 ${
             status.healthy
-              ? "border-green-200 bg-green-50 text-green-900"
+              ? "border-green-200 bg-green-50 text-green-900 dark:border-green-900 dark:bg-green-950/30 dark:text-green-100"
               : "border-destructive/30 bg-destructive/10 text-destructive"
           }`}
         >
@@ -73,7 +73,7 @@ export default async function HealthPage() {
                   variant={service.healthy ? "outline" : "destructive"}
                   className={
                     service.healthy
-                      ? "border-green-300 bg-green-50 text-green-800"
+                      ? "border-green-300 bg-green-50 text-green-800 dark:border-green-900 dark:bg-green-950/30 dark:text-green-200"
                       : undefined
                   }
                 >

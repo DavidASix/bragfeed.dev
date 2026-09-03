@@ -137,7 +137,6 @@ export default function GooglePlaceInput({
         className: cn("w-full  border rounded-lg", className),
         style: {
           display: isLoaded ? "block" : "none",
-          colorScheme: "light",
         },
       })}
       {!isLoaded && (

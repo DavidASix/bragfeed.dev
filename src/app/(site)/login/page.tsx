@@ -175,7 +175,7 @@ export default function Home() {
   return (
     <div className="flex flex-col md:flex-row flex-1">
       {/* Left Side - Brand Section */}
-      <div className="relative flex-1 bg-gradient-to-br from-primary via-primary/90 to-secondary overflow-hidden flex flex-col">
+      <div className="relative flex-1 bg-gradient-to-br from-primary via-primary/90 to-secondary overflow-hidden flex flex-col dark:from-primary/35 dark:via-primary/20 dark:to-secondary/25">
         <div className="relative z-10 flex flex-col flex-1 justify-between p-8 md:p-12 lg:p-16 text-white border">
           {/* Center Section */}
           <div className="flex-1 flex flex-col justify-center py-8 md:py-12">
@@ -208,13 +208,13 @@ export default function Home() {
           <div className="hidden md:block">
             <Badge
               variant="secondary"
-              className="inline-flex items-center gap-3 px-4 py-2 text-sm"
+              className="inline-flex items-center gap-3 px-4 py-2 text-sm dark:border-white/15 dark:bg-black/20 dark:text-white/80 dark:hover:bg-black/20"
             >
               <div className="flex items-center gap-1">
                 {[...Array(5)].map((_, index) => (
                   <Star
                     key={index}
-                    className="size-4 fill-yellow-400 text-yellow-400"
+                    className="size-4 fill-yellow-400 text-yellow-400 dark:fill-primary/80 dark:text-primary/80"
                   />
                 ))}
               </div>
