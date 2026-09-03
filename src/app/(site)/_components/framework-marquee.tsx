@@ -30,7 +30,7 @@ function MarqueeRow({ items }: { items: typeof frameworks }) {
               alt={`${fw.name} logo`}
               width={80}
               height={80}
-              className="object-contain grayscale brightness-150 group-hover:grayscale-0 group-hover:brightness-100 group-hover:scale-[1.05] transition-all duration-300"
+              className="object-contain grayscale brightness-150 transition-all duration-300 group-hover:scale-[1.05] group-hover:grayscale-0 group-hover:brightness-100 dark:brightness-0 dark:invert dark:group-hover:brightness-100 dark:group-hover:invert-0"
             />
             <span className="font-bold text-base text-foreground whitespace-normal">
               {fw.name}
