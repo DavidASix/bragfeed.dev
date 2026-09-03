@@ -208,13 +208,13 @@ export default function Home() {
           <div className="hidden md:block">
             <Badge
               variant="secondary"
-              className="inline-flex items-center gap-3 px-4 py-2 text-sm"
+              className="inline-flex items-center gap-3 px-4 py-2 text-sm dark:border-white/15 dark:bg-black/20 dark:text-white/80 dark:hover:bg-black/20"
             >
               <div className="flex items-center gap-1">
                 {[...Array(5)].map((_, index) => (
                   <Star
                     key={index}
-                    className="size-4 fill-yellow-400 text-yellow-400"
+                    className="size-4 fill-yellow-400 text-yellow-400 dark:fill-primary/80 dark:text-primary/80"
                   />
                 ))}
               </div>
