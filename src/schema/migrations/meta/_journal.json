@@ -29,6 +29,13 @@
       "when": 1759702845330,
       "tag": "0003_first_obadiah_stane",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1788388764228,
+      "tag": "0004_keen_sauron",
+      "breakpoints": true
     }
   ]
 }
