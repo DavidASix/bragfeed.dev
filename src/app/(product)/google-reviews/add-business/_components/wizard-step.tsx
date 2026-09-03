@@ -33,7 +33,7 @@ export function WizardStep({
           informationalStep={informationalStep}
         />
 
-        <div className="bg-gray-50 p-6 rounded-lg">{children}</div>
+        <div className="bg-muted/40 p-6 rounded-lg">{children}</div>
       </CardContent>
     </Card>
   );

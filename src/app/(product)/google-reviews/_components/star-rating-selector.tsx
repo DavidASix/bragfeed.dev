@@ -13,7 +13,7 @@ export function StarRatingSelector({
 }: StarRatingSelectorProps) {
   return (
     <div className="flex flex-col gap-2">
-      <label className="text-sm font-medium text-gray-700">
+      <label className="text-sm font-medium text-foreground">
         Minimum Review Score
       </label>
       <div className="flex items-center gap-1">
@@ -34,13 +34,13 @@ export function StarRatingSelector({
               className={`w-8 h-8 transition-colors ${
                 star <= value
                   ? "fill-yellow-400 text-yellow-400"
-                  : "text-gray-300 hover:text-gray-400"
+                  : "text-muted-foreground/30 hover:text-muted-foreground/60"
               }`}
             />
           </button>
         ))}
       </div>
-      <p className="text-xs text-gray-500">
+      <p className="text-xs text-muted-foreground">
         Only reviews with {value} star{value > 1 ? "s" : ""} or higher will be
         returned by the API
       </p>

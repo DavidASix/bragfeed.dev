@@ -85,10 +85,10 @@ export default function BusinessDetailsPage() {
     return (
       <section className="section section-padding">
         <div className="content text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">
+          <h1 className="text-2xl font-bold text-foreground mb-4">
             Business Not Found
           </h1>
-          <p className="text-gray-600 mb-6">
+          <p className="text-muted-foreground mb-6">
             The business you&apos;re looking for doesn&apos;t exist or you
             don&apos;t have access to it.
           </p>
@@ -106,7 +106,7 @@ export default function BusinessDetailsPage() {
   return (
     <>
       {/* Header Section */}
-      <section className="section section-padding bg-gradient-to-b from-primary/10 to-white">
+      <section className="section section-padding bg-gradient-to-b from-primary/10 to-background">
         <div className="content">
           <div className="flex items-center justify-between gap-4 mb-6">
             <Button variant="default" asChild>
@@ -114,11 +114,13 @@ export default function BusinessDetailsPage() {
             </Button>
           </div>
           <div className="text-center">
-            <h1 className="text-4xl font-bold tracking-tight text-gray-900 lg:text-5xl mb-4">
+            <h1 className="text-4xl font-bold tracking-tight text-foreground lg:text-5xl mb-4">
               {business.name || "Unnamed Business"}
             </h1>
             {business.address && (
-              <p className="text-xl text-gray-600 mb-6">{business.address}</p>
+              <p className="text-xl text-muted-foreground mb-6">
+                {business.address}
+              </p>
             )}
 
             {/* Business Stats */}
@@ -131,7 +133,7 @@ export default function BusinessDetailsPage() {
                         <div className="text-3xl font-bold text-secondary">
                           {business.stats.review_count || 0}
                         </div>
-                        <div className="text-sm text-gray-600">
+                        <div className="text-sm text-muted-foreground">
                           Total Reviews
                         </div>
                       </div>
@@ -146,7 +148,9 @@ export default function BusinessDetailsPage() {
                         ? business.stats.review_score.toFixed(1)
                         : "—"}
                     </div>
-                    <div className="text-sm text-gray-600">Average Rating</div>
+                    <div className="text-sm text-muted-foreground">
+                      Average Rating
+                    </div>
                   </div>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -154,7 +158,7 @@ export default function BusinessDetailsPage() {
                         <div className="text-3xl font-bold text-primary">
                           {available_reviews || 0}
                         </div>
-                        <div className="text-sm text-gray-600">
+                        <div className="text-sm text-muted-foreground">
                           Available Reviews
                         </div>
                       </div>
@@ -166,12 +170,14 @@ export default function BusinessDetailsPage() {
                     </TooltipContent>
                   </Tooltip>
                   <div className="text-center">
-                    <div className="text-3xl font-bold text-gray-700">
+                    <div className="text-3xl font-bold text-foreground/80">
                       {last_refreshed
                         ? new Date(last_refreshed).toLocaleDateString()
                         : "—"}
                     </div>
-                    <div className="text-sm text-gray-600">Data Refreshed</div>
+                    <div className="text-sm text-muted-foreground">
+                      Data Refreshed
+                    </div>
                   </div>
                 </div>
               </TooltipProvider>
@@ -216,7 +222,7 @@ export default function BusinessDetailsPage() {
                           />
                           Refresh Data
                         </Button>
-                        <p className="text-xs text-gray-500 max-w-xs text-right">
+                        <p className="text-xs text-muted-foreground max-w-xs text-right">
                           Your data is also re-fetched during each API request
                           so that your API calls always return fresh data.
                         </p>
@@ -238,7 +244,7 @@ export default function BusinessDetailsPage() {
                 </Card>
 
                 <div className="flex justify-between items-center mb-8">
-                  <h2 className="text-2xl font-bold text-gray-900">
+                  <h2 className="text-2xl font-bold text-foreground">
                     Recent Reviews ({reviews.length})
                   </h2>
                 </div>
@@ -246,10 +252,10 @@ export default function BusinessDetailsPage() {
                 {reviews.length === 0 ? (
                   <Card>
                     <CardContent className="text-center py-12">
-                      <p className="text-gray-500 mb-4">
+                      <p className="text-muted-foreground mb-4">
                         No reviews have been fetched for this business yet.
                       </p>
-                      <p className="text-sm text-gray-400">
+                      <p className="text-sm text-muted-foreground/70">
                         Reviews are automatically updated when you add a
                         business.
                       </p>
@@ -276,10 +282,10 @@ export default function BusinessDetailsPage() {
               <TabsContent value="integration" className="space-y-6">
                 <div className="space-y-6">
                   <div>
-                    <h2 className="text-2xl font-bold text-gray-900 mb-4">
+                    <h2 className="text-2xl font-bold text-foreground mb-4">
                       Integration Instructions
                     </h2>
-                    <p className="text-gray-600 mb-6">
+                    <p className="text-muted-foreground mb-6">
                       Choose your framework and copy the integration code to
                       display reviews on your site.
                     </p>
@@ -297,19 +303,19 @@ export default function BusinessDetailsPage() {
                     <CardContent>
                       <div className="grid md:grid-cols-2 gap-6">
                         <div>
-                          <h3 className="font-semibold text-gray-900 mb-2">
+                          <h3 className="font-semibold text-foreground mb-2">
                             Business ID
                           </h3>
-                          <code className="text-sm bg-gray-100 px-2 py-1 rounded">
+                          <code className="text-sm bg-muted px-2 py-1 rounded">
                             {business.id}
                           </code>
                         </div>
                         {business.place_id && (
                           <div>
-                            <h3 className="font-semibold text-gray-900 mb-2">
+                            <h3 className="font-semibold text-foreground mb-2">
                               Google Place ID
                             </h3>
-                            <code className="text-sm bg-gray-100 px-2 py-1 rounded break-all">
+                            <code className="text-sm bg-muted px-2 py-1 rounded break-all">
                               {business.place_id}
                             </code>
                           </div>

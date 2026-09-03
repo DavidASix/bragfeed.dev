@@ -121,7 +121,7 @@ export default function AddBusinessPage() {
   return (
     <>
       {/* Header Section */}
-      <section className="section section-padding bg-gradient-to-b from-primary/10 to-white">
+      <section className="section section-padding bg-gradient-to-b from-primary/10 to-background">
         <div className="content">
           <div className="flex items-center gap-4 mb-6">
             <Button variant="default" asChild>
@@ -129,10 +129,10 @@ export default function AddBusinessPage() {
             </Button>
           </div>
           <div className="text-center">
-            <h1 className="text-4xl font-bold tracking-tight text-gray-900 lg:text-5xl">
+            <h1 className="text-4xl font-bold tracking-tight text-foreground lg:text-5xl">
               Add New Business
             </h1>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto mt-4">
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto mt-4">
               Connect your Google Business Profile to display reviews on your
               static website
             </p>
@@ -141,7 +141,7 @@ export default function AddBusinessPage() {
       </section>
 
       {/* Wizard Steps */}
-      <section className="section section-padding bg-white">
+      <section className="section section-padding bg-background">
         <div className="content">
           <div className="max-w-4xl mx-auto">
             {/* Step Progress Indicator */}
@@ -170,7 +170,7 @@ export default function AddBusinessPage() {
                 status={getStepStatus(1)}
               >
                 <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-foreground mb-2">
                     Enter your business name as it appears on Google Maps
                   </label>
                 </div>
@@ -194,8 +194,8 @@ export default function AddBusinessPage() {
                         </Button>
                       </div>
                     ) : (
-                      <div className="p-3 bg-green-50 border border-green-200 rounded-md">
-                        <p className="text-sm text-green-800">
+                      <div className="p-3 bg-green-50 border border-green-200 rounded-md dark:bg-green-950/30 dark:border-green-900">
+                        <p className="text-sm text-green-800 dark:text-green-200">
                           ✓ Selected Place ID: <strong>{placeId}</strong>
                         </p>
                       </div>
@@ -214,7 +214,7 @@ export default function AddBusinessPage() {
                 {!placeId ||
                 existingBusinessId ||
                 checkBusinessQuery.isFetching ? (
-                  <p className="text-gray-500 text-center py-8">
+                  <p className="text-muted-foreground text-center py-8">
                     Please select a Google Place first to fetch reviews
                   </p>
                 ) : (
@@ -243,9 +243,9 @@ export default function AddBusinessPage() {
 
                     {reviews.length > 0 ? (
                       <>
-                        <div className="p-3 bg-green-50 border border-green-200 rounded-md">
+                        <div className="p-3 bg-green-50 border border-green-200 rounded-md dark:bg-green-950/30 dark:border-green-900">
                           {businessStats && (
-                            <div className="mt-2 text-sm text-green-700">
+                            <div className="mt-2 text-sm text-green-700 dark:text-green-300">
                               <p>Total Reviews: {businessStats.review_count}</p>
                               <p>
                                 Average Rating: {businessStats.review_score}
@@ -254,7 +254,7 @@ export default function AddBusinessPage() {
                             </div>
                           )}
                         </div>
-                        <p className="text-sm font-semibold text-gray-800">
+                        <p className="text-sm font-semibold text-foreground">
                           {Math.min(reviews.length, 5)} recent reviews:
                         </p>
                         {reviews.slice(0, 5).map((review, index) => (
@@ -314,16 +314,16 @@ export default function AddBusinessPage() {
                 informationalStep={true}
               >
                 {currentStep < 4 ? (
-                  <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-md">
-                    <p className="text-sm text-yellow-800">
+                  <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-md dark:bg-yellow-950/30 dark:border-yellow-900">
+                    <p className="text-sm text-yellow-800 dark:text-yellow-200">
                       ⚠️ Complete the previous steps to view integration
                       instructions
                     </p>
                   </div>
                 ) : (
                   <div className="space-y-4">
-                    <div className="p-4 bg-green-50 border border-green-200 rounded-md">
-                      <p className="text-sm text-green-800">
+                    <div className="p-4 bg-green-50 border border-green-200 rounded-md dark:bg-green-950/30 dark:border-green-900">
+                      <p className="text-sm text-green-800 dark:text-green-200">
                         ✅ Business successfully created! You can now integrate
                         reviews into your website.
                       </p>

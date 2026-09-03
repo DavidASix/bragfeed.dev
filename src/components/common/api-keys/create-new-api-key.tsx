@@ -151,10 +151,10 @@ export default function CreateNewApiKey({
       <div className={className}>
         {showDetails && (
           <div className="mb-6">
-            <h3 className="text-2xl font-semibold text-gray-900 mb-2">
+            <h3 className="text-2xl font-semibold text-foreground mb-2">
               Your API Key
             </h3>
-            <p className="text-base text-gray-600">
+            <p className="text-base text-muted-foreground">
               This key allows your website to securely fetch reviews from our
               service.
             </p>
@@ -162,14 +162,14 @@ export default function CreateNewApiKey({
         )}
 
         <div className="text-center py-12 space-y-6">
-          <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto">
-            <Info className="w-8 h-8 text-gray-400" />
+          <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto">
+            <Info className="w-8 h-8 text-muted-foreground" />
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            <h3 className="text-lg font-semibold text-foreground mb-2">
               Subscription Required
             </h3>
-            <p className="text-gray-600 mb-4">
+            <p className="text-muted-foreground mb-4">
               You need an active subscription to generate and use API keys.
             </p>
             <Button asChild size="lg">
@@ -185,10 +185,10 @@ export default function CreateNewApiKey({
     <div className={className}>
       {showDetails && (
         <div className="mb-6">
-          <h3 className="text-2xl font-semibold text-gray-900 mb-2">
+          <h3 className="text-2xl font-semibold text-foreground mb-2">
             Your API Key
           </h3>
-          <p className="text-base text-gray-600">
+          <p className="text-base text-muted-foreground">
             This key allows your website to securely fetch reviews from our
             service.
           </p>
@@ -202,12 +202,12 @@ export default function CreateNewApiKey({
         </div>
       ) : hasApiKey ? (
         <div className="space-y-4">
-          <div className="flex items-center space-x-2 text-green-800 font-medium">
+          <div className="flex items-center space-x-2 text-green-800 font-medium dark:text-green-300">
             <CheckCircle className="w-5 h-5" />
             <span>API key is active and ready to use</span>
           </div>
 
-          <div className="bg-white border border-green-200 p-4 rounded-lg">
+          <div className="bg-card border border-green-200 p-4 rounded-lg dark:border-green-900">
             <div className="font-mono text-sm break-all">
               {currentApiKey
                 ? showApiKey
@@ -272,7 +272,7 @@ export default function CreateNewApiKey({
         </div>
       ) : (
         <div className="text-center py-8 space-y-4">
-          <p className="text-gray-600">
+          <p className="text-muted-foreground">
             You need to create an API key to access your reviews
           </p>
           <Button

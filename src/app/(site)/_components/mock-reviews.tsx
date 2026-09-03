@@ -75,7 +75,7 @@ export function MockReviewsWindow() {
   return (
     <MockWindow
       title="bragfeed.dev - Google Reviews API"
-      theme="light"
+      theme="system"
       className="shadow-2xl max-w-5xl mx-auto"
     >
       <div className="grid lg:grid-cols-2 gap-8 items-center p-2">
@@ -101,7 +101,7 @@ export function MockReviewsWindow() {
                 className={`w-3 h-3 ml-1 ${isLoading ? "animate-spin" : ""}`}
               />
             </Button>
-            <span className="text-sm text-gray-500 tabular-nums">
+            <span className="text-sm text-muted-foreground tabular-nums">
               {isLoading ? 0 : countdown}s
             </span>
           </div>
@@ -113,7 +113,7 @@ export function MockReviewsWindow() {
               ? Array.from({ length: 3 }).map((_, i) => (
                   <div
                     key={i}
-                    className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg h-[72px]"
+                    className="flex items-center gap-3 p-3 bg-muted/40 rounded-lg h-[72px]"
                   >
                     <Skeleton className="w-10 h-10 rounded-full flex-shrink-0" />
                     <div className="flex-1 space-y-2">
@@ -126,7 +126,7 @@ export function MockReviewsWindow() {
               : displayedReviews.map((review, i) => (
                   <div
                     key={i}
-                    className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg h-[72px]"
+                    className="flex items-center gap-3 p-3 bg-muted/40 rounded-lg h-[72px]"
                   >
                     <div className="w-10 h-10 bg-secondary/20 rounded-full flex items-center justify-center flex-shrink-0">
                       <span className="text-secondary font-semibold">
@@ -142,7 +142,7 @@ export function MockReviewsWindow() {
                           />
                         ))}
                       </div>
-                      <div className="text-sm text-gray-600 line-clamp-2">
+                      <div className="text-sm text-muted-foreground line-clamp-2">
                         &quot;{review}&quot;
                       </div>
                     </div>
