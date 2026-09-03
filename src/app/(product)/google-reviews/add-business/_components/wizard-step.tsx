@@ -21,7 +21,9 @@ export function WizardStep({
   informationalStep = false,
 }: WizardStepProps) {
   return (
-    <Card className={`${status === "inactive" ? "opacity-50" : ""}`}>
+    <Card
+      className={`${status === "inactive" ? "opacity-50 dark:opacity-70" : ""}`}
+    >
       <CardContent className="pt-6 space-y-6">
         <StepIndicator
           step={step}
