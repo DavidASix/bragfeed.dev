@@ -1,0 +1,1 @@
+ALTER TABLE "user" ADD COLUMN "has_billing_override" boolean DEFAULT false NOT NULL;
