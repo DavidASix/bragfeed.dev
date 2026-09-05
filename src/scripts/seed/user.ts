@@ -27,6 +27,16 @@ export async function up() {
         has_active_subscription: false,
         has_billing_override: false,
       },
+      {
+        id: "00000000-0000-0000-0000-000000000003",
+        name: "Billing Override User",
+        email: "override@example.com",
+        emailVerified: new Date("2025-07-27T08:14:09.624Z"),
+        image: null,
+        stripe_customer_id: null,
+        has_active_subscription: false,
+        has_billing_override: true,
+      },
     ])
     .onConflictDoNothing();
 
