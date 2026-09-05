@@ -1,4 +1,5 @@
-import { QueryProvider } from "@/lib/tan-stack/query-provider";
+import { QueryProvider } from "@/trpc/client";
+import { api, HydrateClient } from "@/trpc/server";
 import { redirect } from "next/navigation";
 
 import Navigation from "@/components/structure/header/navigation";
@@ -15,10 +16,14 @@ export default async function ProductLayout({
     redirect("/login");
   }
 
+  await api.purchases.getSubscriptionDetails.prefetch(undefined);
+
   return (
     <QueryProvider>
-      <Navigation />
-      <main>{children}</main>
+      <HydrateClient>
+        <Navigation />
+        <main>{children}</main>
+      </HydrateClient>
     </QueryProvider>
   );
 }

@@ -1,5 +1,4 @@
 "use client";
-import { useMutation, useQuery } from "@tanstack/react-query";
 import {
   CheckCircle,
   ClipboardCopyIcon,
@@ -12,10 +11,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { toast } from "sonner";
 
-import getSubscriptionDetailsSchema from "@/app/api/purchases/get-subscription-details/schema";
-import createApiKeySchema from "@/app/api/security/create-api-key/schema";
-import getLatestActiveKeySchema from "@/app/api/security/get-latest-active-key/schema";
-import requests from "@/lib/requests";
+import { api } from "@/trpc/client";
 
 import {
   AlertDialog,
@@ -87,38 +83,31 @@ export default function CreateNewApiKey({
   className = "",
   onKeyGenerated,
 }: CreateNewApiKeyProps) {
+  const utils = api.useUtils();
   const [showApiKey, setShowApiKey] = useState(false);
 
-  const subscriptionQuery = useQuery({
-    queryKey: ["activeSubscription"],
-    queryFn: async () => {
-      return await requests.get(getSubscriptionDetailsSchema);
+  const subscriptionQuery = api.purchases.getSubscriptionDetails.useQuery(
+    undefined,
+    {
+      meta: {
+        errorMessage: "Failed to check subscription status",
+      },
     },
-    meta: {
-      errorMessage: "Failed to check subscription status",
-    },
-  });
+  );
 
-  const apiKeyQuery = useQuery({
-    queryKey: ["apiKey"],
-    queryFn: async () => {
-      const { apiKey } = await requests.get(getLatestActiveKeySchema);
-      return apiKey;
-    },
+  const apiKeyQuery = api.security.getLatestActiveKey.useQuery(undefined, {
+    select: (data) => data.apiKey,
     meta: {
       errorMessage: "Failed to fetch API key",
     },
   });
 
-  const generateKeyMutation = useMutation({
-    mutationFn: async () => {
-      await requests.get(createApiKeySchema);
-    },
-    onSuccess: async () => {
+  const generateKeyMutation = api.security.createApiKey.useMutation({
+    onSuccess: async ({ key }) => {
       toast.success("API key generated successfully");
-      const refetchResult = await apiKeyQuery.refetch();
+      await utils.security.getLatestActiveKey.invalidate();
       if (onKeyGenerated) {
-        onKeyGenerated(refetchResult.data ?? "");
+        onKeyGenerated(key);
       }
     },
     onError: (error) => {
@@ -145,7 +134,7 @@ export default function CreateNewApiKey({
   };
 
   const hasApiKey = !apiKeyQuery.isLoading && currentApiKey;
-  const hasActiveSubscription = subscriptionQuery.data?.hasActiveSubscription;
+  const hasPaidAccess = subscriptionQuery.data?.hasPaidAccess;
 
   if (subscriptionQuery.isLoading) {
     return (
@@ -157,15 +146,15 @@ export default function CreateNewApiKey({
     );
   }
 
-  if (!hasActiveSubscription) {
+  if (!hasPaidAccess) {
     return (
       <div className={className}>
         {showDetails && (
           <div className="mb-6">
-            <h3 className="text-2xl font-semibold text-gray-900 mb-2">
+            <h3 className="text-2xl font-semibold text-foreground mb-2">
               Your API Key
             </h3>
-            <p className="text-base text-gray-600">
+            <p className="text-base text-muted-foreground">
               This key allows your website to securely fetch reviews from our
               service.
             </p>
@@ -173,14 +162,14 @@ export default function CreateNewApiKey({
         )}
 
         <div className="text-center py-12 space-y-6">
-          <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto">
-            <Info className="w-8 h-8 text-gray-400" />
+          <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto">
+            <Info className="w-8 h-8 text-muted-foreground" />
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            <h3 className="text-lg font-semibold text-foreground mb-2">
               Subscription Required
             </h3>
-            <p className="text-gray-600 mb-4">
+            <p className="text-muted-foreground mb-4">
               You need an active subscription to generate and use API keys.
             </p>
             <Button asChild size="lg">
@@ -196,10 +185,10 @@ export default function CreateNewApiKey({
     <div className={className}>
       {showDetails && (
         <div className="mb-6">
-          <h3 className="text-2xl font-semibold text-gray-900 mb-2">
+          <h3 className="text-2xl font-semibold text-foreground mb-2">
             Your API Key
           </h3>
-          <p className="text-base text-gray-600">
+          <p className="text-base text-muted-foreground">
             This key allows your website to securely fetch reviews from our
             service.
           </p>
@@ -213,12 +202,12 @@ export default function CreateNewApiKey({
         </div>
       ) : hasApiKey ? (
         <div className="space-y-4">
-          <div className="flex items-center space-x-2 text-green-800 font-medium">
+          <div className="flex items-center space-x-2 text-green-800 font-medium dark:text-green-300">
             <CheckCircle className="w-5 h-5" />
             <span>API key is active and ready to use</span>
           </div>
 
-          <div className="bg-white border border-green-200 p-4 rounded-lg">
+          <div className="bg-card border border-green-200 p-4 rounded-lg dark:border-green-900">
             <div className="font-mono text-sm break-all">
               {currentApiKey
                 ? showApiKey
@@ -283,7 +272,7 @@ export default function CreateNewApiKey({
         </div>
       ) : (
         <div className="text-center py-8 space-y-4">
-          <p className="text-gray-600">
+          <p className="text-muted-foreground">
             You need to create an API key to access your reviews
           </p>
           <Button

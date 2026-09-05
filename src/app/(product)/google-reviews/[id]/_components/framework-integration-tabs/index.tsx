@@ -1,7 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
-
-import getLatestActiveKeySchema from "@/app/api/security/get-latest-active-key/schema";
-import requests from "@/lib/requests";
+import { api } from "@/trpc/client";
 
 import { CodeBlock } from "@/components/ui/code-block";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -15,12 +12,8 @@ interface FrameworkIntegrationTabsProps {
 export function FrameworkIntegrationTabs({
   placeId,
 }: FrameworkIntegrationTabsProps) {
-  const apiKeyQuery = useQuery({
-    queryKey: ["apiKey"],
-    queryFn: async () => {
-      const { apiKey } = await requests.get(getLatestActiveKeySchema);
-      return apiKey;
-    },
+  const apiKeyQuery = api.security.getLatestActiveKey.useQuery(undefined, {
+    select: (data) => data.apiKey,
     meta: {
       errorMessage: "Failed to fetch API key",
     },
@@ -50,7 +43,7 @@ export function FrameworkIntegrationTabs({
           </div>
 
           <CodeBlock
-            theme="light"
+            theme="dark"
             code={framework.code}
             language={framework.id === "hugo" ? "html" : "javascript"}
             title={`${framework.name} Integration`}

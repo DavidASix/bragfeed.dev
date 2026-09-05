@@ -13,7 +13,7 @@ export type Product = {
  * Products priced in Canadian dollars (CAD).
  * price_id for testing: price_1RQaBMAY1r2O5Na5Kfg5joLI
  */
-export const products: Record<string, Product> = {
+export const products = {
   all_access: {
     slug: "all_access",
     id: "prod_SLGiKkhJQ7qFox",
@@ -33,7 +33,7 @@ export const products: Record<string, Product> = {
     price_id: "",
     type: "one-time",
   },
-};
+} satisfies Record<string, Product>;
 
 export const productKeys = arrayToTuple(
   Object.keys(products) as (keyof typeof products)[],

@@ -30,9 +30,9 @@ function MarqueeRow({ items }: { items: typeof frameworks }) {
               alt={`${fw.name} logo`}
               width={80}
               height={80}
-              className="object-contain grayscale brightness-150 group-hover:grayscale-0 group-hover:brightness-100 group-hover:scale-[1.05] transition-all duration-300"
+              className="object-contain grayscale brightness-150 transition-all duration-300 group-hover:scale-[1.05] group-hover:grayscale-0 group-hover:brightness-100 dark:invert dark:opacity-70 dark:group-hover:grayscale"
             />
-            <span className="font-bold text-base text-gray-800 whitespace-normal">
+            <span className="font-bold text-base text-foreground whitespace-normal">
               {fw.name}
             </span>
           </div>
@@ -50,7 +50,7 @@ export function FrameworkMarquee() {
   return (
     <div className="space-y-4">
       <div className="flex justify-start">
-        <h2 className="text-2xl font-bold text-gray-900">Works with</h2>
+        <h2 className="text-2xl font-bold text-foreground">Works with</h2>
       </div>
 
       <div className="space-y-4">
@@ -66,7 +66,9 @@ export function FrameworkMarquee() {
       </div>
 
       <div className="flex justify-end">
-        <span className="text-xl font-semibold text-gray-600">and more</span>
+        <span className="text-xl font-semibold text-muted-foreground">
+          and more
+        </span>
       </div>
     </div>
   );

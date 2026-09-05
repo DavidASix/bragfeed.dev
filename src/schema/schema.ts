@@ -41,6 +41,10 @@ export const users = pgTable("user", {
   has_active_subscription: boolean("has_active_subscription")
     .notNull()
     .default(false),
+  /** Grants paid access without requiring a Stripe subscription or payment record. */
+  has_billing_override: boolean("has_billing_override")
+    .notNull()
+    .default(false),
 });
 
 export const accounts = pgTable(
@@ -182,6 +186,35 @@ export const events = pgTable("events", {
     .notNull()
     .defaultNow(),
 });
+
+/**
+ * HEALTH CHECKS
+ */
+export const dbHealthCheckServices = pgEnum("health_check_services", [
+  "database",
+  "local-business-data",
+]);
+
+export type DBHealthCheckService =
+  (typeof dbHealthCheckServices.enumValues)[number];
+
+export const health_checks = pgTable(
+  "health_checks",
+  {
+    id: serial("id").primaryKey(),
+    service: dbHealthCheckServices("service").notNull(),
+    healthy: boolean("healthy").notNull(),
+    message: text("message"),
+    checked_at: timestamp("checked_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (t) => ({
+    idx_health_checks_service_checked_at: index(
+      "idx_health_checks_service_checked_at",
+    ).on(t.service, t.checked_at),
+  }),
+);
 
 /**
  * API KEYS

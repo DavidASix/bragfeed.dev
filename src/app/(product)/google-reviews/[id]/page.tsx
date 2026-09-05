@@ -1,15 +1,11 @@
 "use client";
 
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
 import { RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 
-import getBusinessDetailsSchema from "@/app/api/google/get-business-details/schema";
-import updateMinimumScoreSchema from "@/app/api/google/update-minimum-score/schema";
-import refreshBusinessDetailsSchema from "@/app/api/google/refresh-business-details/schema";
-import requests from "@/lib/requests";
+import { api } from "@/trpc/client";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -32,38 +28,29 @@ import { StarRatingSelector } from "../_components/star-rating-selector";
 import { FrameworkIntegrationTabs } from "./_components/framework-integration-tabs";
 
 export default function BusinessDetailsPage() {
+  const utils = api.useUtils();
   const params = useParams();
   const searchParams = useSearchParams();
   const businessId = params.id as string;
-  const queryClient = useQueryClient();
 
   // Determine default tab from query param
   const tabParam = searchParams.get("tab");
   const validTabs = ["details", "integration"];
   const defaultTab = validTabs.includes(tabParam ?? "") ? tabParam! : "details";
 
-  const businessQuery = useQuery({
-    queryKey: ["businessDetails", businessId],
-    queryFn: async () => {
-      return requests.post(getBusinessDetailsSchema, { businessId });
+  const businessQuery = api.google.getBusinessDetails.useQuery(
+    { businessId },
+    {
+      enabled: !!businessId,
+      meta: {
+        errorMessage: "Failed to fetch business details",
+      },
     },
-    enabled: !!businessId,
-    meta: {
-      errorMessage: "Failed to fetch business details",
-    },
-  });
+  );
 
-  const updateMinimumScoreMutation = useMutation({
-    mutationFn: async (minimumScore: number) => {
-      return requests.post(updateMinimumScoreSchema, {
-        businessId,
-        minimumScore,
-      });
-    },
+  const updateMinimumScoreMutation = api.google.updateMinimumScore.useMutation({
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["businessDetails", businessId],
-      });
+      utils.google.getBusinessDetails.invalidate({ businessId });
       toast.success("Minimum review score updated");
     },
     onError: () => {
@@ -71,20 +58,16 @@ export default function BusinessDetailsPage() {
     },
   });
 
-  const refreshBusinessDataMutation = useMutation({
-    mutationFn: async () => {
-      return requests.post(refreshBusinessDetailsSchema, { businessId });
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["businessDetails", businessId],
-      });
-      toast.success("Data refreshed successfully!");
-    },
-    onError: () => {
-      toast.error("Failed to refresh business data");
-    },
-  });
+  const refreshBusinessDataMutation =
+    api.google.refreshBusinessDetails.useMutation({
+      onSuccess: () => {
+        utils.google.getBusinessDetails.invalidate({ businessId });
+        toast.success("Data refreshed successfully!");
+      },
+      onError: () => {
+        toast.error("Failed to refresh business data");
+      },
+    });
 
   if (businessQuery.isLoading) {
     return (
@@ -102,10 +85,10 @@ export default function BusinessDetailsPage() {
     return (
       <section className="section section-padding">
         <div className="content text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">
+          <h1 className="text-2xl font-bold text-foreground mb-4">
             Business Not Found
           </h1>
-          <p className="text-gray-600 mb-6">
+          <p className="text-muted-foreground mb-6">
             The business you&apos;re looking for doesn&apos;t exist or you
             don&apos;t have access to it.
           </p>
@@ -123,7 +106,7 @@ export default function BusinessDetailsPage() {
   return (
     <>
       {/* Header Section */}
-      <section className="section section-padding bg-gradient-to-b from-primary/10 to-white">
+      <section className="section section-padding bg-gradient-to-b from-primary/10 to-background">
         <div className="content">
           <div className="flex items-center justify-between gap-4 mb-6">
             <Button variant="default" asChild>
@@ -131,11 +114,13 @@ export default function BusinessDetailsPage() {
             </Button>
           </div>
           <div className="text-center">
-            <h1 className="text-4xl font-bold tracking-tight text-gray-900 lg:text-5xl mb-4">
+            <h1 className="text-4xl font-bold tracking-tight text-foreground lg:text-5xl mb-4">
               {business.name || "Unnamed Business"}
             </h1>
             {business.address && (
-              <p className="text-xl text-gray-600 mb-6">{business.address}</p>
+              <p className="text-xl text-muted-foreground mb-6">
+                {business.address}
+              </p>
             )}
 
             {/* Business Stats */}
@@ -148,7 +133,7 @@ export default function BusinessDetailsPage() {
                         <div className="text-3xl font-bold text-secondary">
                           {business.stats.review_count || 0}
                         </div>
-                        <div className="text-sm text-gray-600">
+                        <div className="text-sm text-muted-foreground">
                           Total Reviews
                         </div>
                       </div>
@@ -163,7 +148,9 @@ export default function BusinessDetailsPage() {
                         ? business.stats.review_score.toFixed(1)
                         : "—"}
                     </div>
-                    <div className="text-sm text-gray-600">Average Rating</div>
+                    <div className="text-sm text-muted-foreground">
+                      Average Rating
+                    </div>
                   </div>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -171,7 +158,7 @@ export default function BusinessDetailsPage() {
                         <div className="text-3xl font-bold text-primary">
                           {available_reviews || 0}
                         </div>
-                        <div className="text-sm text-gray-600">
+                        <div className="text-sm text-muted-foreground">
                           Available Reviews
                         </div>
                       </div>
@@ -183,12 +170,14 @@ export default function BusinessDetailsPage() {
                     </TooltipContent>
                   </Tooltip>
                   <div className="text-center">
-                    <div className="text-3xl font-bold text-gray-700">
+                    <div className="text-3xl font-bold text-foreground/80">
                       {last_refreshed
                         ? new Date(last_refreshed).toLocaleDateString()
                         : "—"}
                     </div>
-                    <div className="text-sm text-gray-600">Data Refreshed</div>
+                    <div className="text-sm text-muted-foreground">
+                      Data Refreshed
+                    </div>
                   </div>
                 </div>
               </TooltipProvider>
@@ -222,7 +211,9 @@ export default function BusinessDetailsPage() {
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => refreshBusinessDataMutation.mutate()}
+                          onClick={() =>
+                            refreshBusinessDataMutation.mutate({ businessId })
+                          }
                           disabled={refreshBusinessDataMutation.isPending}
                           className="gap-2"
                         >
@@ -231,7 +222,7 @@ export default function BusinessDetailsPage() {
                           />
                           Refresh Data
                         </Button>
-                        <p className="text-xs text-gray-500 max-w-xs text-right">
+                        <p className="text-xs text-muted-foreground max-w-xs text-right">
                           Your data is also re-fetched during each API request
                           so that your API calls always return fresh data.
                         </p>
@@ -242,7 +233,10 @@ export default function BusinessDetailsPage() {
                     <StarRatingSelector
                       value={business.minimum_score ?? 1}
                       onChange={(value) =>
-                        updateMinimumScoreMutation.mutate(value)
+                        updateMinimumScoreMutation.mutate({
+                          businessId,
+                          minimumScore: value,
+                        })
                       }
                       disabled={updateMinimumScoreMutation.isPending}
                     />
@@ -250,7 +244,7 @@ export default function BusinessDetailsPage() {
                 </Card>
 
                 <div className="flex justify-between items-center mb-8">
-                  <h2 className="text-2xl font-bold text-gray-900">
+                  <h2 className="text-2xl font-bold text-foreground">
                     Recent Reviews ({reviews.length})
                   </h2>
                 </div>
@@ -258,10 +252,10 @@ export default function BusinessDetailsPage() {
                 {reviews.length === 0 ? (
                   <Card>
                     <CardContent className="text-center py-12">
-                      <p className="text-gray-500 mb-4">
+                      <p className="text-muted-foreground mb-4">
                         No reviews have been fetched for this business yet.
                       </p>
-                      <p className="text-sm text-gray-400">
+                      <p className="text-sm text-muted-foreground/70">
                         Reviews are automatically updated when you add a
                         business.
                       </p>
@@ -275,11 +269,7 @@ export default function BusinessDetailsPage() {
                         author={review.author_name || "Anonymous"}
                         rating={review.rating || 0}
                         text={review.comments || "No comment"}
-                        date={
-                          review.datetime && !isNaN(Date.parse(review.datetime))
-                            ? new Date(review.datetime)
-                            : null
-                        }
+                        date={review.datetime}
                         dimmed={
                           (review.rating || 0) < (business.minimum_score ?? 1)
                         }
@@ -292,10 +282,10 @@ export default function BusinessDetailsPage() {
               <TabsContent value="integration" className="space-y-6">
                 <div className="space-y-6">
                   <div>
-                    <h2 className="text-2xl font-bold text-gray-900 mb-4">
+                    <h2 className="text-2xl font-bold text-foreground mb-4">
                       Integration Instructions
                     </h2>
-                    <p className="text-gray-600 mb-6">
+                    <p className="text-muted-foreground mb-6">
                       Choose your framework and copy the integration code to
                       display reviews on your site.
                     </p>
@@ -313,19 +303,19 @@ export default function BusinessDetailsPage() {
                     <CardContent>
                       <div className="grid md:grid-cols-2 gap-6">
                         <div>
-                          <h3 className="font-semibold text-gray-900 mb-2">
+                          <h3 className="font-semibold text-foreground mb-2">
                             Business ID
                           </h3>
-                          <code className="text-sm bg-gray-100 px-2 py-1 rounded">
+                          <code className="text-sm bg-muted px-2 py-1 rounded">
                             {business.id}
                           </code>
                         </div>
                         {business.place_id && (
                           <div>
-                            <h3 className="font-semibold text-gray-900 mb-2">
+                            <h3 className="font-semibold text-foreground mb-2">
                               Google Place ID
                             </h3>
-                            <code className="text-sm bg-gray-100 px-2 py-1 rounded break-all">
+                            <code className="text-sm bg-muted px-2 py-1 rounded break-all">
                               {business.place_id}
                             </code>
                           </div>
