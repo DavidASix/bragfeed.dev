@@ -134,7 +134,7 @@ export default function CreateNewApiKey({
   };
 
   const hasApiKey = !apiKeyQuery.isLoading && currentApiKey;
-  const hasActiveSubscription = subscriptionQuery.data?.hasActiveSubscription;
+  const hasPaidAccess = subscriptionQuery.data?.hasPaidAccess;
 
   if (subscriptionQuery.isLoading) {
     return (
@@ -146,7 +146,7 @@ export default function CreateNewApiKey({
     );
   }
 
-  if (!hasActiveSubscription) {
+  if (!hasPaidAccess) {
     return (
       <div className={className}>
         {showDetails && (
