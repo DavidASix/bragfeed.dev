@@ -13,7 +13,7 @@ import {
   updateBusinessStats,
 } from "@/lib/server/google/update";
 import { checkAndRecordRateLimit } from "@/lib/server/rate-limit";
-import { getActiveSubscription } from "@/lib/server/subscriptions";
+import { getPaidAccess } from "@/lib/server/subscriptions";
 import { userHasOwnership } from "@/lib/ownership";
 import { db } from "@/schema/db";
 import { businesses } from "@/schema/schema";
@@ -82,8 +82,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const subscription = await getActiveSubscription(userId);
-    if (!subscription) {
+    const access = await getPaidAccess(userId);
+    if (!access.subscription && !access.hasBillingOverride) {
       return NextResponse.json(
         { error: "Active subscription required" },
         { status: 403 },

@@ -4,7 +4,10 @@ import type Stripe from "stripe";
 import { z } from "zod";
 
 import { productKeys, products } from "@/lib/products";
-import { getSubscriptionDetails } from "@/lib/server/subscriptions";
+import {
+  getPaidAccess,
+  getSubscriptionDetails,
+} from "@/lib/server/subscriptions";
 import { stripe } from "@/lib/server/stripe";
 import { db } from "@/schema/db";
 import { users } from "@/schema/schema";
@@ -41,6 +44,14 @@ export const purchasesRouter = router({
   initializeCheckout: protectedProcedure
     .input(z.object({ product: z.enum(productKeys) }))
     .mutation(async ({ ctx, input }) => {
+      const access = await getPaidAccess(ctx.userId);
+      if (access.hasBillingOverride) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Subscription management is disabled for this account",
+        });
+      }
+
       const product = products[input.product];
       const params: Stripe.Checkout.SessionCreateParams = {
         success_url: `${process.env.DOMAIN}/subscription/?status=success&product=${input.product}&session_id={CHECKOUT_SESSION_ID}`,
@@ -61,6 +72,14 @@ export const purchasesRouter = router({
    * on Stripe.
    */
   cancelSubscription: protectedProcedure.mutation(async ({ ctx }) => {
+    const access = await getPaidAccess(ctx.userId);
+    if (access.hasBillingOverride) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "Subscription management is disabled for this account",
+      });
+    }
+
     const [user] = await db
       .select({ stripe_customer_id: users.stripe_customer_id })
       .from(users)

@@ -5,11 +5,11 @@ import superjson from "superjson";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { z } from "zod";
 
-const { getActiveSubscription } = vi.hoisted(() => ({
-  getActiveSubscription: vi.fn(),
+const { getPaidAccess } = vi.hoisted(() => ({
+  getPaidAccess: vi.fn(),
 }));
 
-vi.mock("@/lib/server/subscriptions", () => ({ getActiveSubscription }));
+vi.mock("@/lib/server/subscriptions", () => ({ getPaidAccess }));
 
 import { paidProcedure, protectedProcedure, router } from "@/trpc";
 
@@ -18,6 +18,7 @@ const testRouter = router({
   paidUser: paidProcedure.query(({ ctx }) => ({
     userId: ctx.userId,
     subscription: ctx.subscription,
+    hasBillingOverride: ctx.hasBillingOverride,
   })),
   validatedMutation: protectedProcedure
     .input(z.object({ value: z.number().int().positive() }))
@@ -36,7 +37,7 @@ const authenticatedContext = {
 
 describe("tRPC policy procedures", () => {
   beforeEach(() => {
-    getActiveSubscription.mockReset();
+    getPaidAccess.mockReset();
   });
 
   it("rejects a protected procedure without a session", async () => {
@@ -52,7 +53,10 @@ describe("tRPC policy procedures", () => {
   });
 
   it("rejects paid access without an active subscription", async () => {
-    getActiveSubscription.mockResolvedValue(null);
+    getPaidAccess.mockResolvedValue({
+      hasBillingOverride: false,
+      subscription: null,
+    });
     const caller = testRouter.createCaller(authenticatedContext);
     await expect(caller.paidUser()).rejects.toMatchObject({
       code: "FORBIDDEN",
@@ -65,11 +69,28 @@ describe("tRPC policy procedures", () => {
       subscriptionStart: new Date("2026-01-01T00:00:00.000Z"),
       subscriptionEnd: new Date("2027-01-01T00:00:00.000Z"),
     };
-    getActiveSubscription.mockResolvedValue(subscription);
+    getPaidAccess.mockResolvedValue({
+      hasBillingOverride: false,
+      subscription,
+    });
     const caller = testRouter.createCaller(authenticatedContext);
     await expect(caller.paidUser()).resolves.toEqual({
       userId: "user-1",
       subscription,
+      hasBillingOverride: false,
+    });
+  });
+
+  it("grants paid access from an account billing override", async () => {
+    getPaidAccess.mockResolvedValue({
+      hasBillingOverride: true,
+      subscription: null,
+    });
+    const caller = testRouter.createCaller(authenticatedContext);
+    await expect(caller.paidUser()).resolves.toEqual({
+      userId: "user-1",
+      subscription: null,
+      hasBillingOverride: true,
     });
   });
 
