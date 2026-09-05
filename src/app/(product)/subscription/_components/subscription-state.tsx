@@ -6,6 +6,7 @@ import {
   XCircle,
   Calendar,
   CreditCard,
+  ShieldCheck,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -29,6 +30,7 @@ type SubscriptionStateProps = {
   dataIsLoading: boolean;
   cancelIsLoading: boolean;
   hasActiveSubscription: boolean;
+  hasBillingOverride: boolean;
   endDate?: Date;
   onClickCheckout: () => void;
   onClickCancel: () => void;
@@ -53,6 +55,7 @@ export function SubscriptionState({
   dataIsLoading,
   cancelIsLoading,
   hasActiveSubscription,
+  hasBillingOverride,
   endDate,
   onClickCheckout,
   onClickCancel,
@@ -72,11 +75,26 @@ export function SubscriptionState({
   }
 
   const daysRemaining = endDate ? calculateDaysRemaining(endDate) : 0;
+  const hasPaidAccess = hasActiveSubscription || hasBillingOverride;
 
   return (
     <div className="max-w-3xl mx-auto">
-      {hasActiveSubscription ? (
-        <Card className="border-green-200 bg-green-50/50 dark:border-green-900 dark:bg-green-950/20">
+      {hasBillingOverride && (
+        <Alert className="mb-4 border-blue-300 bg-blue-50 dark:border-blue-800 dark:bg-blue-950/30">
+          <ShieldCheck className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+          <AlertDescription className="text-blue-900 dark:text-blue-100">
+            An account billing override is active. You have unlimited access,
+            and subscription management is disabled for this account.
+          </AlertDescription>
+        </Alert>
+      )}
+      {hasPaidAccess ? (
+        <Card
+          className={`border-green-200 bg-green-50/50 dark:border-green-900 dark:bg-green-950/20 ${
+            hasBillingOverride ? "pointer-events-none opacity-50 grayscale" : ""
+          }`}
+          aria-disabled={hasBillingOverride}
+        >
           <CardContent className="pt-6">
             <div className="space-y-6">
               {/* Status Header */}
@@ -90,7 +108,9 @@ export function SubscriptionState({
                       Active Subscription
                     </h2>
                     <p className="text-green-700 dark:text-green-300 text-sm">
-                      All features unlocked
+                      {hasBillingOverride
+                        ? "Unlimited access enabled"
+                        : "All features unlocked"}
                     </p>
                   </div>
                 </div>
@@ -136,7 +156,7 @@ export function SubscriptionState({
                     <Button
                       variant="outline"
                       className="border-red-300 text-red-600 hover:bg-red-50 hover:text-red-700 dark:border-red-800 dark:text-red-400 dark:hover:bg-red-950"
-                      disabled={cancelIsLoading}
+                      disabled={cancelIsLoading || hasBillingOverride}
                     >
                       {cancelIsLoading ? (
                         <>

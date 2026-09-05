@@ -90,9 +90,7 @@ export default function DashboardPage() {
           <SpotlightSection
             hasBusinesses={hasBusinesses}
             monthlyApiCalls={statsData?.monthlyApiCalls ?? 0}
-            hasActiveSubscription={
-              subscriptionData?.hasActiveSubscription ?? false
-            }
+            hasActiveSubscription={subscriptionData?.hasPaidAccess ?? false}
           />
         </div>
       </section>

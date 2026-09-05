@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const mocks = vi.hoisted(() => ({
   getUserIdForApiKey: vi.fn(),
-  getActiveSubscription: vi.fn(),
+  getPaidAccess: vi.fn(),
   checkAndRecordRateLimit: vi.fn(),
   userHasOwnership: vi.fn(),
   getLastEvent: vi.fn(),
@@ -17,7 +17,7 @@ vi.mock("@/lib/server/api-keys", () => ({
   getUserIdForApiKey: mocks.getUserIdForApiKey,
 }));
 vi.mock("@/lib/server/subscriptions", () => ({
-  getActiveSubscription: mocks.getActiveSubscription,
+  getPaidAccess: mocks.getPaidAccess,
 }));
 vi.mock("@/lib/server/rate-limit", () => ({
   checkAndRecordRateLimit: mocks.checkAndRecordRateLimit,
@@ -76,7 +76,10 @@ describe("paid fetch-updated-data REST boundary", () => {
     vi.setSystemTime(new Date("2026-09-02T12:00:00.000Z"));
     vi.clearAllMocks();
     mocks.getUserIdForApiKey.mockResolvedValue("user-1");
-    mocks.getActiveSubscription.mockResolvedValue({ id: 1 });
+    mocks.getPaidAccess.mockResolvedValue({
+      hasBillingOverride: false,
+      subscription: { id: 1 },
+    });
     mocks.checkAndRecordRateLimit.mockResolvedValue({ allowed: true });
     mocks.userHasOwnership.mockResolvedValue(true);
     mocks.getLastEvent.mockResolvedValue({ timestamp: new Date() });
@@ -126,10 +129,29 @@ describe("paid fetch-updated-data REST boundary", () => {
   });
 
   it("returns 403 before parsing the body for inactive users", async () => {
-    mocks.getActiveSubscription.mockResolvedValue(null);
+    mocks.getPaidAccess.mockResolvedValue({
+      hasBillingOverride: false,
+      subscription: null,
+    });
     const response = await POST(createRequest("{", "Bearer customer-key"));
     expect(response.status).toBe(403);
     expect(mocks.checkAndRecordRateLimit).not.toHaveBeenCalled();
+  });
+
+  it("allows an account billing override without a payment period", async () => {
+    mocks.getPaidAccess.mockResolvedValue({
+      hasBillingOverride: true,
+      subscription: null,
+    });
+
+    const response = await POST(
+      createRequest(
+        JSON.stringify({ business_id: businessId }),
+        "Bearer customer-key",
+      ),
+    );
+
+    expect(response.status).toBe(200);
   });
 
   it("returns 400 for malformed JSON without consuming quota", async () => {

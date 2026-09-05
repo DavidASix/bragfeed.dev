@@ -82,6 +82,9 @@ export default function SubscriptionPage() {
             hasActiveSubscription={
               subscriptionQuery.data?.hasActiveSubscription ?? false
             }
+            hasBillingOverride={
+              subscriptionQuery.data?.hasBillingOverride ?? false
+            }
             endDate={subscriptionQuery.data?.subscriptionEnd}
             onClickCheckout={onClickCheckout}
             onClickCancel={() => {
