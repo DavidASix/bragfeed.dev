@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi, type Mock } from "vitest";
 
 type PolicyMocks = {
   selectRows: unknown[];
+  userRows: unknown[];
   selectError: Error | null;
   insertError: Error | null;
   insertValues: Mock<(value: unknown) => void>;
@@ -10,6 +11,7 @@ type PolicyMocks = {
 
 const mocks = vi.hoisted<PolicyMocks>(() => ({
   selectRows: [],
+  userRows: [],
   selectError: null,
   insertError: null,
   insertValues: vi.fn(),
@@ -18,22 +20,23 @@ const mocks = vi.hoisted<PolicyMocks>(() => ({
 
 vi.mock("@/schema/db", () => ({
   db: {
-    select: () => ({
+    select: (selection?: Record<string, unknown>) => ({
       from: () => {
+        const rows =
+          selection && Object.hasOwn(selection, "hasBillingOverride")
+            ? mocks.userRows
+            : mocks.selectRows;
         const query = {
           where: () => query,
           orderBy: () => query,
           limit: () =>
             mocks.selectError
               ? Promise.reject(mocks.selectError)
-              : Promise.resolve(mocks.selectRows),
+              : Promise.resolve(rows),
           then: (
             resolve: (value: unknown[]) => unknown,
             reject: (error: Error) => unknown,
-          ) =>
-            mocks.selectError
-              ? reject(mocks.selectError)
-              : resolve(mocks.selectRows),
+          ) => (mocks.selectError ? reject(mocks.selectError) : resolve(rows)),
         };
         return query;
       },
@@ -54,12 +57,17 @@ vi.mock("@/lib/encryption", () => ({
 
 import { getUserIdForApiKey } from "@/lib/server/api-keys";
 import { checkAndRecordRateLimit } from "@/lib/server/rate-limit";
-import { getActiveSubscription } from "@/lib/server/subscriptions";
+import {
+  getActiveSubscription,
+  getPaidAccess,
+  getSubscriptionDetails,
+} from "@/lib/server/subscriptions";
 
 describe("transport-neutral server policy", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mocks.selectRows = [];
+    mocks.userRows = [];
     mocks.selectError = null;
     mocks.insertError = null;
     mocks.encryptDeterministic.mockResolvedValue("encrypted-key");
@@ -79,6 +87,29 @@ describe("transport-neutral server policy", () => {
 
   it("returns null when no subscription covers the current period", async () => {
     await expect(getActiveSubscription("user-1")).resolves.toBeNull();
+  });
+
+  it("grants paid access from the account override without a payment period", async () => {
+    mocks.userRows = [{ hasBillingOverride: true }];
+
+    await expect(getPaidAccess("user-1")).resolves.toEqual({
+      hasBillingOverride: true,
+      subscription: null,
+    });
+  });
+
+  it("returns effective paid access and the billing override in subscription details", async () => {
+    mocks.userRows = [
+      { hasActiveSubscription: false, hasBillingOverride: true },
+    ];
+
+    await expect(getSubscriptionDetails("user-1")).resolves.toEqual({
+      hasActiveSubscription: false,
+      hasBillingOverride: true,
+      hasPaidAccess: true,
+      subscriptionStart: undefined,
+      subscriptionEnd: undefined,
+    });
   });
 
   it("resolves valid API keys once and returns null for missing keys", async () => {

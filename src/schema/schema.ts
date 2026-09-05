@@ -41,6 +41,10 @@ export const users = pgTable("user", {
   has_active_subscription: boolean("has_active_subscription")
     .notNull()
     .default(false),
+  /** Grants paid access without requiring a Stripe subscription or payment record. */
+  has_billing_override: boolean("has_billing_override")
+    .notNull()
+    .default(false),
 });
 
 export const accounts = pgTable(

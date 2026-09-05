@@ -15,8 +15,15 @@ export type SubscriptionDetails = {
    * value of false; more details in the users table.
    */
   hasActiveSubscription: boolean;
+  hasBillingOverride: boolean;
+  hasPaidAccess: boolean;
   subscriptionStart?: Date;
   subscriptionEnd?: Date;
+};
+
+export type PaidAccess = {
+  hasBillingOverride: boolean;
+  subscription: ActiveSubscription | null;
 };
 
 /**
@@ -50,6 +57,30 @@ export async function getActiveSubscription(
 }
 
 /**
+ * Resolves paid access from either a real subscription period or an account override.
+ *
+ * @param userId - Authenticated user whose access is being checked.
+ * @returns The source of the user's paid access without synthesizing payment data.
+ */
+export async function getPaidAccess(userId: string): Promise<PaidAccess> {
+  const [subscription, [user]] = await Promise.all([
+    getActiveSubscription(userId),
+    db
+      .select({ hasBillingOverride: users.has_billing_override })
+      .from(users)
+      .where(eq(users.id, userId))
+      .limit(1),
+  ]);
+
+  if (!user) throw new Error("User not found");
+
+  return {
+    hasBillingOverride: user.hasBillingOverride,
+    subscription,
+  };
+}
+
+/**
  * Returns the billing state displayed to an authenticated user.
  *
  * @param userId - Authenticated user whose billing state is requested.
@@ -63,15 +94,19 @@ export async function getSubscriptionDetails(
     db
       .select({
         hasActiveSubscription: users.has_active_subscription,
+        hasBillingOverride: users.has_billing_override,
       })
       .from(users)
-      .where(eq(users.id, userId)),
+      .where(eq(users.id, userId))
+      .limit(1),
   ]);
 
   if (!user) throw new Error("User not found");
 
   return {
     hasActiveSubscription: user.hasActiveSubscription,
+    hasBillingOverride: user.hasBillingOverride,
+    hasPaidAccess: user.hasBillingOverride || Boolean(subscription),
     subscriptionStart: subscription?.subscriptionStart,
     subscriptionEnd: subscription?.subscriptionEnd,
   };

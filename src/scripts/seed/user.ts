@@ -15,6 +15,7 @@ export async function up() {
         image: null,
         stripe_customer_id: null,
         has_active_subscription: false,
+        has_billing_override: false,
       },
       {
         id: "6506bac5-e63a-4fa3-b9c9-a94ab5a549fc",
@@ -24,6 +25,7 @@ export async function up() {
         image: null,
         stripe_customer_id: "cus_1234567890example",
         has_active_subscription: true,
+        has_billing_override: false,
       },
     ])
     .onConflictDoNothing();
